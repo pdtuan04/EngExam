@@ -52,7 +52,7 @@ namespace Infrastructure.Extensions
                 SecurityStamp = "DF7GIIY7UNBVCVLZD73QO6PGSVQXBSTW",
                 ConcurrencyStamp = "f67e2437-61a2-4458-ac14-de7ab48158b6"
             };
-            List<User> userList = new List<User>()
+            var userList = new List<User>()
             {
                 admin,
                 user,
@@ -129,6 +129,7 @@ namespace Infrastructure.Extensions
                 new Exam
                 {
                     Id = Guid.Parse("77777777-7777-7777-7777-777777777777"),
+                    Title = "Basic Grammar Test",
                     Description = "Basic Grammar Test",
                     ExamCategoryId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
                 }

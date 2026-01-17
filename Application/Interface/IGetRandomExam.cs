@@ -10,6 +10,6 @@ namespace Application.Interface
 {
     public interface IGetRandomExam
     {
-        public Task<ExamResponse> GetRandomExamAsync();
+        public Task<ExamForDoingDto> GetRandomExamAsync();
     }
 }

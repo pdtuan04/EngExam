@@ -3,11 +3,11 @@ using Application.Interface;
 using EngExam.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EngExam.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ExamController : ControllerBase
@@ -27,36 +27,69 @@ namespace EngExam.Controllers
             var exam = await _getRandomExam.GetRandomExamAsync();
             if (exam == null)
             {
-                return NotFound("No exam found");
+                return NotFound(new
+                {
+                    success = false,
+                    message = "No exam found"
+                });
             }
-            return Ok(exam);
+            return Ok(new
+            {
+                success = true,
+                data = exam,
+                message = "Random exam retrieved successfully"
+            });
         }
+        [Authorize]
         [HttpPost("submit-exam")]
         public async Task<IActionResult> SubmitExam([FromBody] SubmitExamRequest submitExam)
         {
             var userId = ClaimsExtensions.GetUserId(User);
             var result = await _submitExam.SubmitExamAsync(submitExam, userId);
-            return Ok(result);
+            return Ok(new
+            {
+                success = true,
+                data = result,
+                message = "Submit exam successfully"
+            });
         }
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(Guid id)
+        public async Task<IActionResult> GetExamById(Guid id)
         {
-            var exam = await _getExam.GetExamByIdAsync(id);
+            var exam = await _getExam.GetExamForDoingAsync(id);
             if (exam == null)
             {
-                return NotFound($"Exam with ID {id} not found.");
+                return NotFound(new
+                {
+                    success = false,
+                    message = "No exam found"
+                });
             }
-            return Ok(exam);
+            return Ok(new
+            {
+                success = true,
+                data = exam,
+                message = "Get exam by id successfully"
+            });
         }
         [HttpGet("exam-list-{id}")]
-        public async Task<IActionResult> GetByIdCategory(Guid id)
+        public async Task<IActionResult> GetExamByIdCategory(Guid id)
         {
-            var exam = await _getExam.GetExamByIdAsync(id);
+            var exam = await _getExam.GetExamsByCategoryIdAsync(id);
             if (exam == null)
             {
-                return NotFound($"Exam with ID {id} not found.");
+                return NotFound(new
+                {
+                    success = false,
+                    message = "No exam found"
+                });
             }
-            return Ok(exam);
+            return Ok(new
+            {
+                success = true,
+                data = exam,
+                message = "Get exam by category successfully"
+            });
         }
     }
 }

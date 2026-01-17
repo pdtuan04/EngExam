@@ -9,6 +9,7 @@ namespace Domain.Entity
 {
     public class Exam:BaseEntity
     {
+        public required string Title { get; set; }
         public string? Description { get; set; }
         public required Guid ExamCategoryId { get; set; }
         public ICollection<ExamDetail> ExamDetail { get; } = [];

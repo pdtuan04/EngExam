@@ -9,6 +9,6 @@ namespace Application.Interface
 {
     public interface IGetExamCategory
     {
-        public Task<ExamCategoryResponse> GetAllExamCategoryAsync();
+        public Task<IEnumerable<ExamCategoryDto>?> GetAllExamCategoryAsync();
     }
 }

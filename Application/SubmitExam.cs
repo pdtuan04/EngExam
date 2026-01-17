@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application.DTOs.Requests.Exam;
+﻿using Application.DTOs.Requests.Exam;
 using Application.DTOs.Requests.Question;
+using Application.DTOs.Responses;
 using Application.Exceptions;
 using Application.Handler.InterfaceHandler;
 using Application.Interface;
@@ -12,6 +8,11 @@ using Application.Repositories;
 using Application.UnitOfWork;
 using Domain.Entity;
 using Domain.Enums;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Application
 {
@@ -29,7 +30,7 @@ namespace Application
             _getExamFinder = getExamFinder;
             _questionHandlers = questionHandlers;
         }
-        public async Task<ExamResult> SubmitExamAsync(SubmitExamRequest submit, Guid userId)
+        public async Task<ExamResultDto> SubmitExamAsync(SubmitExamRequest submit, Guid userId)
         {
             await _unitOfWork.BeginTransactionAsync();
             try
@@ -51,7 +52,33 @@ namespace Application
                 };
                 await _unitOfWork.ExamResultRepository.AddAsync(examResult);
                 await _unitOfWork.SaveChangesAsync();
-                return examResult;
+                var examResultDto = new ExamResultDto
+                {
+                    Id = examResult.Id,
+                    CompleteAt = examResult.CompleteAt,
+                    TotalScore = examResult.Score,
+                    Details = exam
+                                .ExamDetail
+                                .Select(ed =>
+                                {
+                                    var history = histories.First(h => h.QuestionId == ed.QuestionId);
+                                    return new UserAnswerDto
+                                    {
+                                        Content = ed.Question.Content,
+                                        QuestionTypes = ed.Question.QuestionTypes,
+                                        UserAnswer = history.UserAnswer,
+                                        Explanation = ed.Question.Explanation,
+                                        IsCorrect = history.IsCorrect,
+                                        EarnedPoint = history.Score,
+                                        Options = ed.Question.Answers.Select(a => new Option
+                                        {
+                                            Content = a.Content,
+                                            IsCorrect = a.IsCorrect,
+                                        }).ToList()
+                                    };
+                                }).ToList()
+                };
+                return examResultDto;
             }
             catch
             {
