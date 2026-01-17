@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace Application.DTOs.Responses
 {
-    public class ExamResponse
+    public class ExamResultDto
     {
         public required Guid Id { get; set; }
-        public string Description { get; set; }
-        public required ICollection<QuestionResponse> Questions { get; set; } = [];
+        public required DateTime CompleteAt{ get; set; }
+        public required double TotalScore { get; set; }
+        public required IEnumerable<UserAnswerDto> Details { get; set; }
 
     }
 }

@@ -46,5 +46,12 @@ namespace Infrastructure.Repositories.SQLServer
             var exam = _mapper.Map<Domain.Entity.Exam>(dbExam);
             return _mapper.Map<Domain.Entity.Exam>(dbExam);
         }
+        public async Task<IEnumerable<Domain.Entity.Exam>> GetExamsByCategoryIdAsync(Guid categoryId)
+        {
+            var dbExams = await _context.Exams
+                .Where(e => e.ExamCategoryId == categoryId)
+                .ToListAsync();
+            return _mapper.Map<IEnumerable<Domain.Entity.Exam>>(dbExams);
+        }
     }
 }

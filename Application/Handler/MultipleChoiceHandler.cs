@@ -24,7 +24,7 @@ namespace Application.Handler
                 QuestionId = examDetail.QuestionId,
                 UserAnswer = answer?.Content ?? "",
                 IsCorrect = isCorrect,
-                Score = isCorrect ? examDetail.Score : 0
+                Score = isCorrect ? examDetail.Score : 0,
             };
         }
         public double CalculateScoreHandler(UserAnswer userAnswer, ExamDetail examDetail)

@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Application.DTOs.Responses
 {
-    public class ExamCategoryResponse
+    public class ExamCategoryDto
     {
+        public required Guid Id { get; set; }
         public required string Name { get; set; }
-        public required string Description { get; set; }
+        public required string? Description { get; set; }
     }
 }

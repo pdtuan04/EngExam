@@ -11,24 +11,24 @@ using Application.Repositories;
 
 namespace Application
 {
-    public class GetExam: IGetExamFinder
+    public class RepositoryExamFinder: IGetExamFinder
     {
         public readonly IExamRepository _examRepository;
-        public GetExam(IExamRepository examRepository)
+        public RepositoryExamFinder(IExamRepository examRepository)
         {
             _examRepository = examRepository ?? throw new ArgumentNullException(nameof(examRepository));
         }
-        public async Task<ExamResponse?> GetExamByIdAsync(Guid id)
+        public async Task<ExamForDoingDto?> GetExamForDoingAsync(Guid id)
         {
             var exam = await _examRepository.GetByIdAsync(id);
             if (exam == null)
             {
                 return null;
             }
-            return new ExamResponse
+            return new ExamForDoingDto
             {
                 Id = exam.Id,
-                Description = exam.Description,
+                Description = exam.Description ?? "",
                 Questions = exam.ExamDetail
                 .Select(ed => ed.Question)
                 .Select(q => new QuestionResponse
@@ -46,9 +46,16 @@ namespace Application
                 }).ToList()
             };
         }
-        //public async Task<IEnumerable<ExamResponse>> GetExamByCategory(Guid id)
-        //{
-
-        //}
+        public async Task<IEnumerable<ExamSummaryDto>?> GetExamsByCategoryIdAsync(Guid id)
+        {
+            var exams = await _examRepository.GetExamsByCategoryIdAsync(id);
+            var result = exams.Select(exam => new ExamSummaryDto
+            {
+                Id = exam.Id,
+                Title = exam.Title,
+                Description = exam.Description
+            }).ToList();
+            return result;
+        }
     }
 }

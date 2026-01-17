@@ -9,7 +9,7 @@ namespace Application.Interface
 {
     public interface IGetExamFinder
     {
-        public Task<ExamResponse> GetExamByIdAsync(Guid id);
-        //public Task<IEnumerable<ExamResponse>> GetExamByCategory(Guid id);
+        public Task<ExamForDoingDto> GetExamForDoingAsync(Guid id);
+        public Task<IEnumerable<ExamSummaryDto>?> GetExamsByCategoryIdAsync(Guid id);
     }
 }

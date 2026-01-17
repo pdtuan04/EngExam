@@ -9,16 +9,25 @@ using System.Threading.Tasks;
 
 namespace Application
 {
-    public class GetExamcategory : IGetExamCategory
+    public class GetExamCategory : IGetExamCategory
     {
         private readonly IExamCategoryRepository _examCategoryRepository;
-        public GetExamcategory(IExamCategoryRepository examCategoryRepository)
+        public GetExamCategory(IExamCategoryRepository examCategoryRepository)
         {
             _examCategoryRepository = examCategoryRepository ?? throw new ArgumentNullException(nameof(examCategoryRepository));
         }
-        public async Task<ExamCategoryResponse> GetAllExamCategoryAsync()
+        public async Task<IEnumerable<ExamCategoryDto>?> GetAllExamCategoryAsync()
         {
-            throw new NotImplementedException();
+            var resutl = await _examCategoryRepository.GetAllAsync();
+            if(resutl == null) return null;
+            var examCategorys = resutl
+                .Select(ec => new ExamCategoryDto
+                {
+                    Id = ec.Id,
+                    Name = ec.Name,
+                    Description = ec.Description
+                });
+            return examCategorys;
         }
     }
 }

@@ -91,11 +91,12 @@ app.Run();
 void RegisterServicesForSecurity(ConfigurationManager configuration, IServiceCollection services)
 {
     //Identity
-    services.AddAuthorization();
     services.AddIdentity<Infrastructure.Repositories.SQLServer.DataContext.User, IdentityRole<Guid>>()
         .AddEntityFrameworkStores<ApplicationDbContext>()
         .AddDefaultTokenProviders();
-    services.AddAuthentication(options =>
+    services.AddAuthorization();
+    
+    services.AddAuthentication(options => 
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -158,18 +159,25 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
         services.AddTransient<IExamResultRepository>(service => new ExamResultRepository(
             service.GetRequiredService<ApplicationDbContext>(),
             service.GetRequiredService<IMapper>()));
+        services.AddTransient<IExamCategoryRepository>(service => new ExamCategoryRepository(
+            service.GetRequiredService<ApplicationDbContext>(),
+            service.GetRequiredService<IMapper>()));
 
         services.AddTransient<IUnitOfWork>(service => new UnitOfWork(
             service.GetRequiredService<ApplicationDbContext>(),
             service.GetRequiredService<IMapper>()));
+
         services.AddTransient<IRoleServices>(service => new RoleServices(
             service.GetRequiredService<RoleManager<IdentityRole<Guid>>>()));
+        
     }
 
     
     //cache
     var cacheOptions = configuration.GetSection("CacheSetting").Get<CacheOptions>() ?? new CacheOptions();
     InitializeCache(configuration, services, cacheOptions);
+
+
     //handler
     services.AddSingleton<MultipleChoiceHandler>();
     services.AddSingleton<FillInBlankHandler>();
@@ -178,6 +186,8 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
             { QuestionTypes.MultipleChoice, services.GetRequiredService<MultipleChoiceHandler>() },
             { QuestionTypes.FillInTheBlank, services.GetRequiredService<FillInBlankHandler>()}
         });
+
+
     //usecase
     services.AddTransient<ISubmitExam>(service => new SubmitExam(
         service.GetRequiredService<IUnitOfWork>(),
@@ -189,17 +199,16 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
         service.GetRequiredService<IDistributedCache>(),
         configuration.GetSection("CachableRandomExam").Get<CachableRandomExamOptions>() ?? new()
         ));
-    services.AddTransient<IGetExamFinder>(service => new CachableExamById(
-        new GetExam(service.GetRequiredService<IExamRepository>()),
+    services.AddTransient<IGetExamFinder>(service => new CachableExamFinder(
+        new RepositoryExamFinder(service.GetRequiredService<IExamRepository>()),
         service.GetRequiredService<IDistributedCache>(),
-        configuration.GetSection("CachableExamById").Get<CachableExamByIdOptions>() ?? new(),
-        service.GetRequiredService<ILogger<CachableExamById>>()
+        configuration.GetSection("CachableExamById").Get<CachableExamFinderOptions>() ?? new(),
+        service.GetRequiredService<ILogger<CachableExamFinder>>()
         ));
     var aiOption = configuration.GetSection("AIModel").Get<AIOptions>() ?? new AIOptions();
     services.AddTransient<IAISupport>(services => new OpenAISupport(
         services.GetRequiredService<IChatClient>()));
     RegisterAIServices(configuration, services, aiOption);
-
     services.AddTransient<IAIChatBox>(service => new AIChatBox(
         service.GetRequiredService<IAISupport>()
         ));
@@ -216,6 +225,9 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
         ));
     services.AddTransient<ILoginAccount>(services => new LoginAccount(
         services.GetRequiredService<IAuthService>()
+        ));
+    services.AddTransient<IGetExamCategory>(service => new GetExamCategory(
+        service.GetRequiredService<IExamCategoryRepository>()
         ));
 }
 void RegisterAIServices(ConfigurationManager configuration, IServiceCollection services, AIOptions aiOption)

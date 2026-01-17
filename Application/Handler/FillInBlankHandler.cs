@@ -24,7 +24,7 @@ namespace Application.Handler
                     QuestionId = examDetail.QuestionId,
                     UserAnswer = userAnswer?.AnswerFillInBlank ?? "",
                     IsCorrect = true,
-                    Score = isCorrectFill ? examDetail.Score : 0
+                    Score = isCorrectFill ? examDetail.Score : 0,
                 };
             }
             return new AnswerHistory
@@ -33,7 +33,7 @@ namespace Application.Handler
                 QuestionId = examDetail.QuestionId,
                 UserAnswer = userAnswer?.AnswerFillInBlank ?? "",
                 IsCorrect = false,
-                Score = 0
+                Score = 0,
             };
         }
         public double CalculateScoreHandler(UserAnswer userAnswer, ExamDetail examDetail)

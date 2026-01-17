@@ -35,7 +35,7 @@ namespace Infrastructure.Caching
             };
         }
 
-        public async Task<ExamResponse> GetRandomExamAsync()
+        public async Task<ExamForDoingDto> GetRandomExamAsync()
         {
             var cacheKey = $"{options.CacheKey}";
             var cachedData = await _cache.GetStringAsync(cacheKey);
@@ -49,7 +49,7 @@ namespace Infrastructure.Caching
                 return exam;
             }else
             {
-                var exam = JsonSerializer.Deserialize<ExamResponse>(cachedData);
+                var exam = JsonSerializer.Deserialize<ExamForDoingDto>(cachedData);
                 return exam;
             }
         }

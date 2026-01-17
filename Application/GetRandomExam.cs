@@ -18,13 +18,14 @@ namespace Application
         {
             this._unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         }
-        public async Task<ExamResponse> GetRandomExamAsync()
+        public async Task<ExamForDoingDto> GetRandomExamAsync()
         {
             var exam = await _unitOfWork.ExamRepository.GetRandomExam();
-            var examResponse = new ExamResponse
+            var examResponse = new ExamForDoingDto
             {
                 Id = exam.Id,
-                Description = exam.Description,
+                Title = exam.Title,
+                Description = exam.Description ?? "",
                 Questions = exam.ExamDetail
                 .Select(ed => ed.Question)
                 .DistinctBy(q => q.Id)
