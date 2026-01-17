@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "engexam": "StartDebugging",
+        "ui_mvc": "StartDebugging",
+        "engexam_ui": "StartDebugging"
+      }
+    }
+  }
+}
