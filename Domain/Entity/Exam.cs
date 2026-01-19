@@ -17,7 +17,7 @@ namespace Domain.Entity
         {
             if(ExamDetail.Any(q => q.QuestionId == question.Id)) 
                 throw new Exception($"Question {question.Id} already exists in the exam.");
-            ExamDetail.Add(new ExamDetail() { ExamId = this.Id, QuestionId = question.Id, Score = score });
+            ExamDetail.Add(new ExamDetail() { ExamId = this.Id, QuestionId = question.Id, Score = score ,Question = question});
         }
     }
 }

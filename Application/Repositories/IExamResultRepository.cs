@@ -10,5 +10,7 @@ namespace Application.Repositories
     public interface IExamResultRepository
     {
         Task AddAsync(ExamResult examResult);
+        Task<ExamResult?> GetByIdAsync(Guid id);
+        Task<IEnumerable<ExamResult>> GetResultsByUserId(Guid id);
     }
 }

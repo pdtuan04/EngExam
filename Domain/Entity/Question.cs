@@ -12,7 +12,7 @@ namespace Domain.Entity
     {
         public required string Content { get; set; }
         public required QuestionTypes QuestionTypes { get; set; }
-        public required string Explanation { get; set; }
+        public string? Explanation { get; set; }
         public required Guid TopicId { get; set; }
         public ICollection<Answer> Answers { get; set; } = [];
         public ICollection<ExamDetail> ExamDetail { get; set; } = [];
