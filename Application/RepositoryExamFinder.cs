@@ -11,7 +11,7 @@ using Application.Repositories;
 
 namespace Application
 {
-    public class RepositoryExamFinder: IGetExamFinder
+    public class RepositoryExamFinder : IGetExamFinder
     {
         public readonly IExamRepository _examRepository;
         public RepositoryExamFinder(IExamRepository examRepository)

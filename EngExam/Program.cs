@@ -229,6 +229,9 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
     services.AddTransient<IGetExamCategory>(service => new GetExamCategory(
         service.GetRequiredService<IExamCategoryRepository>()
         ));
+    services.AddTransient<ICreateNormalExam>(service => new CreateNormalExam(
+        service.GetRequiredService<IUnitOfWork>()
+        ));
 }
 void RegisterAIServices(ConfigurationManager configuration, IServiceCollection services, AIOptions aiOption)
 {
