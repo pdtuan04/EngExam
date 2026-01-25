@@ -11,7 +11,7 @@ using Application.Repositories;
 using Application.UnitOfWork;
 using Domain.Entity;
 
-namespace Application
+namespace Application.UseCases
 {
     public class QuestionManager:IQuestionManager
     {

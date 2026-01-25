@@ -11,9 +11,12 @@ namespace Infrastructure.Authentication.Services
     public class RoleServices : IRoleServices
     {
         private readonly RoleManager<IdentityRole<Guid>> _roleManager;
-        public RoleServices(RoleManager<IdentityRole<Guid>> roleManager) 
+        private readonly UserManager<Repositories.SQLServer.DataContext.User> _userManager;
+        public RoleServices(RoleManager<IdentityRole<Guid>> roleManager
+                            ,UserManager<Repositories.SQLServer.DataContext.User> userManager) 
         {
             _roleManager = roleManager ?? throw new ArgumentNullException(nameof(roleManager));
+            _userManager = userManager ?? throw new ArgumentNullException(nameof(_userManager));
         }
 
         public async Task<string> CreateRole(string roleName)
@@ -27,6 +30,12 @@ namespace Infrastructure.Authentication.Services
         {
             await _roleManager.FindByNameAsync(roleName);
             return roleName;
+        }
+        public async Task<bool> AddUserToRole(Domain.Entity.User request, string roleName)
+        {
+            var user = await _userManager.FindByNameAsync(request.UserName) ?? throw new Exception("User not found");// tu tu tinh :))
+            var result = await _userManager.AddToRoleAsync(user, roleName);
+            return result.Succeeded;
         }
     }
 }

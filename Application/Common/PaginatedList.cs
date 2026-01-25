@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.DTOs
+namespace Application.Common
 {
     public class PaginatedList<T> where T : class
     {
@@ -20,10 +20,6 @@ namespace Application.DTOs
             PageNumber = pageNumber;
             PageSize = pageSize;
             TotalCount = totalCount;
-        }
-        public static async Task<PaginatedList<T>> CreatePageAsync(IEnumerable<T> items, int pageNumber, int pageSize, int totalCount)
-        {
-            return new PaginatedList<T>(items, pageNumber, pageSize, totalCount);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http.Metadata;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,8 +14,6 @@ namespace Infrastructure.Common
         public int PageNumber { get; }
         public int PageSize { get; }
         public int TotalCount { get; }
-        public bool HasNextPage => PageNumber * PageSize < TotalCount;
-        public bool HasPreviousPage => PageNumber > 1;
         public PaginatedList(IEnumerable<T> items, int pageNumber, int pageSize, int totalCount)
         {
             Items = items;
@@ -22,7 +21,7 @@ namespace Infrastructure.Common
             PageSize = pageSize;
             TotalCount = totalCount;
         }
-        public static async Task<PaginatedList<T>> CreatePageAsync(IQueryable<T> query, int pageNumber, int pageSize)
+        public static async Task<PaginatedList<T>> QueryPageAsync(IQueryable<T> query, int pageNumber, int pageSize)
         {
             var totalCount = await query.CountAsync();
             var items = await query

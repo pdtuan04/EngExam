@@ -10,5 +10,8 @@ namespace Application.Repositories
 {
     public interface IUserRepository
     {
+        Task<User> GetUserById(Guid id);
+        Task<bool> IsEmailUniqueAsync(string email);
+        Task<bool> IsUsernameUniqueAsync(string username);
     }
 }

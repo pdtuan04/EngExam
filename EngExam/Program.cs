@@ -5,6 +5,7 @@ using Application.Handler.InterfaceHandler;
 using Application.Interface;
 using Application.Repositories;
 using Application.UnitOfWork;
+using Application.UseCases;
 using AutoMapper;
 using Domain.Entity;
 using Domain.Enums;
@@ -14,6 +15,7 @@ using EngExam.OptionsModels;
 using Infrastructure.AI;
 using Infrastructure.Authentication.Services;
 using Infrastructure.Caching;
+using Infrastructure.FileServices;
 using Infrastructure.Repositories.SQLServer;
 using Infrastructure.Repositories.SQLServer.DataContext;
 using Infrastructure.Repositories.SQLServer.Mappers;
@@ -24,6 +26,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.IdentityModel.Tokens;
+using System.Runtime.Intrinsics.Arm;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -36,7 +39,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy =>
                       {
-                          policy.WithOrigins("https://localhost:7077");
+                          policy.WithOrigins("http://localhost:56759");
                           //policy.AllowAnyOrigin();
                           policy.AllowAnyHeader();
                           policy.AllowCredentials();
@@ -168,7 +171,9 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
             service.GetRequiredService<IMapper>()));
 
         services.AddTransient<IRoleServices>(service => new RoleServices(
-            service.GetRequiredService<RoleManager<IdentityRole<Guid>>>()));
+            service.GetRequiredService<RoleManager<IdentityRole<Guid>>>(),
+            service.GetRequiredService<UserManager<Infrastructure.Repositories.SQLServer.DataContext.User>>()
+            ));
         
     }
 
@@ -186,7 +191,8 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
             { QuestionTypes.MultipleChoice, services.GetRequiredService<MultipleChoiceHandler>() },
             { QuestionTypes.FillInTheBlank, services.GetRequiredService<FillInBlankHandler>()}
         });
-
+    services.AddTransient<ISaveImageHandler>(service => new SaveImageHandler(
+        ));
 
     //usecase
     services.AddTransient<ISubmitExam>(service => new SubmitExam(
@@ -231,6 +237,12 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
         ));
     services.AddTransient<ICreateNormalExam>(service => new CreateNormalExam(
         service.GetRequiredService<IUnitOfWork>()
+        ));
+    services.AddTransient<IGetPaginatedExam>(service => new GetPaginatedExam(
+        service.GetRequiredService<IExamRepository>()
+        ));
+    services.AddTransient<IUploadImages>(service => new UploadImage(
+        service.GetRequiredService<ISaveImageHandler>()
         ));
 }
 void RegisterAIServices(ConfigurationManager configuration, IServiceCollection services, AIOptions aiOption)

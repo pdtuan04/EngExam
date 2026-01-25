@@ -48,12 +48,7 @@ namespace Infrastructure.Authentication.Services
             if (userByName != null) return true;
             return false;
         }
-        public async Task<bool> AddUserToRole(Domain.Entity.User request, string roleName)
-        {
-            var user = await _userManager.FindByNameAsync(request.UserName) ?? throw new Exception("User not found");// tu tu tinh :))
-            var result = await _userManager.AddToRoleAsync(user, roleName);
-            return result.Succeeded;
-        }
+        
         public async Task<bool> Register(Domain.Entity.User request)
         {
             var newUser = new Repositories.SQLServer.DataContext.User
@@ -107,6 +102,15 @@ namespace Infrastructure.Authentication.Services
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
             return tokenHandler.WriteToken(token);
+        }
+
+        public async Task<bool> ChangePasswordAsync(Guid userId, string currentPassword, string newPassword)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null) throw new Exception("User not found");
+            var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+            if(result.Succeeded) return true;
+            return false;
         }
     }
 }

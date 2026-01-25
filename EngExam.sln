@@ -16,8 +16,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DBScripts", "DBScripts", "{
 		seeding.sql = seeding.sql
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{60A0B53B-4ECA-44F9-9C20-E4B76909CD54}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.Caching", "Infrastructure.Caching\Application.Caching.csproj", "{9658F347-EABE-492D-AF9D-B9E587B4ADEE}"
 EndProject
 Global

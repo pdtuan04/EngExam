@@ -2,13 +2,8 @@
 using Application.Exceptions;
 using Application.Interface;
 using Domain.Entity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Application
+namespace Application.UseCases
 {
     public class RegisterAccount : IRegisterAccount
     {
@@ -21,6 +16,7 @@ namespace Application
         }
         public async Task<bool> RegisterAccount_Default(RegisterAccountDefaultRequest request)
         {
+            if (!string.Equals(request.Password, request.ConfirmPassword)) throw new Exception("");
             if(await _authService.CheckUserExist(request.UserName, request.Password) == true) throw new AccountRegisterFailedException();
 
             var user = new User
@@ -33,7 +29,7 @@ namespace Application
             };
             var resutl = await _authService.Register(user);
             await _roleServices.CreateRole("User");
-            await _authService.AddUserToRole(user, "User");
+            await _roleServices.AddUserToRole(user, "User");
             if (!resutl) throw new AccountRegisterFailedException("Đăng ký không thành công");
             
             return resutl;
