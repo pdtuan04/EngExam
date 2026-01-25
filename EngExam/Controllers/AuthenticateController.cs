@@ -18,7 +18,6 @@ namespace EngExam.Controllers
         [HttpPost("register-account")]
         public async Task<IActionResult> RegisterAccount([FromBody] RegisterAccountDefaultRequest request, [FromServices] IRegisterAccount registerAccount)
         {
-            // Authentication logic here (e.g., validate user credentials, generate JWT token, etc.)
             var result = await registerAccount.RegisterAccount_Default(request);
             if(!result)
             {

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application
+namespace Application.UseCases
 {
     public class GetExamCategory : IGetExamCategory
     {
@@ -25,7 +25,8 @@ namespace Application
                 {
                     Id = ec.Id,
                     Name = ec.Name,
-                    Description = ec.Description
+                    Description = ec.Description,
+                    ImageUrl = ec.ImageUrl,
                 });
             return examCategorys;
         }

@@ -14,6 +14,7 @@ namespace Application.Interface
         public Task<LoginResponse> Login(string username, string password, bool rememberme);
         public Task<bool> Register(User request);
         public Task<bool> CheckUserExist(string username, string password);
-        public Task<bool> AddUserToRole(User user, string roleName);
+        public Task<bool> ChangePasswordAsync(Guid userId, string currentPassword, string newPassword);
+
     }
 }

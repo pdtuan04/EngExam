@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Application.DTOs.Exam.Doing;
 using Application.DTOs.Responses;
 using Application.Interface;
 using Application.Repositories;
 using Application.UnitOfWork;
 using Domain.Entity;
 
-namespace Application
+namespace Application.UseCases
 {
     public class GetRandomExam:IGetRandomExam
     {
@@ -29,17 +30,16 @@ namespace Application
                 Questions = exam.ExamDetail
                 .Select(ed => ed.Question)
                 .DistinctBy(q => q.Id)
-                .Select(q => new QuestionResponse
+                .Select(q => new QuestionForDoingDTO
                 {
                     Id = q.Id,
                     Context = q.Content,
                     QuestionTypes = q.QuestionTypes,
-                    Explanation = q.Explanation,
                     Answers = q.Answers
-                        .Select(a => new AnswerResponse
+                        .Select(a => new AnswerForDoingDTO
                         {
                             Id = a.Id,
-                            Context = a.Content
+                            Content = a.Content
                         }).ToList()
                 }).ToList()
             };

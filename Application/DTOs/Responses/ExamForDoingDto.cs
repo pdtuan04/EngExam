@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Application.DTOs.Exam.Doing;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,6 @@ namespace Application.DTOs.Responses
         public required Guid Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public required ICollection<QuestionResponse> Questions { get; set; } = [];
+        public required ICollection<QuestionForDoingDTO> Questions { get; set; } = [];
     }
 }

@@ -4,12 +4,13 @@ using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
+using Application.DTOs.Exam.Doing;
 using Application.DTOs.Responses;
 using Application.Exceptions;
 using Application.Interface;
 using Application.Repositories;
 
-namespace Application
+namespace Application.UseCases
 {
     public class RepositoryExamFinder : IGetExamFinder
     {
@@ -31,17 +32,16 @@ namespace Application
                 Description = exam.Description ?? "",
                 Questions = exam.ExamDetail
                 .Select(ed => ed.Question)
-                .Select(q => new QuestionResponse
+                .Select(q => new QuestionForDoingDTO
                 {
                     Id = q.Id,
                     Context = q.Content,
                     QuestionTypes = q.QuestionTypes,
-                    Explanation = q.Explanation,
                     Answers = q.Answers
-                        .Select(a => new AnswerResponse
+                        .Select(a => new AnswerForDoingDTO
                         {
                             Id = a.Id,
-                            Context = a.Content
+                            Content = a.Content
                         }).ToList()
                 }).ToList()
             };

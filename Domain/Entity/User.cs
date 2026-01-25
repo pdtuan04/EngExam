@@ -11,7 +11,21 @@ namespace Domain.Entity
     {
         public required Guid Id { get; set; }
         public required string UserName { get; set; }
-        public required string Password { get; set; }
+        private string _password;
+
+        public string Password {
+            get 
+            { 
+                return _password; 
+            }
+            set 
+            {
+                if (value != null && value.Length < 6) 
+                    throw new Exception("Logic mat khau them sau");
+                if (value == null) throw new Exception("null");
+                _password = value;
+            }
+        }
         public required string Email { get; set; }
         public int? Age { 
             get 

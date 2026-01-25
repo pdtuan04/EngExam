@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Application.Common;
 using Application.Repositories;
 using AutoMapper;
 using Domain.Entity;
@@ -62,7 +63,7 @@ namespace Infrastructure.Repositories.SQLServer
             return dbExam.Id;
         }
 
-        public async Task<Application.DTOs.PaginatedList<Domain.Entity.Exam>> GetPaginatedExamAsync(string? search, string? sortBy, string sortDir, int pageNumber, int pageSize)
+        public async Task<Application.Common.PaginatedList<Domain.Entity.Exam>> GetPaginatedExamAsync(string? search, string? sortBy, string sortDir, int pageNumber, int pageSize)
         {
             IQueryable<DataContext.Exam> query = _context.Exams;
             //search theo title mai mot search cai khac tinh sau :()
@@ -70,20 +71,16 @@ namespace Infrastructure.Repositories.SQLServer
                 query = query.Where(e => e.Title.Contains(search));
             if (!string.IsNullOrEmpty(sortBy))
             {
-                var entitiesProperty = typeof(DataContext.Exam)
-                    .GetProperty(sortBy ?? throw new Exception("System doesn't have any this property"));
-                query = sortDir == "desc"
-                    ? query.OrderByDescending(e => EF.Property<object>(e, entitiesProperty.Name))
-                    : query.OrderBy(e => EF.Property<object>(e, entitiesProperty.Name));
+                //tu tu them sau
             }
             else
             {
                 query = query.OrderBy(e => e.Title);
             }
-            var paginated = await PaginatedList<DataContext.Exam>.CreatePageAsync(query, pageNumber, pageSize);
-            var mappedItems = _mapper.Map<IEnumerable<Domain.Entity.Exam>>(paginated.Items);
-
-            return await Application.DTOs.PaginatedList<Domain.Entity.Exam>.CreatePageAsync(mappedItems, paginated.PageNumber, paginated.PageSize, paginated.TotalCount);
+            var paginated = await Infrastructure.Common.PaginatedList<DataContext.Exam>.QueryPageAsync(query, pageNumber, pageSize);
+            //map nguoc ve domain exam
+            var mappedItems = _mapper.Map<ICollection<Domain.Entity.Exam>>(paginated.Items);
+            return new Application.Common.PaginatedList<Domain.Entity.Exam>(mappedItems, paginated.PageNumber, paginated.PageSize, paginated.TotalCount);
         }
     }
 }
