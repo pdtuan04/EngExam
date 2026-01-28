@@ -1,4 +1,4 @@
-﻿using Application.Interface;
+﻿using Application.Interface.ExamCategory;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

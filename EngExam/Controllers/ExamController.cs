@@ -1,6 +1,6 @@
 ﻿using Application.DTOs;
 using Application.DTOs.Requests.Exam;
-using Application.Interface;
+using Application.Interface.Exam;
 using EngExam.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

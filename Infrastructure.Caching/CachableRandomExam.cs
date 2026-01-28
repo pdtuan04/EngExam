@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Application.DTOs.Responses;
+using Application.DTOs.Exam.Doing;
 using Application.Exceptions;
-using Application.Interface;
+using Application.Interface.Exam;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 
@@ -35,7 +35,7 @@ namespace Infrastructure.Caching
             };
         }
 
-        public async Task<ExamForDoingDto> GetRandomExamAsync()
+        public async Task<ExamForDoingDTO> GetRandomExamAsync()
         {
             var cacheKey = $"{options.CacheKey}";
             var cachedData = await _cache.GetStringAsync(cacheKey);
@@ -49,7 +49,7 @@ namespace Infrastructure.Caching
                 return exam;
             }else
             {
-                var exam = JsonSerializer.Deserialize<ExamForDoingDto>(cachedData);
+                var exam = JsonSerializer.Deserialize<ExamForDoingDTO>(cachedData);
                 return exam;
             }
         }

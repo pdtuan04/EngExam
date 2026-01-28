@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Interface
+namespace Application.Interface.Identity
 {
-    public interface IRegisterAccount
+    public interface IChangePasswordManager
     {
-        public Task<bool> RegisterAccount_Default(RegisterAccountDefaultRequest request);
+        Task<bool> ChangeUserPassword(ChangePasswordDTO request);
     }
 }

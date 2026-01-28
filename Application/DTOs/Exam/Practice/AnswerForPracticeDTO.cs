@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.DTOs.Responses
+namespace Application.DTOs.Exam.Practice
 {
-    public class AnswerResponse
+    public class AnswerForPracticeDTO
     {
         public required Guid Id { get; set; }
         public required string Content { get; set; }

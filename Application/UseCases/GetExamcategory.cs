@@ -1,5 +1,5 @@
 ﻿using Application.DTOs.Responses;
-using Application.Interface;
+using Application.Interface.ExamCategory;
 using Application.Repositories;
 using System;
 using System.Collections.Generic;

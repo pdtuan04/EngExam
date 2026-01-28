@@ -1,6 +1,6 @@
 ﻿using Application.DTOs.Requests.Account;
 using Application.Exceptions;
-using Application.Interface;
+using Application.Interface.Identity;
 using Domain.Entity;
 
 namespace Application.UseCases

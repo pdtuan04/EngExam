@@ -132,6 +132,7 @@ namespace Infrastructure.Extensions
                     Title = "Basic Grammar Test",
                     Description = "Basic Grammar Test",
                     ExamCategoryId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
+                    DurationInMinutes = 10,
                 }
             );
             modelBuilder.Entity<ExamDetail>().HasData(

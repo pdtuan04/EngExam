@@ -3,7 +3,7 @@ using Application.DTOs.Requests.Question;
 using Application.DTOs.Responses;
 using Application.Exceptions;
 using Application.Handler.InterfaceHandler;
-using Application.Interface;
+using Application.Interface.Exam;
 using Application.Repositories;
 using Application.UnitOfWork;
 using Domain.Entity;

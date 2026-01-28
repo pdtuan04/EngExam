@@ -4,8 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.DTOs.Exam.Doing;
-using Application.DTOs.Responses;
-using Application.Interface;
+using Application.Interface.Exam;
 using Application.Repositories;
 using Application.UnitOfWork;
 using Domain.Entity;
@@ -19,14 +18,15 @@ namespace Application.UseCases
         {
             this._unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         }
-        public async Task<ExamForDoingDto> GetRandomExamAsync()
+        public async Task<ExamForDoingDTO> GetRandomExamAsync()
         {
             var exam = await _unitOfWork.ExamRepository.GetRandomExam();
-            var examResponse = new ExamForDoingDto
+            var examResponse = new ExamForDoingDTO
             {
                 Id = exam.Id,
                 Title = exam.Title,
                 Description = exam.Description ?? "",
+                DurationInMinutes = exam.DurationInMinutes,
                 Questions = exam.ExamDetail
                 .Select(ed => ed.Question)
                 .DistinctBy(q => q.Id)

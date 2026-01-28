@@ -5,9 +5,10 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Application.DTOs.Exam.Doing;
 using Application.DTOs.Responses;
 using Application.Exceptions;
-using Application.Interface;
+using Application.Interface.Exam;
 using Application.Repositories;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
@@ -40,7 +41,7 @@ namespace Application.Caching
                 AbsoluteExpirationRelativeToNow = options.Expiration
             };
         }
-        public async Task<ExamForDoingDto> GetExamForDoingAsync(Guid id)
+        public async Task<ExamForDoingDTO> GetExamForDoingAsync(Guid id)
         {
             var cacheKey = $"{_options.CacheKey}{id}";
             string? cachedData = null;
@@ -71,7 +72,7 @@ namespace Application.Caching
             {
                 _logger.LogInformation($"Cache hit for key: {cacheKey}");
 
-                var exam = JsonSerializer.Deserialize<ExamForDoingDto>(cachedData, _serializerOptions);
+                var exam = JsonSerializer.Deserialize<ExamForDoingDTO>(cachedData, _serializerOptions);
                 if (exam == null)
                 {
                     _logger.LogWarning($"Deserialization returned null for key: {cacheKey}.  Invalidating cache.");

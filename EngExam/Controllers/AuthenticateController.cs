@@ -1,5 +1,5 @@
 ﻿using Application.DTOs.Requests.Account;
-using Application.Interface;
+using Application.Interface.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Common;
@@ -29,6 +29,20 @@ namespace EngExam.Controllers
         public async Task<IActionResult> LoginAccount([FromBody] LoginAccountDefaultRequest request, [FromServices] ILoginAccount loginAccount)
         {
             var result = await loginAccount.LoginAccount_Default(request);
+            //var token = 
+            Response.Cookies.Append("jwt", result.Token, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = false,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddHours(Convert.ToDouble(_configuration["JWTKey:TokenExpiryTimeInHour"]))
+            });
+            return Ok("Login successful");
+        }
+        [HttpPost("login-google")]
+        public async Task<IActionResult> LoginByGoogle([FromServices] ILoginAccountByGoogle loginAccount,[FromBody] string idToken)
+        {
+            var result = await loginAccount.LoginByGoogle(idToken);
             //var token = 
             Response.Cookies.Append("jwt", result.Token, new CookieOptions
             {

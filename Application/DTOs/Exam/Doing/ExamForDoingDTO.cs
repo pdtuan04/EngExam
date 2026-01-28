@@ -1,17 +1,17 @@
-﻿using Application.DTOs.Exam.Doing;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.DTOs.Responses
+namespace Application.DTOs.Exam.Doing
 {
-    public class ExamForDoingDto
+    public class ExamForDoingDTO
     {
         public required Guid Id { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
+        public string? Title { get; set; }
+        public string? Description { get; set; }
+        public required int DurationInMinutes { get; set; }
         public required ICollection<QuestionForDoingDTO> Questions { get; set; } = [];
     }
 }

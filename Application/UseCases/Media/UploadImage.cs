@@ -1,12 +1,12 @@
 ﻿using Application.Handler.InterfaceHandler;
-using Application.Interface;
+using Application.Interface.Media;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.UseCases
+namespace Application.UseCases.Media
 {
     public class UploadImage : IUploadImages
     {

@@ -7,7 +7,7 @@ using Application.DTOs.Requests;
 using Application.DTOs.Requests.Question;
 using Application.DTOs.Responses;
 
-namespace Application.Interface
+namespace Application.Interface.QuestionBank
 {
     public interface IQuestionManager
     {
