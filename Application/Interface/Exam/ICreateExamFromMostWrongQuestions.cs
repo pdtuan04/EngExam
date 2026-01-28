@@ -6,10 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Interface
+namespace Application.Interface.Exam
 {
     public interface ICreateExamFromMostWrongQuestions
     {
-        public Task<Exam> CreateExam(CreateExamDTO exam);
+        public Task<Guid> CreateExam(CreateExamDTO exam);
     }
 }

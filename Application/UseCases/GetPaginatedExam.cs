@@ -1,7 +1,7 @@
 ﻿using Application.Common;
 using Application.DTOs;
 using Application.DTOs.Responses;
-using Application.Interface;
+using Application.Interface.Exam;
 using Application.Repositories;
 using Domain.Entity;
 using System;

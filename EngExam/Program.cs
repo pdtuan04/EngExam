@@ -3,11 +3,17 @@ using Application.Caching;
 using Application.Handler;
 using Application.Handler.InterfaceHandler;
 using Application.Interface;
+using Application.Interface.Exam;
+using Application.Interface.ExamCategory;
+using Application.Interface.Identity;
+using Application.Interface.Media;
+using Application.Interface.QuestionBank;
 using Application.Repositories;
 using Application.UnitOfWork;
 using Application.UseCases;
+using Application.UseCases.Identity;
+using Application.UseCases.Media;
 using AutoMapper;
-using Domain.Entity;
 using Domain.Enums;
 using EngExam.Extensions;
 using EngExam.Middlewares;
@@ -19,34 +25,39 @@ using Infrastructure.FileServices;
 using Infrastructure.Repositories.SQLServer;
 using Infrastructure.Repositories.SQLServer.DataContext;
 using Infrastructure.Repositories.SQLServer.Mappers;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.IdentityModel.Tokens;
-using System.Runtime.Intrinsics.Arm;
 using System.Text;
-
+//    /\_____/\
+//   / o   o   \
+//  (==  ^    ==)
+//   )         (
+//  (           )
+// ( (  )   (  ) )
+//(__(__)___(__)__)
+//Phan Dinh Tuan - HUTECH University
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy =>
                       {
-                          policy.WithOrigins("http://localhost:56759");
+                          policy.WithOrigins("https://localhost:56759");
                           //policy.AllowAnyOrigin();
                           policy.AllowAnyHeader();
                           policy.AllowCredentials();
                           policy.AllowAnyMethod();
                       });
 });
-RegisterServicesForSecurity(builder.Configuration, builder.Services);
+var externalAuthOptions = builder.Configuration.GetSection("ExternalAuth").Get<ExternalAuthOptions>() ?? new ExternalAuthOptions();
+RegisterServicesForSecurity(builder.Configuration, builder.Services, externalAuthOptions);
 //builder.Services.ConfigureApplicationCookie(options =>
 //{
 //    options.Cookie.Name = "EngExam_Token";
@@ -91,41 +102,57 @@ app.MapControllers();
 app.Run();
 
 //Sercurity
-void RegisterServicesForSecurity(ConfigurationManager configuration, IServiceCollection services)
+void RegisterServicesForSecurity(ConfigurationManager configuration, IServiceCollection services, ExternalAuthOptions externalAuthOptions)
 {
     //Identity
-    services.AddIdentity<Infrastructure.Repositories.SQLServer.DataContext.User, IdentityRole<Guid>>()
-        .AddEntityFrameworkStores<ApplicationDbContext>()
-        .AddDefaultTokenProviders();
-    services.AddAuthorization();
-    
-    services.AddAuthentication(options => 
+    switch(externalAuthOptions.ExternalAuthTypes)
     {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-    }).AddJwtBearer(options =>
-    {
-        options.SaveToken = true;
-        options.RequireHttpsMetadata = false;
-        options.TokenValidationParameters = new TokenValidationParameters()
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidAudience = configuration["JWTKey:ValidAudience"],
-            ValidIssuer = configuration["JWTKey:ValidIssuer"],
-            ClockSkew = TimeSpan.Zero,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWTKey:Secret"] ?? throw new Exception("JWT configuration is missing")))
-        };
-        options.Events = new JwtBearerEvents
-        {
-            OnMessageReceived = context =>
+        case ExternalAuthTypes.Google:
+            if(externalAuthOptions.GoogleAuthOptions == null)
             {
-                context.Token = context.Request.Cookies["jwt"];
-                return Task.CompletedTask;
+                throw new Exception("GoogleAuthOptions is not configured.");
             }
-        };
-    });
+
+            services.AddIdentity<Infrastructure.Repositories.SQLServer.DataContext.User, IdentityRole<Guid>>()
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
+            services.AddAuthorization();
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.SaveToken = true;
+                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidAudience = configuration["JWTKey:ValidAudience"],
+                    ValidIssuer = configuration["JWTKey:ValidIssuer"],
+                    ClockSkew = TimeSpan.Zero,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWTKey:Secret"] ?? throw new Exception("JWT configuration is missing")))
+                };
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        context.Token = context.Request.Cookies["jwt"];
+                        return Task.CompletedTask;
+                    }
+                };
+            }).AddGoogle(options =>
+            {
+                options.ClientId = externalAuthOptions.GoogleAuthOptions.ClientId;
+                options.ClientSecret = externalAuthOptions.GoogleAuthOptions.ClientSecret;
+            });
+            break;
+        default:
+            throw new NotImplementedException();
+    }
 }
 
 
@@ -244,6 +271,9 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
     services.AddTransient<IUploadImages>(service => new UploadImage(
         service.GetRequiredService<ISaveImageHandler>()
         ));
+    services.AddTransient<ILoginAccountByGoogle>(service => new LoginAccountByGoogle(
+        service.GetRequiredService<IAuthService>()
+        ));
 }
 void RegisterAIServices(ConfigurationManager configuration, IServiceCollection services, AIOptions aiOption)
 {
@@ -274,7 +304,6 @@ void InitializeCache(ConfigurationManager configuration, IServiceCollection serv
             }
             services.AddStackExchangeRedisCache(options => {
                 options.Configuration = configuration.GetConnectionString(cacheOptions.RedisOptions.ConnectionStringName);
-
             });
             break;
         default:

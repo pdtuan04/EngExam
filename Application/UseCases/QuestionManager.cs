@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Application.DTOs.Requests;
 using Application.DTOs.Requests.Question;
 using Application.DTOs.Responses;
-using Application.Interface;
+using Application.Interface.QuestionBank;
 using Application.Repositories;
 using Application.UnitOfWork;
 using Domain.Entity;
@@ -63,7 +63,7 @@ namespace Application.UseCases
                 Answers = q.Answers.Select(a => new AnswerResponse
                 {
                     Id = a.Id,
-                    Context = a.Content
+                    Content = a.Content
                 }).ToList()
             }).ToList();
         }
@@ -80,7 +80,7 @@ namespace Application.UseCases
                 Answers = question.Answers.Select(a => new AnswerResponse
                 {
                     Id = a.Id,
-                    Context = a.Content
+                    Content = a.Content
                 }).ToList()
             };
             return response;

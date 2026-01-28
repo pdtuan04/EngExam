@@ -1,4 +1,4 @@
-﻿using Application.Interface;
+﻿using Application.Interface.Media;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;

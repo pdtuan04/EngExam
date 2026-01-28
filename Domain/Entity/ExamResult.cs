@@ -11,7 +11,7 @@ namespace Domain.Entity
         public required Guid Id { get; set; }
         public required DateTime CompleteAt { get; set; }
         public required Guid ExamId { get; set; }
-        public Exam Exam { get; set; }
+        public Exam? Exam { get; set; }
         private double _score;
         public required double Score
         {

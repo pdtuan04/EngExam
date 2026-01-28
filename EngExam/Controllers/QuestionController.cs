@@ -1,7 +1,7 @@
 ﻿using Application.DTOs.Requests;
 using Application.DTOs.Requests.Question;
 using Application.DTOs.Responses;
-using Application.Interface;
+using Application.Interface.QuestionBank;
 using Application.Repositories;
 using AutoMapper;
 using Domain.Entity;

@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.DTOs.Responses
+namespace Application.DTOs.Exam.Practice
 {
-    public class ExamDoingDto
+    public class ExamForPracticeDTO
     {
         public required Guid Id { get; set; }
         public string? Title { get; set; }
         public string? Description { get; set; }
-        public required ICollection<QuestionResponse> Questions { get; set; } = [];
+        public required ICollection<QuestionForPracticeDTO> Questions { get; set; } = [];
     }
 }

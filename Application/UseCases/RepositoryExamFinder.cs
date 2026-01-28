@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Application.DTOs.Exam.Doing;
 using Application.DTOs.Responses;
 using Application.Exceptions;
-using Application.Interface;
+using Application.Interface.Exam;
 using Application.Repositories;
 
 namespace Application.UseCases
@@ -19,17 +19,18 @@ namespace Application.UseCases
         {
             _examRepository = examRepository ?? throw new ArgumentNullException(nameof(examRepository));
         }
-        public async Task<ExamForDoingDto?> GetExamForDoingAsync(Guid id)
+        public async Task<ExamForDoingDTO?> GetExamForDoingAsync(Guid id)
         {
             var exam = await _examRepository.GetByIdAsync(id);
             if (exam == null)
             {
                 return null;
             }
-            return new ExamForDoingDto
+            return new ExamForDoingDTO
             {
                 Id = exam.Id,
                 Description = exam.Description ?? "",
+                DurationInMinutes = exam.DurationInMinutes,
                 Questions = exam.ExamDetail
                 .Select(ed => ed.Question)
                 .Select(q => new QuestionForDoingDTO

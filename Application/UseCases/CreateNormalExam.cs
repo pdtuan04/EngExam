@@ -1,5 +1,5 @@
 ﻿using Application.DTOs.Exam.Management;
-using Application.Interface;
+using Application.Interface.Exam;
 using Application.UnitOfWork;
 using Domain.Entity;
 using System;
@@ -28,6 +28,7 @@ namespace Application.UseCases
                     Title = ex.Title,
                     Description = ex.Description,
                     ExamCategoryId = ex.ExamCategoryId,
+                    DurationInMinutes = ex.DurationInMinutes,
                 };
                 foreach (var q in ex.QuestionInCreateExam)
                 {

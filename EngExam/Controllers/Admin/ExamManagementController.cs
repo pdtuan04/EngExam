@@ -1,5 +1,5 @@
 ﻿using Application.DTOs.Exam.Management;
-using Application.Interface;
+using Application.Interface.Exam;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

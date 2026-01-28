@@ -1,5 +1,5 @@
 ﻿using Application.DTOs.Requests.Account;
-using Application.Interface;
+using Application.Interface.Identity;
 using Application.UnitOfWork;
 using System;
 using System.Collections.Generic;

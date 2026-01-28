@@ -1,8 +1,10 @@
 ﻿using Application.DTOs.Responses;
-using Application.Interface;
+using Application.Interface.Identity;
 using AutoMapper;
 using Azure;
+using Azure.Core;
 using Domain.Entity;
+using Google.Apis.Auth;
 using Infrastructure.Repositories.SQLServer.DataContext;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -28,7 +30,7 @@ namespace Infrastructure.Authentication.Services
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
         public AuthenService(
-            UserManager<Repositories.SQLServer.DataContext.User> userManager, 
+            UserManager<Repositories.SQLServer.DataContext.User> userManager,
             SignInManager<Repositories.SQLServer.DataContext.User> signInManager,
             RoleManager<IdentityRole<Guid>> roleManager,
             IMapper mapper,
@@ -48,7 +50,7 @@ namespace Infrastructure.Authentication.Services
             if (userByName != null) return true;
             return false;
         }
-        
+
         public async Task<bool> Register(Domain.Entity.User request)
         {
             var newUser = new Repositories.SQLServer.DataContext.User
@@ -67,7 +69,7 @@ namespace Infrastructure.Authentication.Services
             if (userByName == null) throw new Exception("Ko tim thay");
 
             var result = await _userManager.CheckPasswordAsync(userByName, password);
-            if(!result) throw new Exception("Sai tai khoan hoac mat khau");
+            if (!result) throw new Exception("Sai tai khoan hoac mat khau");
             var token = await JwtTokenGen(_mapper.Map<Domain.Entity.User>(userByName));
             var response = new LoginResponse { Token = token, UserId = userByName.Id.ToString() };
             return response;
@@ -79,7 +81,7 @@ namespace Infrastructure.Authentication.Services
             {
                 new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
             };
-            foreach(var role in userRoles)
+            foreach (var role in userRoles)
             {
                 authClaims.Add(new Claim(ClaimTypes.Role, role));
             }
@@ -109,8 +111,27 @@ namespace Infrastructure.Authentication.Services
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user == null) throw new Exception("User not found");
             var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
-            if(result.Succeeded) return true;
+            if (result.Succeeded) return true;
             return false;
+        }
+        public async Task<LoginResponse> LoginByGoogleAsync(string idToken)
+        {
+            var payload = await GoogleJsonWebSignature.ValidateAsync(idToken);
+            var userByName = await _userManager.FindByEmailAsync(payload.Email);
+
+            if (userByName == null)
+            {
+                var newUser = new Repositories.SQLServer.DataContext.User
+                {
+                    UserName = payload.Email,
+                    Email = payload.Email,
+                };
+                var result = await _userManager.CreateAsync(newUser);
+                userByName = newUser;
+            }
+            var token = await JwtTokenGen(_mapper.Map<Domain.Entity.User>(userByName));
+            var response = new LoginResponse { Token = token, UserId = userByName.Id.ToString() };
+            return response;
         }
     }
 }

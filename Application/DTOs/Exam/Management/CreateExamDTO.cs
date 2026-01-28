@@ -14,6 +14,9 @@ namespace Application.DTOs.Exam.Management
         public Guid Id { get; set; } = Guid.NewGuid();
         [Required]
         public required string Title { get; set; }
+        [Required]
+        [Range(1, 180)]
+        public required int DurationInMinutes { get; set; }
         public string? Description { get; set; }
         [Required]
         public required Guid ExamCategoryId { get; set; }

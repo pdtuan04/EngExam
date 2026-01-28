@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Interface
+namespace Application.Interface.Identity
 {
     public interface IAuthService
     {
@@ -15,6 +15,6 @@ namespace Application.Interface
         public Task<bool> Register(User request);
         public Task<bool> CheckUserExist(string username, string password);
         public Task<bool> ChangePasswordAsync(Guid userId, string currentPassword, string newPassword);
-
+        public Task<LoginResponse> LoginByGoogleAsync(string idToken);
     }
 }

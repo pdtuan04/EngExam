@@ -10,4 +10,10 @@
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="UseCases\Exam\" />
+    <Folder Include="UseCases\ExamCategory\" />
+    <Folder Include="UseCases\Question\" />
+  </ItemGroup>
+
 </Project>
