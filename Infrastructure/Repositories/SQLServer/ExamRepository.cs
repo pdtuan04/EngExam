@@ -48,5 +48,15 @@ namespace Infrastructure.Repositories.SQLServer
             await _dbContext.Exams.AddAsync(dbExam);
             return dbExam.Id;
         }
+
+        public async Task<Domain.Entity.Exam> GetExamToTake(Guid id)
+        {
+            var dbExam = await _dbContext.Exams
+                .Include(e => e.ExamDetail)
+                .ThenInclude(ed => ed.Question)
+                .ThenInclude(q => q.Answers)
+                .FirstOrDefaultAsync(e => e.Id == id);
+            return _mapper.Map<Domain.Entity.Exam>(dbExam);
+        }
     }
 }

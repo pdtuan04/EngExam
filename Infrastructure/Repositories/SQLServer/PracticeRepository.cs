@@ -15,5 +15,16 @@ namespace Infrastructure.Repositories.SQLServer
         public PracticeRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper) 
         {
         }
+
+        public async Task<Domain.Entity.Practice> GetPracticeToTake(Guid id)
+        {
+            var practice = await _dbContext.Practices
+                .AsNoTracking()
+                .Include(p => p.PracticeDetails)
+                    .ThenInclude(pd => pd.Question)
+                        .ThenInclude(q => q.Answers)
+                .FirstOrDefaultAsync(p => p.Id == id);
+            return _mapper.Map<Domain.Entity.Practice>(practice);
+        }
     }
 }
