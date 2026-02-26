@@ -13,18 +13,22 @@ namespace Infrastructure.Repositories.SQLServer.DataContext
 {
     public class ApplicationDbContext : IdentityDbContext<User,IdentityRole<Guid>,Guid>
     {
-        private readonly string _connectionString;
-        public ApplicationDbContext()
+        //private readonly string _connectionString;
+        //public ApplicationDbContext()
+        //{
+        //    _connectionString = @"Server=TUAN;Database=ENG;Trusted_Connection=True;TrustServerCertificate=True";
+        //}
+        //public ApplicationDbContext(string connectionString)
+        //{
+        //    _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
+        //}
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    optionsBuilder.UseSqlServer(_connectionString);
+        //}
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : base(options)
         {
-            _connectionString = @"Server=TUAN;Database=ENG;Trusted_Connection=True;TrustServerCertificate=True";
-        }
-        public ApplicationDbContext(string connectionString)
-        {
-            _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
-        }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer(_connectionString);
         }
         public DbSet<Question> Questions { get; set; }
         public DbSet<Answer> Answers { get; set; }

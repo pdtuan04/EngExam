@@ -16,7 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DBScripts", "DBScripts", "{
 		seeding.sql = seeding.sql
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.Caching", "Infrastructure.Caching\Application.Caching.csproj", "{9658F347-EABE-492D-AF9D-B9E587B4ADEE}"
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{81DDED9D-158B-E303-5F62-77A2896D2A5A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,10 +40,10 @@ Global
 		{2F27DD9A-A00A-45E4-9D3A-EF48B221A020}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F27DD9A-A00A-45E4-9D3A-EF48B221A020}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F27DD9A-A00A-45E4-9D3A-EF48B221A020}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9658F347-EABE-492D-AF9D-B9E587B4ADEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9658F347-EABE-492D-AF9D-B9E587B4ADEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9658F347-EABE-492D-AF9D-B9E587B4ADEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9658F347-EABE-492D-AF9D-B9E587B4ADEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
