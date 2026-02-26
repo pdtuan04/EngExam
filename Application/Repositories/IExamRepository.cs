@@ -15,5 +15,6 @@ namespace Application.Repositories
         Task<Exam> GetRandomExam();
         Task<IEnumerable<Exam>> GetExamsByCategoryIdAsync(Guid id);
         Task<Guid> AddAsync(Exam exam);
+        Task<Exam> GetExamToTake(Guid id);
     }
 }

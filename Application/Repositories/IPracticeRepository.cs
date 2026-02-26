@@ -9,5 +9,6 @@ namespace Application.Repositories
 {
     public interface IPracticeRepository : IGenericRepository<Practice>
     {
+        Task<Practice> GetPracticeToTake(Guid id);
     }
 }

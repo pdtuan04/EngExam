@@ -10,6 +10,6 @@ namespace Domain.Entity
     public class Practice : BaseEntity
     {
         public string? Description { get; set; }
-        public ICollection<PracticeDetail> PracticeDetail { get; set; } = null!;
+        public ICollection<PracticeDetail> PracticeDetails { get; set; } = null!;
     }
 }

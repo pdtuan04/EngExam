@@ -118,7 +118,7 @@ namespace Application.Services
 
         public async Task<TakeExamResponse> GetExamToTake(Guid id)
         {
-            var result = await _unitOfWork.ExamRepository.GetByIdAsync(id);
+            var result = await _unitOfWork.ExamRepository.GetExamToTake(id);
             return new TakeExamResponse
             {
                 Id = result.Id,
@@ -189,7 +189,7 @@ namespace Application.Services
             {
 
                 var now = DateTime.UtcNow;
-                var exam = await _unitOfWork.ExamRepository.GetByIdAsync(request.ExamId) ?? throw new ExamNullException();
+                var exam = await _unitOfWork.ExamRepository.GetExamToTake(request.ExamId) ?? throw new ExamNullException();
                 var score = await ScoreCalculation(request.UserAnswers, exam.ExamDetail);
                 var histories = await HistorySave(request.UserAnswers, exam.ExamDetail, exam.Id);
                 var examResultId = Guid.NewGuid();

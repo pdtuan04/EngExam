@@ -21,12 +21,12 @@ namespace Application.Services
         }
         public async Task<DoPracticeResponse> GetPracticeToTake(Guid id)
         {
-            var result = await _unitOfWork.PracticeRepository.GetByIdAsync(id);
+            var result = await _unitOfWork.PracticeRepository.GetPracticeToTake(id);
             return new DoPracticeResponse
             {
                 Id = result.Id,
                 Description = result.Description,
-                Questions = result.PracticeDetail.Select(x => new QuestionToPracticeResponse
+                Questions = result.PracticeDetails.Select(x => new QuestionToPracticeResponse
                 {
                     Id = x.QuestionId,
                     Content = x.Question.Content,
