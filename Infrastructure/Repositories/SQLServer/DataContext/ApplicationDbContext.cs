@@ -22,6 +22,10 @@ namespace Infrastructure.Repositories.SQLServer.DataContext
         {
             _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
         }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer(_connectionString);
+        }
         public DbSet<Question> Questions { get; set; }
         public DbSet<Answer> Answers { get; set; }
         public DbSet<ExamDetail> ExamDetails { get; set; }
@@ -30,11 +34,10 @@ namespace Infrastructure.Repositories.SQLServer.DataContext
         public DbSet<AnswersHistory> DetailResults { get; set; }
         public DbSet<Topic> Topics { get; set; }
         public DbSet<ExamCategory> ExamCategories { get; set; }
+        public DbSet<Practice> Practices { get; set; }
+        public DbSet<PracticeDetail> PracticeDetails { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer(_connectionString);
-        }
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -58,8 +61,20 @@ namespace Infrastructure.Repositories.SQLServer.DataContext
             modelBuilder.Entity<AnswersHistory>()
                 .HasOne(ed => ed.Question)
                 .WithMany(q => q.AnswerHistory)
-                .HasForeignKey(ed => ed.QuestionId);
-
+                .HasForeignKey(ed => ed.QuestionId)
+                .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<PracticeDetail>()
+                .HasKey(pd => new { pd.PracticeId, pd.QuestionId });
+            modelBuilder.Entity<PracticeDetail>()
+                .HasOne(pd => pd.Practice)
+                .WithMany(p => p.PracticeDetails)
+                .HasForeignKey(pd => pd.PracticeId)
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<PracticeDetail>()
+                .HasOne(pd => pd.Question)
+                .WithMany(p => p.PracticeDetails)
+                .HasForeignKey(pd => pd.QuestionId)
+                .OnDelete(DeleteBehavior.NoAction);
             // Seed data when migration
             modelBuilder.SeedingData();
         }

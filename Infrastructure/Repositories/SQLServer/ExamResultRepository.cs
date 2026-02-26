@@ -10,34 +10,30 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories.SQLServer
 {
-    public class ExamResultRepository : IExamResultRepository
+    public class ExamResultRepository : GenericRepository<Domain.Entity.ExamResult, ExamResult> ,IExamResultRepository
     {
-        private readonly ApplicationDbContext _context;
-        private readonly IMapper _mapper;
-        public ExamResultRepository(ApplicationDbContext context, IMapper mapper)
+        public ExamResultRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
         public async Task AddAsync(Domain.Entity.ExamResult examResult)
         {
             var dbexamresult = _mapper.Map<ExamResult>(examResult);
-            await _context.ExamResults.AddAsync(dbexamresult);
-            await _context.SaveChangesAsync();
+            await _dbContext.ExamResults.AddAsync(dbexamresult);
+            await _dbContext.SaveChangesAsync();
         }
         public async Task<Domain.Entity.ExamResult?> GetByIdAsync(Guid id)
         {
-            var dbexamresult = await _context.ExamResults.FindAsync(id);
+            var dbexamresult = await _dbContext.ExamResults.FindAsync(id);
             return dbexamresult is null ? null : _mapper.Map<Domain.Entity.ExamResult>(dbexamresult);
         }
         public async Task<IEnumerable<Domain.Entity.ExamResult>> GetAllAsync()
         {
-            var dbexamresults = await _context.ExamResults.AsNoTracking().ToListAsync();
+            var dbexamresults = await _dbContext.ExamResults.AsNoTracking().ToListAsync();
             return _mapper.Map<List<Domain.Entity.ExamResult>>(dbexamresults);
         }
         public async Task<IEnumerable<Domain.Entity.ExamResult>> GetResultsByUserId(Guid id)
         {
-            var dbexamresults = await _context.ExamResults
+            var dbexamresults = await _dbContext.ExamResults
                 .AsNoTracking()
                 .Where(er => er.UserId == id)
                 .ToListAsync();

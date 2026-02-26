@@ -7,10 +7,7 @@ using Domain.Entity;
 
 namespace Application.Repositories
 {
-    public interface IAnswerRepository
+    public interface IAnswerRepository : IGenericRepository<Answer>
     {
-        Task<IEnumerable<Answer>> GetAllAsync();
-        Task GetByIdAsync(Guid id);
-        Task AddAsync(Answer answer);
     }
 }

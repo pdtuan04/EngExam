@@ -13,24 +13,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories.SQLServer
 {
-    public class ExamRepository : IExamRepository
+    public class ExamRepository : GenericRepository<Domain.Entity.Exam, DataContext.Exam>,IExamRepository
     {
-        private readonly ApplicationDbContext _context;
-        private readonly IMapper _mapper;
-        public ExamRepository(ApplicationDbContext context, IMapper mapper)
+        public ExamRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper)
         {
-            _context = context;
-            _mapper = mapper;
         }
         public async Task<IEnumerable<Domain.Entity.Exam>> GetAllAsync()
         {
-            var dbExams = await _context.Exams.ToListAsync();
+            var dbExams = await _dbContext.Exams.ToListAsync();
             return _mapper.Map<IEnumerable<Domain.Entity.Exam>>(dbExams);
         }
 
         public async Task<Domain.Entity.Exam> GetRandomExam()
         {
-            var randomExam = await _context.Exams
+            var randomExam = await _dbContext.Exams
                 .Include(e => e.ExamDetail)
                 .ThenInclude(ed => ed.Question)
                 .ThenInclude(q => q.Answers)
@@ -38,19 +34,9 @@ namespace Infrastructure.Repositories.SQLServer
                 .FirstOrDefaultAsync();
             return _mapper.Map<Domain.Entity.Exam>(randomExam);
         }
-        public async Task<Domain.Entity.Exam> GetByIdAsync(Guid id)
-        {
-            var dbExam = await _context.Exams
-                .Include(ed => ed.ExamDetail)
-                .ThenInclude(q => q.Question)
-                .ThenInclude(a => a.Answers)
-                .FirstOrDefaultAsync(ed => ed.Id == id);
-            var exam = _mapper.Map<Domain.Entity.Exam>(dbExam);
-            return _mapper.Map<Domain.Entity.Exam>(dbExam);
-        }
         public async Task<IEnumerable<Domain.Entity.Exam>> GetExamsByCategoryIdAsync(Guid categoryId)
         {
-            var dbExams = await _context.Exams
+            var dbExams = await _dbContext.Exams
                 .Where(e => e.ExamCategoryId == categoryId)
                 .ToListAsync();
             return _mapper.Map<IEnumerable<Domain.Entity.Exam>>(dbExams);
@@ -59,28 +45,8 @@ namespace Infrastructure.Repositories.SQLServer
         public async Task<Guid> AddAsync(Domain.Entity.Exam exam)
         {
             var dbExam = _mapper.Map<DataContext.Exam>(exam);
-            await _context.Exams.AddAsync(dbExam);
+            await _dbContext.Exams.AddAsync(dbExam);
             return dbExam.Id;
-        }
-
-        public async Task<Application.Common.PaginatedList<Domain.Entity.Exam>> GetPaginatedExamAsync(string? search, string? sortBy, string sortDir, int pageNumber, int pageSize)
-        {
-            IQueryable<DataContext.Exam> query = _context.Exams;
-            //search theo title mai mot search cai khac tinh sau :()
-            if (!string.IsNullOrEmpty(search))
-                query = query.Where(e => e.Title.Contains(search));
-            if (!string.IsNullOrEmpty(sortBy))
-            {
-                //tu tu them sau
-            }
-            else
-            {
-                query = query.OrderBy(e => e.Title);
-            }
-            var paginated = await Infrastructure.Common.PaginatedList<DataContext.Exam>.QueryPageAsync(query, pageNumber, pageSize);
-            //map nguoc ve domain exam
-            var mappedItems = _mapper.Map<ICollection<Domain.Entity.Exam>>(paginated.Items);
-            return new Application.Common.PaginatedList<Domain.Entity.Exam>(mappedItems, paginated.PageNumber, paginated.PageSize, paginated.TotalCount);
         }
     }
 }

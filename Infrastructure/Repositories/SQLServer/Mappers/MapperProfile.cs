@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using Infrastructure.Repositories.SQLServer.DataContext;
 
 namespace Infrastructure.Repositories.SQLServer.Mappers
 {
@@ -11,22 +12,28 @@ namespace Infrastructure.Repositories.SQLServer.Mappers
     {
         public MapperProfile() 
         {
-            CreateMap<DataContext.Question,Domain.Entity.Question>();
-            CreateMap<DataContext.Answer,Domain.Entity.Answer>();
-            CreateMap<Domain.Entity.Answer, DataContext.Answer>();
-            CreateMap<Domain.Entity.Question, DataContext.Question>();
-            CreateMap<Domain.Entity.Exam, DataContext.Exam>();
-            CreateMap<DataContext.Exam, Domain.Entity.Exam>();
-            CreateMap<DataContext.ExamDetail, Domain.Entity.ExamDetail>();
-            CreateMap<Domain.Entity.ExamDetail, DataContext.ExamDetail>();
-            CreateMap<DataContext.ExamResult, Domain.Entity.ExamResult>();
-            CreateMap<Domain.Entity.ExamResult, DataContext.ExamResult>();
-            CreateMap<DataContext.AnswersHistory, Domain.Entity.AnswerHistory>();
-            CreateMap<Domain.Entity.AnswerHistory, DataContext.AnswersHistory>();
-            CreateMap<DataContext.User, Domain.Entity.User>();
-            CreateMap<Domain.Entity.User, DataContext.User>();
-            CreateMap<DataContext.ExamCategory, Domain.Entity.ExamCategory>();
-            CreateMap<Domain.Entity.ExamCategory, DataContext.ExamCategory>();
+            CreateMap<Question, Domain.Entity.Question>().ReverseMap();
+            CreateMap<Answer, Domain.Entity.Answer>().ReverseMap();
+            CreateMap<Domain.Entity.Answer, Answer>().ReverseMap();
+            CreateMap<Domain.Entity.Question, Question>().ReverseMap();
+            CreateMap<Domain.Entity.Exam, Exam>().ReverseMap();
+            CreateMap<Exam, Domain.Entity.Exam>().ReverseMap();
+            CreateMap<ExamDetail, Domain.Entity.ExamDetail>().ReverseMap();
+            CreateMap<Domain.Entity.ExamDetail, ExamDetail>().ReverseMap();
+            CreateMap<ExamResult, Domain.Entity.ExamResult>().ReverseMap();
+            CreateMap<Domain.Entity.ExamResult, ExamResult>().ReverseMap();
+            CreateMap<AnswersHistory, Domain.Entity.AnswerHistory>().ReverseMap();
+            CreateMap<Domain.Entity.AnswerHistory, AnswersHistory>().ReverseMap();
+            CreateMap<User, Domain.Entity.User>().ReverseMap();
+            CreateMap<Domain.Entity.User, User>().ReverseMap();
+            CreateMap<ExamCategory, Domain.Entity.ExamCategory>().ReverseMap();
+            CreateMap<Domain.Entity.ExamCategory, ExamCategory>().ReverseMap();
+
+            CreateMap<Practice, Domain.Entity.Practice>().ReverseMap();
+            CreateMap<Domain.Entity.Practice, Practice>().ReverseMap();
+
+            CreateMap<PracticeDetail, Domain.Entity.PracticeDetail>().ReverseMap();
+            CreateMap<Domain.Entity.PracticeDetail, PracticeDetail>().ReverseMap();
         }
     }
 }

@@ -78,7 +78,29 @@ namespace Infrastructure.Extensions
                 {
                     Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
                     Name = "Grammar",
-                    Description = "Grammar examination category"
+                    Description = "Grammar examination category",
+                    ImageUrl = "/uploads/images/category_img.jpg"
+                },
+                new ExamCategory
+                {
+                    Id = Guid.Parse("c5f9dd20-276f-4a4a-bbb1-26b795a8514c"),
+                    Name = "Reading",
+                    Description = "Reading",
+                    ImageUrl = "/uploads/images/category_img.jpg"
+                },
+                new ExamCategory
+                {
+                    Id = Guid.Parse("2af67565-75f7-4511-9b67-3762e917c173"),
+                    Name = "Vocabulary",
+                    Description = "Vocabulary exam",
+                    ImageUrl = "/uploads/images/category_img.jpg"
+                },
+                new ExamCategory
+                {
+                    Id = Guid.Parse("48b31fd9-e2a2-4b6a-9884-e2b6c664715b"),
+                    Name = "Listening",
+                    Description = "Listening exam",
+                    ImageUrl = "/uploads/images/category_img.jpg"
                 }
             );
 

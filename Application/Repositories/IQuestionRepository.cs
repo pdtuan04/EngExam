@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Application.DTOs;
 using Domain.Entity;
 
 namespace Application.Repositories
 {
-    public interface IQuestionRepository
+    public interface IQuestionRepository : IGenericRepository<Question>
     {
         Task<IEnumerable<Question>> GetAllAsync();
         Task<Question> GetByIdAsync(Guid id);

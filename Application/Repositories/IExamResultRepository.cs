@@ -7,7 +7,7 @@ using Domain.Entity;
 
 namespace Application.Repositories
 {
-    public interface IExamResultRepository
+    public interface IExamResultRepository : IGenericRepository<ExamResult>
     {
         Task AddAsync(ExamResult examResult);
         Task<ExamResult?> GetByIdAsync(Guid id);

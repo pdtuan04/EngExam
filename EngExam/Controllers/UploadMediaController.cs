@@ -1,4 +1,4 @@
-﻿using Application.Interface.Media;
+﻿using Application.Common.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -9,8 +9,8 @@ namespace EngExam.Controllers
     [ApiController]
     public class UploadMediaController : ControllerBase
     {
-        private readonly IUploadImages _uploadImages;
-        public UploadMediaController(IUploadImages uploadImages)
+        private readonly IFileService _uploadImages;
+        public UploadMediaController(IFileService uploadImages)
         {
             _uploadImages = uploadImages;
         }

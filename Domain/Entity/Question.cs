@@ -18,5 +18,6 @@ namespace Domain.Entity
         public ICollection<Answer> Answers { get; set; } = [];
         public ICollection<ExamDetail> ExamDetail { get; set; } = [];
         public ICollection<AnswerHistory> AnswerHistory { get; set; } = [];
+        public ICollection<PracticeDetail> PracticeDetail { get; set; } = null!;
     }
 }

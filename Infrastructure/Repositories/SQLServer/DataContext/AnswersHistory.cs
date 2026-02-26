@@ -8,6 +8,7 @@ namespace Infrastructure.Repositories.SQLServer.DataContext
 {
     public class AnswersHistory
     {
+        public required Guid Id { get; set; }
         public required Guid ExamResultId { get; set; }
         public required Guid QuestionId { get; set; }
         public required ExamResult ExamResult { get; set; }

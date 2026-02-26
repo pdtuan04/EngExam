@@ -1,4 +1,5 @@
-﻿using Application.Interface.ExamCategory;
+﻿using Application.Common.Interfaces;
+using Application.Models.Pagination;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,16 +11,16 @@ namespace EngExam.Controllers
     [ApiController]
     public class ExamCategoryController : ControllerBase
     {
-        private readonly IGetExamCategory _getExamCategory;
-        public ExamCategoryController(IGetExamCategory getExamCategory)
+        private readonly IExamCategoryService _examCategoryService;
+        public ExamCategoryController(IExamCategoryService examCategoryService)
         {
-            _getExamCategory = getExamCategory;
+            _examCategoryService = examCategoryService ?? throw new ArgumentNullException(nameof(examCategoryService));
         }
         [AllowAnonymous]
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+        [HttpGet("paginated")]
+        public async Task<IActionResult> GetPaginated([FromQuery] PaginatedRequest request)
         {
-            var result = await _getExamCategory.GetAllExamCategoryAsync();
+            var result = await _examCategoryService.GetPaginated(request);
             if (result == null)
             {
                 return NotFound(new

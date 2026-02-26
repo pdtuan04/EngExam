@@ -13,14 +13,13 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories.SQLServer
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository : GenericRepository<Domain.Entity.User, DataContext.User>, IUserRepository
     {
         private readonly UserManager<Repositories.SQLServer.DataContext.User> _userManager;
         private readonly IMapper _mapper;
-        public UserRepository(UserManager<Repositories.SQLServer.DataContext.User> userManager, IMapper mapper)
+        public UserRepository(UserManager<Repositories.SQLServer.DataContext.User> userManager, IMapper mapper) : base(null,mapper)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         public async Task<bool> IsEmailUniqueAsync(string email)

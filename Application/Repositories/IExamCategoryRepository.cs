@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Application.Repositories
 {
-    public interface IExamCategoryRepository
+    public interface IExamCategoryRepository : IGenericRepository<ExamCategory>
     {
-        Task<IEnumerable<ExamCategory>> GetAllAsync();
+
     }
 }

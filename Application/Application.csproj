@@ -11,9 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="UseCases\Exam\" />
-    <Folder Include="UseCases\ExamCategory\" />
-    <Folder Include="UseCases\Question\" />
+    <Folder Include="Common\Exceptions\" />
+    <Folder Include="Common\Enums\" />
   </ItemGroup>
 
 </Project>

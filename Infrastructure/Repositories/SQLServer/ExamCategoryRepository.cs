@@ -10,20 +10,10 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories.SQLServer
 {
-    public class ExamCategoryRepository : IExamCategoryRepository
+    public class ExamCategoryRepository : GenericRepository<Domain.Entity.ExamCategory, ExamCategory>,IExamCategoryRepository
     {
-        private readonly ApplicationDbContext _context;
-        private readonly IMapper _mapper;
-        public ExamCategoryRepository(ApplicationDbContext context, IMapper mapper)
+        public ExamCategoryRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-        }
-
-        public async Task<IEnumerable<Domain.Entity.ExamCategory>> GetAllAsync()
-        {
-            var dbExamCategories = await _context.ExamCategories.ToListAsync();
-            return _mapper.Map<IEnumerable<Domain.Entity.ExamCategory>>(dbExamCategories);
         }
     }
 }

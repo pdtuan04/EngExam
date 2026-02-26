@@ -11,37 +11,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories.SQLServer
 {
-    public class AnswerRepository: IAnswerRepository
+    public class AnswerRepository: GenericRepository<Domain.Entity.Answer, Answer>, IAnswerRepository
     {
-        private readonly ApplicationDbContext _context;
-        private readonly IMapper _mapper;
-        public AnswerRepository(ApplicationDbContext dbContext, IMapper mapper)
+        public AnswerRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper)
         {
-            this._context = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-            this._mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-        }
-
-        public Task AddAsync(Domain.Entity.Answer answer)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<IEnumerable<Domain.Entity.Answer>> GetAllAsync()
-        {
-            var answers = await _context.Answers.ToListAsync();
-            return _mapper.Map<IEnumerable<Domain.Entity.Answer>>(answers);
-        }
-
-        public Task GetByIdAsync(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-        public async Task<IEnumerable<Domain.Entity.Answer>> GetAnswerByQuestionId(Guid idQuestion)
-        {
-            var answers = await _context.Answers
-                .Where(a => a.QuestionId == idQuestion)
-                .ToListAsync();
-            return _mapper.Map<IEnumerable<Domain.Entity.Answer>>(answers);
         }
     }
 }

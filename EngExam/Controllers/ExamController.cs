@@ -1,6 +1,6 @@
-﻿using Application.DTOs;
-using Application.DTOs.Requests.Exam;
-using Application.Interface.Exam;
+﻿using Application.Common.Interfaces;
+using Application.Models.Exam;
+using Application.Models.Pagination;
 using EngExam.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -13,21 +13,15 @@ namespace EngExam.Controllers
     [ApiController]
     public class ExamController : ControllerBase
     {
-        private readonly IGetRandomExam _getRandomExam;
-        private readonly IGetExamFinder _getExam;
-        private readonly ISubmitExam _submitExam;
-        private readonly IGetPaginatedExam _paginatedExam;
-        public ExamController(IGetRandomExam getRandomExam, ISubmitExam submitExam, IGetExamFinder getExam, IGetPaginatedExam paginatedExam)
+        private readonly IExamService _examService;
+        public ExamController(IExamService examService)
         {
-            _getRandomExam = getRandomExam;
-            _submitExam = submitExam;
-            _getExam = getExam;
-            _paginatedExam = paginatedExam;
+            _examService = examService;
         }
         [HttpGet("random")]
         public async Task<IActionResult> GetRandomExam()
         {
-            var exam = await _getRandomExam.GetRandomExamAsync();
+            var exam = await _examService.GetRandomExamToTake();
             if (exam == null)
             {
                 return NotFound(new
@@ -48,7 +42,7 @@ namespace EngExam.Controllers
         public async Task<IActionResult> SubmitExam([FromBody] SubmitExamRequest submitExam)
         {
             var userId = ClaimsExtensions.GetUserId(User);
-            var result = await _submitExam.SubmitExamAsync(submitExam, userId);
+            var result = await _examService.SubmitExam(userId, submitExam);
             return Ok(new
             {
                 success = true,
@@ -59,7 +53,7 @@ namespace EngExam.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetExamById(Guid id)
         {
-            var exam = await _getExam.GetExamForDoingAsync(id);
+            var exam = await _examService.GetExamToTake(id);
             if (exam == null)
             {
                 return NotFound(new
@@ -78,7 +72,7 @@ namespace EngExam.Controllers
         [HttpGet("exam-list-{id}")]
         public async Task<IActionResult> GetExamByIdCategory(Guid id)
         {
-            var exam = await _getExam.GetExamsByCategoryIdAsync(id);
+            var exam = await _examService.GetExamsByCategoryIdAsync(id);
             if (exam == null)
             {
                 return NotFound(new
@@ -95,9 +89,9 @@ namespace EngExam.Controllers
             });
         }
         [HttpGet("paginated")]
-        public async Task<IActionResult> GetPaginatedExams([FromQuery] PaginatedDTO request)
+        public async Task<IActionResult> GetPaginated([FromQuery] PaginatedRequest request)
         {
-            var exams = await _paginatedExam.GetPaginatedExamsAsync(request);
+            var exams = await _examService.GetPaginated(request);
             return Ok(new
             {
                 success = true,

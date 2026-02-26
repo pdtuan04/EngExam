@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application.DTOs.Requests.Question;
-using Application.Handler.InterfaceHandler;
+﻿using Application.Handler.InterfaceHandler;
+using Application.Models.Exam;
 using Domain.Entity;
 
 namespace Application.Handler
 {
     public class FillInBlankHandler:IQuestionTypesHandler
     {
-        public AnswerHistory HistoryHandler(UserAnswer userAnswer, ExamDetail examDetail, Guid examResultId)
+        public AnswerHistory HistoryHandler(UserAnswerRequest userAnswer, ExamDetail examDetail, Guid examResultId)
         {
             var isCorrectFill = examDetail
                                 .Question.Answers
@@ -36,7 +31,7 @@ namespace Application.Handler
                 Score = 0,
             };
         }
-        public double CalculateScoreHandler(UserAnswer userAnswer, ExamDetail examDetail)
+        public double CalculateScoreHandler(UserAnswerRequest userAnswer, ExamDetail examDetail)
         {
             if(string.IsNullOrWhiteSpace(userAnswer.AnswerFillInBlank)) return 0;
             var correctAnswer = examDetail.Question.Answers

@@ -10,7 +10,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\uploads\videos\**" />
+    <Content Remove="wwwroot\uploads\videos\**" />
+    <EmbeddedResource Remove="wwwroot\uploads\videos\**" />
+    <None Remove="wwwroot\uploads\videos\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.11">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.7" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0-preview.4" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
@@ -26,7 +37,6 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\uploads\images\" />
-    <Folder Include="wwwroot\uploads\videos\" />
   </ItemGroup>
 
 </Project>

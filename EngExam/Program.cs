@@ -1,26 +1,17 @@
 using Application;
-using Application.Caching;
+using Application.Common.Interfaces;
 using Application.Handler;
 using Application.Handler.InterfaceHandler;
 using Application.Interface;
-using Application.Interface.Exam;
-using Application.Interface.ExamCategory;
-using Application.Interface.Identity;
-using Application.Interface.Media;
-using Application.Interface.QuestionBank;
 using Application.Repositories;
-using Application.UnitOfWork;
-using Application.UseCases;
-using Application.UseCases.Identity;
-using Application.UseCases.Media;
+using Application.Services;
 using AutoMapper;
 using Domain.Enums;
 using EngExam.Extensions;
 using EngExam.Middlewares;
 using EngExam.OptionsModels;
 using Infrastructure.AI;
-using Infrastructure.Authentication.Services;
-using Infrastructure.Caching;
+using Infrastructure.Authentication;
 using Infrastructure.FileServices;
 using Infrastructure.Repositories.SQLServer;
 using Infrastructure.Repositories.SQLServer.DataContext;
@@ -113,7 +104,7 @@ void RegisterServicesForSecurity(ConfigurationManager configuration, IServiceCol
                 throw new Exception("GoogleAuthOptions is not configured.");
             }
 
-            services.AddIdentity<Infrastructure.Repositories.SQLServer.DataContext.User, IdentityRole<Guid>>()
+            services.AddIdentity<User, IdentityRole<Guid>>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
             services.AddAuthorization();
@@ -165,7 +156,8 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
 
     if(repositoryOptions.Type == RepositoryType.SQLServer)
     {
-        services.AddAutoMapper(typeof(MapperProfile));
+        //services.AddAutoMapper(typeof(MapperProfile));
+        services.AddAutoMapper(cfg => { }, typeof(MapperProfile));
         services.AddDbContext<ApplicationDbContext>(options =>
         {
             options.UseSqlServer(configuration.GetConnectionString("EngExamConnection"));
@@ -179,9 +171,6 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
             service.GetRequiredService<ApplicationDbContext>(),
             service.GetRequiredService<IMapper>()));
 
-        services.AddTransient<IQuestionManager>(service => new QuestionManager(
-            service.GetRequiredService<IUnitOfWork>()));
-
         services.AddTransient<IAnswerRepository>(service => new AnswerRepository(
             service.GetRequiredService<ApplicationDbContext>(),
             service.GetRequiredService<IMapper>()));
@@ -192,16 +181,12 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
         services.AddTransient<IExamCategoryRepository>(service => new ExamCategoryRepository(
             service.GetRequiredService<ApplicationDbContext>(),
             service.GetRequiredService<IMapper>()));
-
+        services.AddTransient<IPracticeRepository>(service => new PracticeRepository(
+            service.GetRequiredService<ApplicationDbContext>(),
+            service.GetRequiredService<IMapper>()));
         services.AddTransient<IUnitOfWork>(service => new UnitOfWork(
             service.GetRequiredService<ApplicationDbContext>(),
             service.GetRequiredService<IMapper>()));
-
-        services.AddTransient<IRoleServices>(service => new RoleServices(
-            service.GetRequiredService<RoleManager<IdentityRole<Guid>>>(),
-            service.GetRequiredService<UserManager<Infrastructure.Repositories.SQLServer.DataContext.User>>()
-            ));
-        
     }
 
     
@@ -222,22 +207,6 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
         ));
 
     //usecase
-    services.AddTransient<ISubmitExam>(service => new SubmitExam(
-        service.GetRequiredService<IUnitOfWork>(),
-        service.GetRequiredService<IGetExamFinder>(),
-        service.GetRequiredService<IDictionary<QuestionTypes, IQuestionTypesHandler>>()));
-    services.AddTransient<IGetRandomExam>(service => new CachableRandomExam(
-        service.GetRequiredService<ILogger<CachableRandomExam>>(),
-        new GetRandomExam(service.GetRequiredService<IUnitOfWork>()),
-        service.GetRequiredService<IDistributedCache>(),
-        configuration.GetSection("CachableRandomExam").Get<CachableRandomExamOptions>() ?? new()
-        ));
-    services.AddTransient<IGetExamFinder>(service => new CachableExamFinder(
-        new RepositoryExamFinder(service.GetRequiredService<IExamRepository>()),
-        service.GetRequiredService<IDistributedCache>(),
-        configuration.GetSection("CachableExamById").Get<CachableExamFinderOptions>() ?? new(),
-        service.GetRequiredService<ILogger<CachableExamFinder>>()
-        ));
     var aiOption = configuration.GetSection("AIModel").Get<AIOptions>() ?? new AIOptions();
     services.AddTransient<IAISupport>(services => new OpenAISupport(
         services.GetRequiredService<IChatClient>()));
@@ -245,34 +214,29 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
     services.AddTransient<IAIChatBox>(service => new AIChatBox(
         service.GetRequiredService<IAISupport>()
         ));
-    services.AddTransient<IAuthService>(services => new AuthenService(
-        services.GetRequiredService<UserManager<Infrastructure.Repositories.SQLServer.DataContext.User>>(),
-        services.GetRequiredService<SignInManager<Infrastructure.Repositories.SQLServer.DataContext.User>>(),
+    services.AddTransient<IAuthIdentityService>(services => new AuthIdentityService(
+        services.GetRequiredService<UserManager<User>>(),
+        services.GetRequiredService<SignInManager<User>>(),
         services.GetRequiredService<RoleManager<IdentityRole<Guid>>>(),
         services.GetRequiredService<IMapper>(),
         services.GetRequiredService<IConfiguration>()
         ));
-    services.AddTransient<IRegisterAccount>(services => new RegisterAccount(
-        services.GetRequiredService<IAuthService>(),
-        services.GetRequiredService<IRoleServices>()
+    services.AddTransient<IAuthService>(service => new AuthenService(
+        service.GetRequiredService<IUnitOfWork>(),
+        service.GetRequiredService<IAuthIdentityService>()
         ));
-    services.AddTransient<ILoginAccount>(services => new LoginAccount(
-        services.GetRequiredService<IAuthService>()
+    services.AddTransient<IExamService>(service => new ExamService(
+        service.GetRequiredService<IUnitOfWork>(),
+        service.GetRequiredService<IDictionary<QuestionTypes, IQuestionTypesHandler>>()
         ));
-    services.AddTransient<IGetExamCategory>(service => new GetExamCategory(
-        service.GetRequiredService<IExamCategoryRepository>()
-        ));
-    services.AddTransient<ICreateNormalExam>(service => new CreateNormalExam(
+    services.AddTransient<IPracticeService>(service => new PracticeService(
         service.GetRequiredService<IUnitOfWork>()
         ));
-    services.AddTransient<IGetPaginatedExam>(service => new GetPaginatedExam(
-        service.GetRequiredService<IExamRepository>()
+    services.AddTransient<IExamCategoryService>(service => new ExamCategoryService(
+        service.GetRequiredService<IUnitOfWork>()
         ));
-    services.AddTransient<IUploadImages>(service => new UploadImage(
+    services.AddTransient<IFileService>(service => new FileService(
         service.GetRequiredService<ISaveImageHandler>()
-        ));
-    services.AddTransient<ILoginAccountByGoogle>(service => new LoginAccountByGoogle(
-        service.GetRequiredService<IAuthService>()
         ));
 }
 void RegisterAIServices(ConfigurationManager configuration, IServiceCollection services, AIOptions aiOption)

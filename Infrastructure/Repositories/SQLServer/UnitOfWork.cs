@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Application.Common.Interfaces;
 using Application.Repositories;
-using Application.UnitOfWork;
 using AutoMapper;
 using Infrastructure.Repositories.SQLServer.DataContext;
 
@@ -19,6 +19,7 @@ namespace Infrastructure.Repositories.SQLServer
         public IAnswerRepository AnswerRepository { get;}
         public IExamResultRepository ExamResultRepository { get;}
         public IExamCategoryRepository ExamCategoryRepository { get; }
+        public IPracticeRepository PracticeRepository { get; }
         public UnitOfWork(ApplicationDbContext applicationDbContext, IMapper mapper)
         {
             this._applicationDbContext = applicationDbContext ?? throw new ArgumentNullException(nameof(applicationDbContext));
@@ -28,6 +29,7 @@ namespace Infrastructure.Repositories.SQLServer
             AnswerRepository = new AnswerRepository(_applicationDbContext, _mapper);
             ExamResultRepository = new ExamResultRepository(_applicationDbContext, _mapper);
             ExamCategoryRepository = new ExamCategoryRepository(_applicationDbContext, _mapper);
+            PracticeRepository = new PracticeRepository(_applicationDbContext, _mapper);
         }
         //modify later to support real transaction
         public Task BeginTransactionAsync()
