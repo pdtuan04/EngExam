@@ -33,18 +33,20 @@ namespace Application.Services
             var exam = new Exam
             {
                 Id = Guid.NewGuid(),
+                IsActive = true,
                 CreatedAt = now,
                 Title = request.Title,
                 DurationInMinutes = request.DurationInMinutes,
                 ExamCategoryId = request.ExamCategoryId,
             };
-            var questionId = Guid.NewGuid();
 
             foreach (var q in request.Questions)
             {
+                var questionId = Guid.NewGuid();
                 exam.AddExamDetail(new Question
                 {
                     Id = questionId,
+                    IsActive = true,
                     Content = q.Content,
                     Explanation = q.Explanation,
                     QuestionTypes = q.QuestionTypes,
@@ -53,6 +55,7 @@ namespace Application.Services
                     Answers = q.Answers.Select(a => new Answer
                     {
                         Id = Guid.NewGuid(),
+                        IsActive = true,
                         CreatedAt = now,
                         Content = a.Content,
                         IsCorrect = a.IsCorrect,
@@ -256,6 +259,110 @@ namespace Application.Services
                     CreatedAt = x.CreatedAt,
                 }
             );
+        }
+
+        public async Task<ExamDetailResponse> Update(UpdateExamRequest request)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            var now = DateTime.UtcNow;
+            var exam = await _unitOfWork.ExamRepository.GetExamDetail(request.Id) ?? throw new ExamNullException();
+            exam.IsActive = request.IsActive;
+            exam.Title = request.Title;
+            exam.Description = request.Description;
+            exam.DurationInMinutes = request.DurationInMinutes;
+            exam.ExamCategoryId = request.ExamCategoryId;
+            exam.UpdatedAt = now;
+            foreach (var q in request.Questions)
+            {
+                var existQues = exam.ExamDetail.FirstOrDefault(ed => ed.QuestionId == q.Id);
+                if (existQues == null)
+                {
+                    exam.AddExamDetail(new Question
+                    {
+                        Id = q.Id,
+                        Content = q.Content,
+                        Explanation = q.Explanation,
+                        TopicId = q.TopicId,
+                        QuestionTypes = q.QuestionTypes,
+                        ImageUrl = q.ImageUrl,
+                        IsActive = q.IsActive,
+                    }, q.Score);
+                }
+                else
+                {
+                    existQues.Question.Content = q.Content;
+                    existQues.Question.Explanation = q.Explanation;
+                    existQues.Question.TopicId = q.TopicId;
+                    existQues.Question.QuestionTypes = q.QuestionTypes;
+                    existQues.Question.ImageUrl = q.ImageUrl;
+                    existQues.Question.IsActive = q.IsActive;
+                    existQues.Score = q.Score;
+                    foreach (var a in q.Answers)
+                    {
+                        var existAns = existQues.Question.Answers.FirstOrDefault(ans => ans.Id == a.Id);
+                        if (existAns == null)
+                        {
+                            existQues.Question.Answers.Add(new Answer
+                            {
+                                Id = a.Id,
+                                Content = a.Content,
+                                IsCorrect = a.IsCorrect,
+                                QuestionId = q.Id,
+                                IsActive = true,
+                            });
+                        }
+                        else
+                        {
+                            existAns.Content = a.Content;
+                            existAns.IsCorrect = a.IsCorrect;
+                            existAns.IsActive = true;
+                        }
+                    }
+                }
+                
+            }
+            await _unitOfWork.ExamRepository.Update(exam);
+            await _unitOfWork.SaveChangesAsync();
+            return new ExamDetailResponse
+            {
+                Id = exam.Id,
+                Title = exam.Title,
+                Description = exam.Description,
+                DurationInMinutes = exam.DurationInMinutes,
+                ExamCategoryId = exam.ExamCategoryId,
+                CreatedAt = exam.CreatedAt,
+                Questions = exam.ExamDetail.Select(ed => new QuestionDetailResponse
+                {
+                    Id = ed.Question.Id,
+                    Content = ed.Question.Content,
+                    Explanation = ed.Question.Explanation ?? "",
+                    QuestionTypes = ed.Question.QuestionTypes,
+                    TopicId = ed.Question.TopicId,
+                    Score = ed.Score,
+                    CreateAt = ed.Question.CreatedAt,
+                    Answers = ed.Question.Answers.Select(a => new AnswerDetailsResponse
+                    {
+                        Id = a.Id,
+                        Content = a.Content,
+                        IsCorrect = a.IsCorrect,
+                        QuestionId = a.QuestionId,
+                    }).ToList(),
+                }).ToList(),
+            };
+        }
+
+        public async Task<bool> Delete(Guid id)
+        {
+            await _unitOfWork.ExamRepository.Delete(id);
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> SoftDelete(Guid id)
+        {
+            await _unitOfWork.ExamRepository.SoftDelete(id);
+            await _unitOfWork.SaveChangesAsync();
+            return true;
         }
     }
 }

@@ -15,5 +15,11 @@ namespace Infrastructure.Repositories.SQLServer
         public ExamCategoryRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper)
         {
         }
+
+        public async Task<ICollection<Domain.Entity.ExamCategory>> GetAllAsync()
+        {
+            var result = await _dbContext.ExamCategories.ToListAsync();
+            return _mapper.Map<ICollection<Domain.Entity.ExamCategory>>(result);
+        }
     }
 }

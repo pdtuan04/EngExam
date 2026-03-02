@@ -14,12 +14,12 @@ namespace Infrastructure.Repositories.SQLServer.DataContext
         public QuestionTypes QuestionTypes { get; set; }
         public string? Explanation { get; set; }
         public string? ImageUrl { get; set; }
-        public ICollection<Answer> Answers { get; set; } = [];
-        public ICollection<ExamDetail> ExamDetail { get; set; } = [];
-        public ICollection<AnswersHistory> AnswerHistory { get; set; } = [];
-        public ICollection<PracticeDetail> PracticeDetails { get; set; } = [];
+        public ICollection<Answer> Answers { get; set; } = null!;
+        public ICollection<ExamDetail> ExamDetail { get; set; } = null!;
+        public ICollection<AnswersHistory> AnswerHistory { get; set; } = null!;
+        public ICollection<PracticeDetail> PracticeDetails { get; set; } = null!;
         public required Guid TopicId { get; set; }
-        public Topic? Topic { get; set; }
+        public Topic? Topic { get; set; } = null!;
 
     }
 }

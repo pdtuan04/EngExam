@@ -32,7 +32,22 @@ namespace Domain.Entity
         {
             if(ExamDetail.Any(q => q.QuestionId == question.Id)) 
                 throw new Exception($"Question {question.Id} already exists in the exam.");
-            ExamDetail.Add(new ExamDetail() { ExamId = this.Id, QuestionId = question.Id, Score = score ,Question = question});
+            ExamDetail.Add(new ExamDetail() { ExamId = this.Id, QuestionId = question.Id, Score = score ,Question = question,});
+        }
+        public void UpdateExamDetail(Question question, double score)
+        {
+            var examDetail = ExamDetail.FirstOrDefault(q => q.QuestionId == question.Id);
+            if (examDetail == null)
+                ExamDetail.Add(new ExamDetail() { ExamId = this.Id, QuestionId = question.Id, Score = score, Question = question });
+            else{
+                examDetail.Question.Content = question.Content;
+                examDetail.Question.UpdatedAt = question.UpdatedAt;
+                examDetail.Question.Explanation = question.Explanation;
+                examDetail.Question.ImageUrl = question.ImageUrl;
+                examDetail.Score = score;
+                examDetail.Question = question;
+            }
+            examDetail.Score = score;
         }
     }
 }

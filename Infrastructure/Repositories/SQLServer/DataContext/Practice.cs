@@ -8,6 +8,7 @@ namespace Infrastructure.Repositories.SQLServer.DataContext
 {
     public class Practice : BaseEntity
     {
+        public required string Title { get; set; }
         public string? Description { get; set; }
         public required Guid TopicId { get; set; }
         public Topic Topic { get; set; } = null!;
