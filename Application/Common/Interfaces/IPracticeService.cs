@@ -1,4 +1,5 @@
-﻿using Application.Models.Practice;
+﻿using Application.Models.Pagination;
+using Application.Models.Practice;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,6 @@ namespace Application.Common.Interfaces
     public interface IPracticeService
     {
         Task<DoPracticeResponse> GetPracticeToTake(Guid id);
+        Task<PaginationResponse<PracticeResponse>> GetPaginated(int pageIndex, int pageSize);
     }
 }

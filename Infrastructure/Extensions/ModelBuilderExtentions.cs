@@ -79,28 +79,36 @@ namespace Infrastructure.Extensions
                     Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
                     Name = "Grammar",
                     Description = "Grammar examination category",
-                    ImageUrl = "/uploads/images/category_img.jpg"
+                    ImageUrl = "/uploads/images/category_img.jpg",
+                    CreatedAt = new DateTime(2026, 01, 01),
+                    IsActicve = true,
                 },
                 new ExamCategory
                 {
                     Id = Guid.Parse("c5f9dd20-276f-4a4a-bbb1-26b795a8514c"),
                     Name = "Reading",
                     Description = "Reading",
-                    ImageUrl = "/uploads/images/category_img.jpg"
+                    ImageUrl = "/uploads/images/category_img.jpg",
+                    CreatedAt = new DateTime(2026, 01, 01),
+                    IsActicve = true,
                 },
                 new ExamCategory
                 {
                     Id = Guid.Parse("2af67565-75f7-4511-9b67-3762e917c173"),
                     Name = "Vocabulary",
                     Description = "Vocabulary exam",
-                    ImageUrl = "/uploads/images/category_img.jpg"
+                    ImageUrl = "/uploads/images/category_img.jpg",
+                    CreatedAt = new DateTime(2026, 01, 01),
+                    IsActicve = true,
                 },
                 new ExamCategory
                 {
                     Id = Guid.Parse("48b31fd9-e2a2-4b6a-9884-e2b6c664715b"),
                     Name = "Listening",
                     Description = "Listening exam",
-                    ImageUrl = "/uploads/images/category_img.jpg"
+                    ImageUrl = "/uploads/images/category_img.jpg",
+                    CreatedAt = new DateTime(2026, 01, 01),
+                    IsActicve = true,
                 }
             );
 
@@ -109,7 +117,9 @@ namespace Infrastructure.Extensions
                 {
                     Id = Guid.Parse("22222222-2222-2222-2222-222222222222"),
                     Name = "Basic Grammar",
-                    Description = "Basic grammar rules"
+                    Description = "Basic grammar rules",
+                    CreatedAt = new DateTime(2026, 01, 01),
+                    IsActicve = true,
                 }
             );
 
@@ -120,7 +130,9 @@ namespace Infrastructure.Extensions
                     Content = "She ___ to school every day.",
                     QuestionTypes = Domain.Enums.QuestionTypes.MultipleChoice,
                     Explanation = "With third person singular, use 'goes'.",
-                    TopicId = Guid.Parse("22222222-2222-2222-2222-222222222222")
+                    TopicId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+                    CreatedAt = new DateTime(2026, 01, 01),
+                    IsActicve = true,
                 }
             );
             modelBuilder.Entity<Answer>().HasData(
@@ -130,6 +142,8 @@ namespace Infrastructure.Extensions
                     Content = "go",
                     IsCorrect = false,
                     QuestionId = Guid.Parse("33333333-3333-3333-3333-333333333333"),
+                    CreatedAt = new DateTime(2026, 01, 01),
+                    IsActicve = true,
                 },
                 new Answer
                 {
@@ -137,6 +151,8 @@ namespace Infrastructure.Extensions
                     Content = "goes",
                     IsCorrect = true,
                     QuestionId = Guid.Parse("33333333-3333-3333-3333-333333333333"),
+                    CreatedAt = new DateTime(2026, 01, 01),
+                    IsActicve = true,
                 },
                 new Answer
                 {
@@ -144,6 +160,8 @@ namespace Infrastructure.Extensions
                     Content = "going",
                     IsCorrect = false,
                     QuestionId = Guid.Parse("33333333-3333-3333-3333-333333333333"),
+                    CreatedAt = new DateTime(2026, 01, 01),
+                    IsActicve = true,
                 }
             );
 
@@ -155,6 +173,8 @@ namespace Infrastructure.Extensions
                     Description = "Basic Grammar Test",
                     ExamCategoryId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
                     DurationInMinutes = 10,
+                    CreatedAt = new DateTime(2026, 01, 01),
+                    IsActicve = true,
                 }
             );
             modelBuilder.Entity<ExamDetail>().HasData(
@@ -162,7 +182,7 @@ namespace Infrastructure.Extensions
                 {
                     ExamId = Guid.Parse("77777777-7777-7777-7777-777777777777"),
                     QuestionId = Guid.Parse("33333333-3333-3333-3333-333333333333"),
-                    Score = 1
+                    Score = 1,
                 }
             );
         }

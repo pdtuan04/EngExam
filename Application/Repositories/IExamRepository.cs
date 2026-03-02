@@ -16,5 +16,7 @@ namespace Application.Repositories
         Task<IEnumerable<Exam>> GetExamsByCategoryIdAsync(Guid id);
         Task<Guid> AddAsync(Exam exam);
         Task<Exam> GetExamToTake(Guid id);
+        Task<Exam> GetExamDetail(Guid id);
+        Task<bool> SoftDelete(Guid id);
     }
 }

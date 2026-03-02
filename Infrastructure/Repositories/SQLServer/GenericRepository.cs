@@ -3,6 +3,7 @@ using Application.Repositories;
 using AutoMapper;
 using AutoMapper.Extensions.ExpressionMapping;
 using AutoMapper.QueryableExtensions;
+using Domain.Entity;
 using Infrastructure.Common;
 using Infrastructure.Repositories.SQLServer.DataContext;
 using Microsoft.EntityFrameworkCore;
@@ -148,10 +149,10 @@ namespace Infrastructure.Repositories.SQLServer
 
         #region Update & Delete
 
-        public void Update(TDomain entity)
+        public virtual async Task Update(TDomain entity)
         {
-            var dbEntity = _mapper.Map<TEntity>(entity);
-            _dbSet.Update(dbEntity);
+            var dbExam = _mapper.Map<TEntity>(entity);
+            _dbSet.Update(dbExam);
         }
 
         public void UpdateRange(IEnumerable<TDomain> entities)
@@ -160,11 +161,6 @@ namespace Infrastructure.Repositories.SQLServer
             _dbSet.UpdateRange(dbEntities);
         }
 
-        public void Delete(TDomain entity)
-        {
-            var dbEntity = _mapper.Map<TEntity>(entity);
-            _dbSet.Remove(dbEntity);
-        }
 
         public void DeleteRange(IEnumerable<TDomain> entities)
         {
@@ -174,10 +170,10 @@ namespace Infrastructure.Repositories.SQLServer
 
         public async Task Delete(object id)
         {
-            TDomain entity = await GetByIdAsync(id);
+            TEntity entity = await _dbSet.FindAsync(id);
             if (entity != null)
             {
-                Delete(entity);
+                _dbSet.Remove(entity);
             }
         }
         #endregion

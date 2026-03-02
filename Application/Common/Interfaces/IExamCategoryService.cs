@@ -10,6 +10,7 @@ namespace Application.Common.Interfaces
 {
     public interface IExamCategoryService
     {
+        Task<ICollection<ExamCategoryResponse>> GetAll();
         Task<PaginationResponse<ExamCategoryResponse>> GetPaginated(PaginatedRequest request);
     }
 }

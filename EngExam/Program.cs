@@ -2,7 +2,6 @@ using Application;
 using Application.Common.Interfaces;
 using Application.Handler;
 using Application.Handler.InterfaceHandler;
-using Application.Interface;
 using Application.Repositories;
 using Application.Services;
 using AutoMapper;
@@ -10,7 +9,6 @@ using Domain.Enums;
 using EngExam.Extensions;
 using EngExam.Middlewares;
 using EngExam.OptionsModels;
-using Infrastructure.AI;
 using Infrastructure.Authentication;
 using Infrastructure.FileServices;
 using Infrastructure.Repositories.SQLServer;
@@ -207,13 +205,6 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
         ));
 
     //usecase
-    var aiOption = configuration.GetSection("AIModel").Get<AIOptions>() ?? new AIOptions();
-    services.AddTransient<IAISupport>(services => new OpenAISupport(
-        services.GetRequiredService<IChatClient>()));
-    RegisterAIServices(configuration, services, aiOption);
-    services.AddTransient<IAIChatBox>(service => new AIChatBox(
-        service.GetRequiredService<IAISupport>()
-        ));
     services.AddTransient<IAuthIdentityService>(services => new AuthIdentityService(
         services.GetRequiredService<UserManager<User>>(),
         services.GetRequiredService<SignInManager<User>>(),

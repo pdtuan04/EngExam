@@ -17,6 +17,18 @@ namespace Application.Services
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         }
 
+        public async Task<ICollection<ExamCategoryResponse>> GetAll()
+        {
+            var result = await _unitOfWork.ExamCategoryRepository.GetAllAsync();
+            return result.Select(x => new ExamCategoryResponse
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Description = x.Description,
+                ImageUrl = x.ImageUrl
+            }).ToList();
+        }
+
         public async Task<PaginationResponse<ExamCategoryResponse>> GetPaginated(PaginatedRequest request)
         {
             return await _unitOfWork.ExamCategoryRepository.ToPagination(

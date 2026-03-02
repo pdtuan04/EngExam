@@ -26,11 +26,11 @@ namespace Infrastructure.Repositories.SQLServer.Mappers
             CreateMap<Domain.Entity.AnswerHistory, AnswersHistory>().ReverseMap();
             CreateMap<User, Domain.Entity.User>().ReverseMap();
             CreateMap<Domain.Entity.User, User>().ReverseMap();
+
             CreateMap<ExamCategory, Domain.Entity.ExamCategory>().ReverseMap();
             CreateMap<Domain.Entity.ExamCategory, ExamCategory>().ReverseMap();
 
             CreateMap<Practice, Domain.Entity.Practice>().ReverseMap();
-            CreateMap<Domain.Entity.Practice, Practice>().ReverseMap();
 
             CreateMap<PracticeDetail, Domain.Entity.PracticeDetail>().ReverseMap();
             CreateMap<Domain.Entity.PracticeDetail, PracticeDetail>().ReverseMap();

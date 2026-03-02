@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EngExam.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ExamCategoryController : ControllerBase
@@ -15,6 +14,25 @@ namespace EngExam.Controllers
         public ExamCategoryController(IExamCategoryService examCategoryService)
         {
             _examCategoryService = examCategoryService ?? throw new ArgumentNullException(nameof(examCategoryService));
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await _examCategoryService.GetAll();
+            if (result == null)
+            {
+                return NotFound(new
+                {
+                    success = false,
+                    message = "No exam categories found"
+                });
+            }
+            return Ok(new
+            {
+                success = true,
+                data = result,
+                message = "Exam categories retrieved successfully"
+            });
         }
         [AllowAnonymous]
         [HttpGet("paginated")]

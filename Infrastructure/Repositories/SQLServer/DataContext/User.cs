@@ -11,7 +11,7 @@ namespace Infrastructure.Repositories.SQLServer.DataContext
 {
     public class User : IdentityUser<Guid>
     {
-        public int Age { get; set; }
-        public ICollection<ExamResult> ExamResults { get; set;} = [];
+        public int? Age { get; set; }
+        public ICollection<ExamResult> ExamResults { get; set;} = null!;
     }
 }

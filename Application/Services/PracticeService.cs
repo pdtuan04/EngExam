@@ -1,6 +1,7 @@
 ﻿using Application.Common.Interfaces;
 using Application.Handler.InterfaceHandler;
 using Application.Models.Answer;
+using Application.Models.Pagination;
 using Application.Models.Practice;
 using Application.Models.Question;
 using Domain.Enums;
@@ -19,12 +20,30 @@ namespace Application.Services
         {
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         }
+
+        public async Task<PaginationResponse<PracticeResponse>> GetPaginated(int pageIndex, int pageSize)
+        {
+            var result = await _unitOfWork.PracticeRepository.ToPagination(
+                pageIndex: pageIndex,
+                pageSize: pageSize,
+                orderBy: x => x.Title,
+                ascending: true,
+                selector: x => new PracticeResponse
+                {
+                    Id = x.Id,
+                    Title = x.Title,
+                    Description = x.Description
+                });
+            return result;
+        }
+
         public async Task<DoPracticeResponse> GetPracticeToTake(Guid id)
         {
             var result = await _unitOfWork.PracticeRepository.GetPracticeToTake(id);
             return new DoPracticeResponse
             {
                 Id = result.Id,
+                Title = result.Title,
                 Description = result.Description,
                 Questions = result.PracticeDetails.Select(x => new QuestionToPracticeResponse
                 {
@@ -42,5 +61,6 @@ namespace Application.Services
                 }).ToList()
             };
         }
+        
     }
 }

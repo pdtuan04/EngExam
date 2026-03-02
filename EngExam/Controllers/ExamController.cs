@@ -18,6 +18,74 @@ namespace EngExam.Controllers
         {
             _examService = examService;
         }
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> CreateExam(CreateExamRequest request)
+        {
+            var result = await _examService.Create(request);
+            if (result == null)
+                return NotFound(new
+                {
+                    success = false,
+                    message = "Create exam failed",
+                });
+            return Ok(new
+            {
+                success = true,
+                message = "Create exam successfully",
+                data = result
+            });
+        }
+        [Authorize]
+        [HttpPut]
+        public async Task<IActionResult> UpdateExam([FromBody] UpdateExamRequest request)
+        {
+            var result = await _examService.Update(request);
+            if (result == null)
+                return NotFound(new
+                {
+                    success = false,
+                    message = "Create exam failed",
+                });
+            return Ok(new
+            {
+                success = true,
+                message = "Create exam successfully",
+                data = result
+            });
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteExam(Guid id)
+        {
+            var result = await _examService.Delete(id);
+            if (!result)
+                return NotFound(new
+                {
+                    success = false,
+                    message = "Delete exam failed",
+                });
+            return Ok(new
+            {
+                success = true,
+                message = "Delete exam successfully",
+            });
+        }
+        [HttpPatch("{id}/unactive")]
+        public async Task<IActionResult> SoftDelete(Guid id)
+        {
+            var result = await _examService.SoftDelete(id);
+            if (!result)
+                return NotFound(new
+                {
+                    success = false,
+                    message = "Change status exam failed",
+                });
+            return Ok(new
+            {
+                success = true,
+                message = "Change status exam successfully",
+            });
+        }
         [HttpGet("random")]
         public async Task<IActionResult> GetRandomExam()
         {

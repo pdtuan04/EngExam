@@ -10,6 +10,7 @@ namespace Application.Models.Practice
     public class DoPracticeResponse
     {
         public required Guid Id { get; set; }
+        public required string Title { get; set; }
         public string? Description { get; set; }
         public ICollection<QuestionToPracticeResponse> Questions { get; set; } = [];
     }

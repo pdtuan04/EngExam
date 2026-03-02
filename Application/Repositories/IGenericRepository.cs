@@ -26,9 +26,8 @@ namespace Application.Repositories
            Expression<Func<T, bool>> filter,
            Func<IQueryable<T>, IQueryable<T>>? include = null);
         Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> filter, Expression<Func<T, object>> sort, bool ascending = true);
-        void Update(T entity);
+        Task Update(T entity);
         void UpdateRange(IEnumerable<T> entities);
-        void Delete(T entity);
         void DeleteRange(IEnumerable<T> entities);
         Task Delete(object id);
     }
