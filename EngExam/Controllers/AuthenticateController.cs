@@ -13,6 +13,7 @@ namespace EngExam.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly IAuthService _authService;
+
         public AuthenticateController(IConfiguration configuration, IAuthService authService)
         {
             _configuration = configuration;

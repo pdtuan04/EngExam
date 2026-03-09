@@ -9,7 +9,7 @@ namespace Application.Exceptions
     public class ExamNullException:Exception
     {
         public ExamNullException()
-            : base("Exam object is null.") { }
+            : base("Exam not found.") { }
 
         public ExamNullException(string message)
             : base(message) { }

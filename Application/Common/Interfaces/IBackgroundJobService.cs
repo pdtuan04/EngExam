@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Application.Common.Interfaces
 {
-    public interface IEmailService
+    public interface IBackgroundJobService
     {
-        Task SendWelcomeAsync(string to, string subject, string body);
 
     }
 }
