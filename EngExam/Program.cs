@@ -9,8 +9,14 @@ using Domain.Enums;
 using EngExam.Extensions;
 using EngExam.Middlewares;
 using EngExam.OptionsModels;
+using Hangfire;
+using Hangfire.SqlServer;
 using Infrastructure.Authentication;
+using Infrastructure.Cache;
+using Infrastructure.Cache.CacheOptions;
+using Infrastructure.Email;
 using Infrastructure.FileServices;
+using Infrastructure.Realtime;
 using Infrastructure.Repositories.SQLServer;
 using Infrastructure.Repositories.SQLServer.DataContext;
 using Infrastructure.Repositories.SQLServer.Mappers;
@@ -19,7 +25,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using StackExchange.Redis;
 using System.Text;
 //    /\_____/\
 //   / o   o   \
@@ -86,6 +94,7 @@ app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapHub<OnlineCounter>("/onlineCounter");
 app.MapControllers();
 
 app.Run();
@@ -161,6 +170,19 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
             options.UseSqlServer(configuration.GetConnectionString("EngExamConnection"));
             //options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });
+
+        //email
+        builder.Services.Configure<EmailOptions>(configuration.GetSection("EmailSetting"));
+        services.AddTransient<IEmailService>(services => new SMTP(
+            services.GetRequiredService<IOptions<EmailOptions>>()
+            ));
+        //hangfire
+        builder.Services.AddHangfire(config => config.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+          .UseSimpleAssemblyNameTypeSerializer()
+          .UseRecommendedSerializerSettings()
+          .UseSqlServerStorage(builder.Configuration.GetConnectionString("EngExamConnection")));
+        builder.Services.AddHangfireServer();
+
         services.AddTransient<IQuestionRepository>(service => new QuestionRepository(
             service.GetRequiredService<ApplicationDbContext>(),
             service.GetRequiredService<IMapper>()));
@@ -210,25 +232,35 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
         services.GetRequiredService<SignInManager<User>>(),
         services.GetRequiredService<RoleManager<IdentityRole<Guid>>>(),
         services.GetRequiredService<IMapper>(),
-        services.GetRequiredService<IConfiguration>()
+        services.GetRequiredService<IConfiguration>(),
+        services.GetRequiredService<IEmailService>(),
+        services.GetRequiredService<IBackgroundJobClient>()
         ));
     services.AddTransient<IAuthService>(service => new AuthenService(
         service.GetRequiredService<IUnitOfWork>(),
         service.GetRequiredService<IAuthIdentityService>()
         ));
-    services.AddTransient<IExamService>(service => new ExamService(
-        service.GetRequiredService<IUnitOfWork>(),
-        service.GetRequiredService<IDictionary<QuestionTypes, IQuestionTypesHandler>>()
+    services.AddTransient<IExamService>(services => new CachableExam(
+        new ExamService(
+            services.GetRequiredService<IUnitOfWork>(),
+            services.GetRequiredService<IDictionary<QuestionTypes, IQuestionTypesHandler>>()),
+        services.GetRequiredService<IDistributedCache>(),
+        configuration.GetSection("CachableExamSetting").Get<CachableExamOption>() ?? new CachableExamOption()
+        ));
+    services.AddTransient<IExamCategoryService>(services => new CachableExamCategory(
+        new ExamCategoryService(services.GetRequiredService<IUnitOfWork>()
+        ),
+        services.GetRequiredService<IDistributedCache>(),
+        configuration.GetSection("CachableExamCategorySetting").Get<CachableExamCategoryOption>() ?? new CachableExamCategoryOption()
         ));
     services.AddTransient<IPracticeService>(service => new PracticeService(
-        service.GetRequiredService<IUnitOfWork>()
-        ));
-    services.AddTransient<IExamCategoryService>(service => new ExamCategoryService(
         service.GetRequiredService<IUnitOfWork>()
         ));
     services.AddTransient<IFileService>(service => new FileService(
         service.GetRequiredService<ISaveImageHandler>()
         ));
+    services.AddSignalR();
+
 }
 void RegisterAIServices(ConfigurationManager configuration, IServiceCollection services, AIOptions aiOption)
 {
@@ -260,6 +292,7 @@ void InitializeCache(ConfigurationManager configuration, IServiceCollection serv
             services.AddStackExchangeRedisCache(options => {
                 options.Configuration = configuration.GetConnectionString(cacheOptions.RedisOptions.ConnectionStringName);
             });
+            services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(configuration.GetConnectionString(cacheOptions.RedisOptions.ConnectionStringName)));
             break;
         default:
             throw new NotSupportedException($"Cache type {cacheOptions.CacheType} is not supported.");

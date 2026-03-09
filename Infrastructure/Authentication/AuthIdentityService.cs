@@ -5,6 +5,7 @@ using Azure;
 using Azure.Core;
 using Domain.Entity;
 using Google.Apis.Auth;
+using Hangfire;
 using Infrastructure.Repositories.SQLServer.DataContext;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -29,18 +30,24 @@ namespace Infrastructure.Authentication
         private readonly RoleManager<IdentityRole<Guid>> _roleManager;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
+        private readonly IEmailService _emailService;
+        private readonly IBackgroundJobClient _backgroundJobClient;
         public AuthIdentityService(
             UserManager<Repositories.SQLServer.DataContext.User> userManager,
             SignInManager<Repositories.SQLServer.DataContext.User> signInManager,
             RoleManager<IdentityRole<Guid>> roleManager,
             IMapper mapper,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IEmailService emailService,
+            IBackgroundJobClient backgroundJobClient)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
             _roleManager = roleManager ?? throw new ArgumentNullException(nameof(roleManager));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _emailService = emailService;
+            _backgroundJobClient = backgroundJobClient;
         }
         public async Task<bool> CheckUserExist(string userName, string email)
         {
@@ -60,6 +67,9 @@ namespace Infrastructure.Authentication
                 Email = request.Email,
             };
             var result = await _userManager.CreateAsync(newUser, request.Password);
+            _backgroundJobClient.Enqueue<IEmailService>(
+                    c => c.SendWelcomeAsync(newUser.Email, "Welcome", "Welcome to our website")
+                );
             return result.Succeeded;
         }
         public async Task<SignInResponse> SignIn(string username, string password, bool rememberme)
@@ -127,6 +137,9 @@ namespace Infrastructure.Authentication
                     Email = payload.Email,
                 };
                 var result = await _userManager.CreateAsync(newUser);
+                _backgroundJobClient.Enqueue<IEmailService>(
+                    c => c.SendWelcomeAsync(newUser.Email, "Welcome", "Welcome to our website")
+                );
                 userByName = newUser;
             }
             var token = await JwtTokenGen(_mapper.Map<Domain.Entity.User>(userByName));

@@ -18,8 +18,14 @@ namespace Infrastructure.Repositories.SQLServer
 
         public async Task<ICollection<Domain.Entity.ExamCategory>> GetAllAsync()
         {
-            var result = await _dbContext.ExamCategories.ToListAsync();
+            var result = await _dbContext.ExamCategories.Where(e => e.IsActicve == true).ToListAsync();
             return _mapper.Map<ICollection<Domain.Entity.ExamCategory>>(result);
+        }
+
+        public async Task SoftDelete(Guid id)
+        {
+            var examCategory = await _dbContext.ExamCategories.FirstOrDefaultAsync(e => e.Id == id) ?? throw new NullReferenceException();
+            examCategory.IsActicve = false;
         }
     }
 }

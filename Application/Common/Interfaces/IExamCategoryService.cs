@@ -1,4 +1,5 @@
-﻿using Application.Models.ExamCategory;
+﻿using Application.Models.Answer;
+using Application.Models.ExamCategory;
 using Application.Models.Pagination;
 using System;
 using System.Collections.Generic;
@@ -12,5 +13,9 @@ namespace Application.Common.Interfaces
     {
         Task<ICollection<ExamCategoryResponse>> GetAll();
         Task<PaginationResponse<ExamCategoryResponse>> GetPaginated(PaginatedRequest request);
+        Task<ExamCategoryResponse> GetById(Guid id);
+        Task<ExamCategoryResponse> CreateExamCategogy(CreateExamCategoryRequest request);
+        Task<ExamCategoryResponse> UpdateExamCategory(UpdateExamCategoryRequest request);
+        Task DeleteExamCategogy(Guid id);
     }
 }

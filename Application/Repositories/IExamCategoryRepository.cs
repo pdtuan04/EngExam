@@ -11,5 +11,6 @@ namespace Application.Repositories
     public interface IExamCategoryRepository : IGenericRepository<ExamCategory>
     {
         Task<ICollection<ExamCategory>> GetAllAsync();
+        Task SoftDelete(Guid id);
     }
 }

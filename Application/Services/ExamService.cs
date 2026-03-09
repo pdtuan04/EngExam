@@ -121,7 +121,7 @@ namespace Application.Services
 
         public async Task<TakeExamResponse> GetExamToTake(Guid id)
         {
-            var result = await _unitOfWork.ExamRepository.GetExamToTake(id);
+            var result = await _unitOfWork.ExamRepository.GetExamToTake(id) ?? throw new ExamNullException();
             return new TakeExamResponse
             {
                 Id = result.Id,
