@@ -223,7 +223,7 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
             { QuestionTypes.MultipleChoice, services.GetRequiredService<MultipleChoiceHandler>() },
             { QuestionTypes.FillInTheBlank, services.GetRequiredService<FillInBlankHandler>()}
         });
-    services.AddTransient<ISaveImageHandler>(service => new SaveImageHandler(
+    services.AddTransient<IUploadImageService>(service => new Infrastructure.FileServices.FileService(
         ));
 
     //usecase
@@ -256,8 +256,8 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
     services.AddTransient<IPracticeService>(service => new PracticeService(
         service.GetRequiredService<IUnitOfWork>()
         ));
-    services.AddTransient<IFileService>(service => new FileService(
-        service.GetRequiredService<ISaveImageHandler>()
+    services.AddTransient<IFileService>(service => new Application.Services.FileService(
+        service.GetRequiredService<IUploadImageService>()
         ));
     services.AddSignalR();
 

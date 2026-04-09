@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Authentication.Utilities
+namespace Application.Common.Utilities
 {
     public static class StringHelper
     {

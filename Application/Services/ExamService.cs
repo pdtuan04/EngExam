@@ -1,4 +1,5 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Common.Exceptions;
+using Application.Common.Interfaces;
 using Application.Exceptions;
 using Application.Handler.InterfaceHandler;
 using Application.Models.Answer;
@@ -95,7 +96,7 @@ namespace Application.Services
 
         public async Task<ExamResponse> GetById(Guid id)
         {
-            var result = await _unitOfWork.ExamRepository.GetByIdAsync(id);
+            var result = await _unitOfWork.ExamRepository.GetByIdAsync(id) ?? throw new NotFoundException("Exam",id);
             return new ExamResponse
             {
                 Id = result.Id,
@@ -121,7 +122,7 @@ namespace Application.Services
 
         public async Task<TakeExamResponse> GetExamToTake(Guid id)
         {
-            var result = await _unitOfWork.ExamRepository.GetExamToTake(id) ?? throw new ExamNullException();
+            var result = await _unitOfWork.ExamRepository.GetExamToTake(id) ?? throw new NotFoundException("Exam",id);
             return new TakeExamResponse
             {
                 Id = result.Id,
@@ -190,9 +191,8 @@ namespace Application.Services
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-
                 var now = DateTime.UtcNow;
-                var exam = await _unitOfWork.ExamRepository.GetExamToTake(request.ExamId) ?? throw new ExamNullException();
+                var exam = await _unitOfWork.ExamRepository.GetExamToTake(request.ExamId) ?? throw new NotFoundException("Exam", request.ExamId);
                 var score = await ScoreCalculation(request.UserAnswers, exam.ExamDetail);
                 var histories = await HistorySave(request.UserAnswers, exam.ExamDetail, exam.Id);
                 var examResultId = Guid.NewGuid();
@@ -265,7 +265,7 @@ namespace Application.Services
         {
             await _unitOfWork.BeginTransactionAsync();
             var now = DateTime.UtcNow;
-            var exam = await _unitOfWork.ExamRepository.GetExamDetail(request.Id) ?? throw new ExamNullException();
+            var exam = await _unitOfWork.ExamRepository.GetExamDetail(request.Id) ?? throw new NotFoundException("Exam",request.Id);
             exam.IsActive = request.IsActive;
             exam.Title = request.Title;
             exam.Description = request.Description;

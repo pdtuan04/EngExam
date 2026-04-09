@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces;
+using Application.Models.File;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +18,11 @@ namespace EngExam.Controllers
         [HttpPost("upload-images")]
         public async Task<IActionResult> UploadImages(IFormFile file)
         {
-            var path = await _uploadImages.UploadImageAsync(file.OpenReadStream(), Path.GetExtension(file.FileName));
+            var request = new UploadImageRequest { 
+                Content = file.OpenReadStream(),
+                FileName = file.FileName
+            };
+            var path = await _uploadImages.UploadImageAsync(request);
 
             return Ok(new
             {

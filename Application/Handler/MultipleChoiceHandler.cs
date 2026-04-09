@@ -1,4 +1,5 @@
-﻿using Application.Exceptions;
+﻿using Application.Common.Exceptions;
+using Application.Exceptions;
 using Application.Handler.InterfaceHandler;
 using Application.Models.Exam;
 using Domain.Entity;
@@ -11,7 +12,7 @@ namespace Application.Handler
         {
             var answer = examDetail
                          .Question.Answers
-                         .FirstOrDefault(a => a.Id == userAnswer.AnswerId) ?? throw new AnswerNullException();
+                         .FirstOrDefault(a => a.Id == userAnswer.AnswerId) ?? throw new BadRequestException("Answer isn't in the exam");
             bool isCorrect = answer?.IsCorrect ?? false;
             return new AnswerHistory
             {
@@ -28,7 +29,7 @@ namespace Application.Handler
             var correctAnswer = examDetail
                                 .Question
                                 .Answers
-                                .FirstOrDefault(a => a.IsCorrect) ?? throw new Exception("This question doesn't has any correct answer");
+                                .FirstOrDefault(a => a.IsCorrect) ?? throw new BadRequestException("The exam doesn't have any correct answer");
             if(userAnswer.AnswerId == correctAnswer.Id)
             {
                 return examDetail.Score;
