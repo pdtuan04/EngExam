@@ -1,5 +1,5 @@
 ﻿using Application.Common.Interfaces;
-using Application.Handler.InterfaceHandler;
+using Application.Models.File;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,28 +10,15 @@ namespace Application.Services
 {
     public class FileService : IFileService
     {
-        private readonly ISaveImageHandler _saveImageHandler;
-        private const long MaxImageSizeInBytes = 2 * 1024 * 1024;
-        private static readonly HashSet<string> AllowedImageExtensions = new(StringComparer.OrdinalIgnoreCase)
+        private readonly IUploadImageService _uploadImageService;
+        public FileService(IUploadImageService uploadImageService)
         {
-            ".jpg",
-            ".jpeg",
-            ".png",
-        };
-        public FileService(ISaveImageHandler saveImageHandler)
-        {
-            _saveImageHandler = saveImageHandler;
+            _uploadImageService = uploadImageService;
         }
-        public Task<string> UploadImageAsync(Stream stream, string fileExtension)
+        public Task<string> UploadImageAsync(UploadImageRequest request)
         {
-            if(stream.Length > MaxImageSizeInBytes)
-                throw new Exception("File is too large");
-
-            if(!AllowedImageExtensions.Contains(fileExtension))
-                throw new Exception("File type is not allowed");
-            //check if we can use the poniter and move it to the begining
-            if (stream.CanSeek) stream.Seek(0, SeekOrigin.Begin);
-            var savingImage = _saveImageHandler.SaveImageAsync(stream, fileExtension);
+            if (request.Content.CanSeek) request.Content.Seek(0, SeekOrigin.Begin);
+            var savingImage = _uploadImageService.SaveImageAsync(request.Content, request.FileName);
             return savingImage;
         }
     }

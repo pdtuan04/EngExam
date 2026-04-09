@@ -1,4 +1,5 @@
-﻿using Application.Exceptions;
+﻿using Application.Common.Exceptions;
+using Application.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -27,6 +28,8 @@ namespace EngExam.Middlewares
                 context.Response.StatusCode = ex switch
                 {
                     BusinessException busEx => busEx.StatusCode,
+                    NotFoundException nfEx => StatusCodes.Status404NotFound,
+                    BadRequestException brEx => StatusCodes.Status400BadRequest,
                     _ => StatusCodes.Status500InternalServerError
                 };
                 await context.Response.WriteAsJsonAsync(

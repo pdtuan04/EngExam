@@ -12,5 +12,6 @@ namespace Domain.Entity
         public required string Name { get; set; }
         public required string Description { get; set; }
         public ICollection<Question> Questions { get; set; } = [];
+        public ICollection<Course> Course { get; set; } = [];
     }
 }

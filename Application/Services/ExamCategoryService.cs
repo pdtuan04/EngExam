@@ -1,4 +1,5 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Common.Exceptions;
+using Application.Common.Interfaces;
 using Application.Models.ExamCategory;
 using Application.Models.Pagination;
 using Domain.Entity;
@@ -80,7 +81,7 @@ namespace Application.Services
         public async Task<ExamCategoryResponse> UpdateExamCategory(UpdateExamCategoryRequest request)
         {
             var now = DateTime.UtcNow;
-            var examCategory = await _unitOfWork.ExamCategoryRepository.GetByIdAsync(request.Id);
+            var examCategory = await _unitOfWork.ExamCategoryRepository.GetByIdAsync(request.Id) ?? throw new NotFoundException("Category", request.Id);
             examCategory.Name = request.Name;
             examCategory.Description = request.Description;
             examCategory.ImageUrl = request.ImageUrl;
@@ -97,7 +98,7 @@ namespace Application.Services
         }
         public async Task<ExamCategoryResponse> GetById(Guid id)
         {
-            var examCategory = await _unitOfWork.ExamCategoryRepository.GetByIdAsync(id);
+            var examCategory = await _unitOfWork.ExamCategoryRepository.GetByIdAsync(id) ?? throw new NotFoundException("Category", id);
             return new ExamCategoryResponse
             {
                 Id = examCategory.Id,

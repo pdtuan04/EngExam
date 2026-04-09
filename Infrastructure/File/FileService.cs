@@ -1,4 +1,4 @@
-﻿using Application.Handler.InterfaceHandler;
+﻿using Application.Common.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,12 +7,10 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.FileServices
 {
-    public class SaveImageHandler : ISaveImageHandler
+    public class FileService : IUploadImageService
     {
         public async Task<string> SaveImageAsync(Stream input, string fileExtension)
         {
-            try
-            {
                 var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "images");
                 if(!Directory.Exists(rootPath))
                 {
@@ -32,11 +30,6 @@ namespace Infrastructure.FileServices
                     await input.CopyToAsync(fileStream);
                 }
                 return $"uploads/images/{fileName}";
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Lỗi khi tải lên hình ảnh: " + ex.Message);
-            }
         }
     }
 }

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Handler.InterfaceHandler
+namespace Application.Common.Interfaces
 {
-    public interface ISaveImageHandler
+    public interface IUploadImageService
     {
         Task<string> SaveImageAsync(Stream stream, string fileName);
     }
