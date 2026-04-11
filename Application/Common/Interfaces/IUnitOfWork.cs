@@ -15,7 +15,7 @@ namespace Application.Common.Interfaces
         IAnswerRepository AnswerRepository { get; }
         IExamCategoryRepository ExamCategoryRepository { get; }
         IPracticeRepository PracticeRepository { get; }
-
+        ICourseRepository  CourseRepository { get; }
         Task BeginTransactionAsync();
         Task SaveChangesAsync();
         Task CancelAsync();
