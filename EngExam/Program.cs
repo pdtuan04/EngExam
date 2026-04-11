@@ -204,7 +204,7 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
         services.AddTransient<IPracticeRepository>(service => new PracticeRepository(
             service.GetRequiredService<ApplicationDbContext>(),
             service.GetRequiredService<IMapper>()));
-        services.AddTransient<IUnitOfWork>(service => new UnitOfWork(
+        services.AddScoped<IUnitOfWork>(service => new UnitOfWork(
             service.GetRequiredService<ApplicationDbContext>(),
             service.GetRequiredService<IMapper>()));
     }

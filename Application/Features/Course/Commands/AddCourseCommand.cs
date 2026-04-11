@@ -1,0 +1,18 @@
+﻿using Application.Abstractions.Messaging;
+using Application.Models.Course;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Application.Features.Course.Command
+{
+    public sealed record class AddCourseCommand(
+        string Name, 
+        string Description,
+        string Content,
+        string? ImageUrl,
+        Guid TopicId
+    ) : ICommand<CourseResponse>;
+}
