@@ -1,4 +1,6 @@
 using Application;
+using Application.Abstractions.Caching;
+using Application.Behaviors;
 using Application.Common.Interfaces;
 using Application.Handler;
 using Application.Handler.InterfaceHandler;
@@ -68,6 +70,7 @@ RegisterServicesForSecurity(builder.Configuration, builder.Services, externalAut
 //});
 
 builder.Services.AddControllers();
+builder.Services.AddApplication();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
@@ -159,9 +162,9 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
 {
 
 
-    var repositoryOptions = configuration.GetSection("Repository").Get<RepositoryOptions>() ?? throw new Exception("No RepositoryOptions Found"); 
+    var repositoryOptions = configuration.GetSection("Repository").Get<RepositoryOptions>() ?? throw new Exception("No RepositoryOptions Found");
 
-    if(repositoryOptions.Type == RepositoryType.SQLServer)
+    if (repositoryOptions.Type == RepositoryType.SQLServer)
     {
         //services.AddAutoMapper(typeof(MapperProfile));
         services.AddAutoMapper(cfg => { }, typeof(MapperProfile));
@@ -204,13 +207,19 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
         services.AddTransient<IPracticeRepository>(service => new PracticeRepository(
             service.GetRequiredService<ApplicationDbContext>(),
             service.GetRequiredService<IMapper>()));
+
         services.AddScoped<IUnitOfWork>(service => new UnitOfWork(
             service.GetRequiredService<ApplicationDbContext>(),
             service.GetRequiredService<IMapper>()));
     }
+    //CQRS
+    services.AddMediatR(cfg => {
+        cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
+        cfg.AddOpenBehavior(typeof(QueryCachingBehavior<,>));
+    });
 
-    
     //cache
+    services.AddSingleton<ICacheService, CacheService>();
     var cacheOptions = configuration.GetSection("CacheSetting").Get<CacheOptions>() ?? new CacheOptions();
     InitializeCache(configuration, services, cacheOptions);
 

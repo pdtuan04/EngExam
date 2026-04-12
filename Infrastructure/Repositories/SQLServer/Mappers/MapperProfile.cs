@@ -34,6 +34,9 @@ namespace Infrastructure.Repositories.SQLServer.Mappers
 
             CreateMap<PracticeDetail, Domain.Entity.PracticeDetail>().ReverseMap();
             CreateMap<Domain.Entity.PracticeDetail, PracticeDetail>().ReverseMap();
+
+            CreateMap<Course, Domain.Entity.Course>().ReverseMap();
+            CreateMap<Domain.Entity.Course, Course>().ReverseMap();
         }
     }
 }

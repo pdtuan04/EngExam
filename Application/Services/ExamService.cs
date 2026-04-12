@@ -35,7 +35,6 @@ namespace Application.Services
             {
                 Id = Guid.NewGuid(),
                 IsActive = true,
-                CreatedAt = now,
                 Title = request.Title,
                 DurationInMinutes = request.DurationInMinutes,
                 ExamCategoryId = request.ExamCategoryId,
@@ -52,12 +51,10 @@ namespace Application.Services
                     Explanation = q.Explanation,
                     QuestionTypes = q.QuestionTypes,
                     TopicId = q.TopicId,
-                    CreatedAt = now,
                     Answers = q.Answers.Select(a => new Answer
                     {
                         Id = Guid.NewGuid(),
                         IsActive = true,
-                        CreatedAt = now,
                         Content = a.Content,
                         IsCorrect = a.IsCorrect,
                         QuestionId = questionId,
