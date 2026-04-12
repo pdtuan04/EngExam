@@ -14,14 +14,14 @@ namespace EngExam.Controllers
         public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
         {
             var query = new GetCourseByIdQuery(id);
-            var result = await Sender.Send(query);
+            var result = await Sender.Send(query, cancellationToken);
             return Ok(result);
         }
         [HttpPost("{id}")]
         public async Task<IActionResult> CreateCourse(CreateCourseRequest request, CancellationToken cancellationToken)
         {
             var command = new AddCourseCommand(request.Name,request.Description, request.Content, request.ImageUrl, request.TopicId);
-            var result = await Sender.Send(command);
+            var result = await Sender.Send(command, cancellationToken);
             return Ok(result);
         }
     }

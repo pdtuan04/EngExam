@@ -16,17 +16,23 @@ namespace Infrastructure.Cache
         private readonly JsonSerializerOptions serializerOptions = new JsonSerializerOptions
         {
         };
-        private readonly DistributedCacheEntryOptions _option;
-        public CacheService(IDistributedCache cache, DistributedCacheEntryOptions option)
+        private readonly DistributedCacheEntryOptions _cacheEntryOptions;
+        public CacheService(IDistributedCache cache)
         {
             _cache = cache;
-            _option = option;
+            _cacheEntryOptions = new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = DefaultExpiration,
+            };
         }
 
         public async Task<T> GetOrCreateAsync<T>(string cacheKey, Func<CancellationToken, Task<T>> factory, TimeSpan? expiration = null, CancellationToken cancellationToken = default)
         {
             var cacheResult = await _cache.GetStringAsync(cacheKey);
-
+            if(cacheResult is null)
+            {
+                return await factory(cancellationToken);
+            }
             T result = JsonSerializer.Deserialize<T>(cacheResult, serializerOptions);
             return result;
         }
