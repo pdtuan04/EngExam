@@ -29,6 +29,6 @@ namespace Application.Repositories
         Task Update(T entity);
         void UpdateRange(IEnumerable<T> entities);
         void DeleteRange(IEnumerable<T> entities);
-        Task Delete(object id);
+        Task<bool> Delete(object id);
     }
 }

@@ -20,7 +20,6 @@ namespace Application.Features.Course.Commands
         }
         public async Task<CourseResponse> Handle(AddCourseCommand request, CancellationToken cancellationToken)
         {
-            await _unitOfWork.BeginTransactionAsync();
             var course = new Domain.Entity.Course
             {
                 Id = Guid.NewGuid(),
@@ -32,7 +31,6 @@ namespace Application.Features.Course.Commands
                 TopicId = request.TopicId,
             };
             await _unitOfWork.CourseRepository.AddAsync(course);
-            await _unitOfWork.SaveChangesAsync();
             return new CourseResponse(course.Id, course.Name,course.Description, course.Content, course.ImageUrl, course.TopicId);
         }
     }

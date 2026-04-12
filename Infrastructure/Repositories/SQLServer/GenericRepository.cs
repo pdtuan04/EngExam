@@ -168,13 +168,15 @@ namespace Infrastructure.Repositories.SQLServer
             _dbSet.RemoveRange(dbEntities);
         }
 
-        public async Task Delete(object id)
+        public async Task<bool> Delete(object id)
         {
             TEntity entity = await _dbSet.FindAsync(id);
             if (entity != null)
             {
                 _dbSet.Remove(entity);
+                return true;
             }
+            return false;
         }
         #endregion
     }
