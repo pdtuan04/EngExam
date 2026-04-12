@@ -28,13 +28,19 @@ namespace Infrastructure.Cache
 
         public async Task<T> GetOrCreateAsync<T>(string cacheKey, Func<CancellationToken, Task<T>> factory, TimeSpan? expiration = null, CancellationToken cancellationToken = default)
         {
-            var cacheResult = await _cache.GetStringAsync(cacheKey);
-            if(cacheResult is null)
+            var cacheResult = await _cache.GetStringAsync(cacheKey, cancellationToken);
+            if(cacheResult != null)
             {
-                return await factory(cancellationToken);
+                T result = JsonSerializer.Deserialize<T>(cacheResult, serializerOptions);
+                return result;
             }
-            T result = JsonSerializer.Deserialize<T>(cacheResult, serializerOptions);
-            return result;
+            var value = await factory(cancellationToken);
+            var options = expiration.HasValue ? new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = expiration.Value,
+            } : _cacheEntryOptions;
+            await _cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(value, serializerOptions), options, cancellationToken);
+            return value;
         }
     }
 }
