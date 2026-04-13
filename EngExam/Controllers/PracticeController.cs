@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces;
+using Application.Features.Practice.Queries;
 using Application.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,18 +8,14 @@ namespace EngExam.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PracticeController : ControllerBase
+    public class PracticeController : ApiController
     {
-        private readonly IPracticeService _practiceService;
-        public PracticeController(IPracticeService practiceService)
-        {
-            _practiceService = practiceService ?? throw new ArgumentNullException(nameof(practiceService));
-        }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPracticeToTake(Guid id)
         {
-            var result = await _practiceService.GetPracticeToTake(id);
+            var query = new GetPracticeToTakeQuery(id);
+            var result = await Sender.Send(query);
             return Ok(new
             {
                 success = true,

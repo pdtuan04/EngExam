@@ -7,16 +7,14 @@ using System.Threading.Tasks;
 
 namespace Application.Models.Exam
 {
-    public class SubmitExamRequest
+    public sealed record SubmitExamRequest(
+    Guid ExamId,
+    IReadOnlyCollection<UserAnswerRequest> UserAnswers)
     {
-        [Required]
-        public Guid ExamId { get; set; }
-        public ICollection<UserAnswerRequest> UserAnswers { get; set; } = [];
+        public IReadOnlyCollection<UserAnswerRequest> UserAnswers { get; init; } = UserAnswers ?? [];
     }
-    public class UserAnswerRequest
-    {
-        public Guid QuestionId { get; set; }
-        public Guid? AnswerId { get; set; }
-        public string? AnswerFillInBlank { get; set; }
-    }
+    public sealed record UserAnswerRequest(
+    Guid QuestionId,
+    Guid? AnswerId,
+    string? AnswerFillInBlank);
 }

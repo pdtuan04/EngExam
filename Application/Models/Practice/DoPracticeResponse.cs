@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 
 namespace Application.Models.Practice
 {
-    public class DoPracticeResponse
+    public sealed record DoPracticeResponse(
+    Guid Id,
+    string Title,
+    string? Description = null,
+    IReadOnlyCollection<QuestionToPracticeResponse> Questions = null!)
     {
-        public required Guid Id { get; set; }
-        public required string Title { get; set; }
-        public string? Description { get; set; }
-        public ICollection<QuestionToPracticeResponse> Questions { get; set; } = [];
+        public IReadOnlyCollection<QuestionToPracticeResponse> Questions { get; init; } = Questions ?? [];
     }
 }

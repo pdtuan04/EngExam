@@ -12,6 +12,11 @@
 
   <ItemGroup>
     <Folder Include="Common\Enums\" />
+    <Folder Include="Features\Exam\Events\" />
+    <Folder Include="Features\ExamResult\Events\" />
+    <Folder Include="Features\ExamResult\Queries\" />
+    <Folder Include="Features\Practice\Commands\" />
+    <Folder Include="Features\Practice\Events\" />
   </ItemGroup>
 
   <ItemGroup>

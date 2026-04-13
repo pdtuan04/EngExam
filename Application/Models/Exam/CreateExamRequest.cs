@@ -8,18 +8,13 @@ using System.Threading.Tasks;
 
 namespace Application.Models.Exam
 {
-    public class CreateExamRequest
+    public record CreateExamRequest(
+        string Title,
+        int DurationInMinutes,
+        Guid ExamCategoryId,
+        string? Description = null,
+        IReadOnlyCollection<CreateQuestionRequest> Questions = null!)
     {
-        [Required]
-        public required string Title { get; set; }
-        [Required]
-        [Range(1, 180)]
-        public required int DurationInMinutes { get; set; }
-        public string? Description { get; set; }
-        [Required]
-        public required Guid ExamCategoryId { get; set; }
-        [MinLength(1)]
-        public required ICollection<CreateQuestionRequest> Questions { get; set; } = [];
-
+        public IReadOnlyCollection<CreateQuestionRequest> Questions { get; init; } = Questions ?? [];
     }
 }

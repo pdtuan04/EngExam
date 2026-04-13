@@ -8,15 +8,16 @@ using System.Threading.Tasks;
 
 namespace Application.Models.Exam
 {
-    public class UpdateExamRequest
+    public sealed record UpdateExamRequest(
+        Guid Id,
+        bool IsActive,
+        string Title,
+        int DurationInMinutes,
+        Guid ExamCategoryId,
+        string? Description = null,
+        string? ImageUrl = null,
+        IReadOnlyCollection<UpdateQuestionRequest> Questions = null!)
     {
-        public required Guid Id { get; set; }
-        public required bool IsActive { get; set; }
-        public required string Title { get; set; }
-        public string? Description { get; set; }
-        public required int DurationInMinutes { get; set; }
-        public string? ImageUrl { get; set; }
-        public required ICollection<UpdateQuestionRequest> Questions { get; set; } = [];
-        public required Guid ExamCategoryId { get; set; }
+        public IReadOnlyCollection<UpdateQuestionRequest> Questions { get; init; } = Questions ?? [];
     }
 }

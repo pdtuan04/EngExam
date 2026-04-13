@@ -1,4 +1,7 @@
 ﻿using Application.Common.Interfaces;
+using Application.Features.Exam.Commands;
+using Application.Features.Exam.Queries;
+using Application.Features.ExamResult.Commands;
 using Application.Models.Exam;
 using Application.Models.Pagination;
 using EngExam.Extensions;
@@ -11,18 +14,14 @@ namespace EngExam.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ExamController : ControllerBase
+    public class ExamController : ApiController
     {
-        private readonly IExamService _examService;
-        public ExamController(IExamService examService)
-        {
-            _examService = examService;
-        }
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateExam(CreateExamRequest request)
         {
-            var result = await _examService.Create(request);
+            var command = new AddExamCommand(request.Title, request.DurationInMinutes, request.ExamCategoryId, request.Description,  request.Questions);
+            var result = await Sender.Send(command);
             if (result == null)
                 return NotFound(new
                 {
@@ -40,7 +39,8 @@ namespace EngExam.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateExam([FromBody] UpdateExamRequest request)
         {
-            var result = await _examService.Update(request);
+            var command = new UpdateExamCommand(request.Id, request.Title, request.DurationInMinutes, request.ExamCategoryId, request.Description, request.IsActive, request.Questions);
+            var result = await Sender.Send(command);
             if (result == null)
                 return NotFound(new
                 {
@@ -57,7 +57,8 @@ namespace EngExam.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteExam(Guid id)
         {
-            var result = await _examService.Delete(id);
+            var command = new DeleteExamCommand(id);
+            var result = await Sender.Send(command);
             if (!result)
                 return NotFound(new
                 {
@@ -73,7 +74,8 @@ namespace EngExam.Controllers
         [HttpPatch("{id}/unactive")]
         public async Task<IActionResult> SoftDelete(Guid id)
         {
-            var result = await _examService.SoftDelete(id);
+            var command = new DeleteExamCommand(id);
+            var result = await Sender.Send(command);
             if (!result)
                 return NotFound(new
                 {
@@ -86,31 +88,13 @@ namespace EngExam.Controllers
                 message = "Change status exam successfully",
             });
         }
-        [HttpGet("random")]
-        public async Task<IActionResult> GetRandomExam()
-        {
-            var exam = await _examService.GetRandomExamToTake();
-            if (exam == null)
-            {
-                return NotFound(new
-                {
-                    success = false,
-                    message = "No exam found"
-                });
-            }
-            return Ok(new
-            {
-                success = true,
-                data = exam,
-                message = "Random exam retrieved successfully"
-            });
-        }
         [Authorize]
         [HttpPost("submit-exam")]
         public async Task<IActionResult> SubmitExam([FromBody] SubmitExamRequest submitExam)
         {
             var userId = ClaimsExtensions.GetUserId(User);
-            var result = await _examService.SubmitExam(userId, submitExam);
+            var command = new SaveExamResultCommand(userId, submitExam.ExamId, submitExam.UserAnswers);
+            var result = await Sender.Send(command);
             return Ok(new
             {
                 success = true,
@@ -121,8 +105,9 @@ namespace EngExam.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetExamById(Guid id)
         {
-            var exam = await _examService.GetExamToTake(id);
-            if (exam == null)
+            var query = new GetExamByIdQuery(id);
+            var result = await Sender.Send(query);
+            if (result == null)
             {
                 return NotFound(new
                 {
@@ -133,15 +118,16 @@ namespace EngExam.Controllers
             return Ok(new
             {
                 success = true,
-                data = exam,
+                data = result,
                 message = "Get exam by id successfully"
             });
         }
         [HttpGet("exam-list-{id}")]
         public async Task<IActionResult> GetExamByIdCategory(Guid id)
         {
-            var exam = await _examService.GetExamsByCategoryIdAsync(id);
-            if (exam == null)
+            var query = new GetExamByCategoryQuery(id);
+            var result = await Sender.Send(query);
+            if (result == null)
             {
                 return NotFound(new
                 {
@@ -152,18 +138,19 @@ namespace EngExam.Controllers
             return Ok(new
             {
                 success = true,
-                data = exam,
+                data = result,
                 message = "Get exam by category successfully"
             });
         }
         [HttpGet("paginated")]
         public async Task<IActionResult> GetPaginated([FromQuery] PaginatedRequest request)
         {
-            var exams = await _examService.GetPaginated(request);
+            var query = new GetExamPaginatedQuery(request.PageIndex, request.PageSize);
+            var result = await Sender.Send(query);
             return Ok(new
             {
                 success = true,
-                data = exams,
+                data = result,
                 message = "Get paginated exams successfully"
             });
         }

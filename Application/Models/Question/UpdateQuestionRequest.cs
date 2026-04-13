@@ -9,21 +9,17 @@ using System.Threading.Tasks;
 
 namespace Application.Models.Question
 {
-    public class UpdateQuestionRequest
+    public record UpdateQuestionRequest(
+    Guid Id,
+    bool IsActive,
+    string Content,
+    double Score,
+    QuestionTypes QuestionTypes,
+    Guid TopicId,
+    string? Explanation = null,
+    string? ImageUrl = null,
+    IReadOnlyCollection<UpdateAnswerRequest> Answers = null!)
     {
-        public required Guid Id { get; set; }
-        public required bool IsActive { get; set; }
-        [Required]
-        public required string Content { get; set; }
-        [Range(0.1, double.MaxValue)]
-        public required double Score { get; set; }
-        [Required]
-        public required QuestionTypes QuestionTypes { get; set; }
-        public string? Explanation { get; set; }
-        public string? ImageUrl { get; set; }
-        [Required]
-        public required Guid TopicId { get; set; }
-        [MinLength(1)]
-        public ICollection<UpdateAnswerRequest> Answers { get; set; } = [];
+        public IReadOnlyCollection<UpdateAnswerRequest> Answers { get; init; } = Answers ?? [];
     }
 }

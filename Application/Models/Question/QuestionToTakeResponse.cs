@@ -8,11 +8,12 @@ using System.Threading.Tasks;
 
 namespace Application.Models.Question
 {
-    public class QuestionToTakeResponse
+    public sealed record QuestionToTakeResponse(
+        Guid Id,
+        string Content,
+        QuestionTypes QuestionTypes,
+        IReadOnlyCollection<AnswerToTakeResponse> Answers)
     {
-        public required Guid Id { get; set; }
-        public required string Content { get; set; }
-        public required QuestionTypes QuestionTypes { get; set; }
-        public required ICollection<AnswerToTakeResponse> Answers { get; set; } = [];
+        public IReadOnlyCollection<AnswerToTakeResponse> Answers { get; init; } = Answers ?? [];
     }
 }

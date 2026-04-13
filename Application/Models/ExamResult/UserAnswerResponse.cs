@@ -7,19 +7,16 @@ using System.Threading.Tasks;
 
 namespace Application.Models.ExamResult
 {
-    public class UserAnswerResponse
+    public sealed record UserAnswerResponse(
+        string Content,
+        QuestionTypes QuestionTypes,
+        string UserAnswer,
+        bool IsCorrect,
+        double EarnedPoint,
+        string? Explanation = null,
+        IReadOnlyCollection<Option> Options = null!)
     {
-        public required string Content { get; set; }
-        public required QuestionTypes QuestionTypes { get; set; }
-        public required string UserAnswer { get; set; }
-        public string Explanation { get; set; }
-        public required bool IsCorrect { get; set; }
-        public required double EarnedPoint { get; set; }
-        public IEnumerable<Option> Options { get; set; } = [];
+        public IReadOnlyCollection<Option> Options { get; init; } = Options ?? [];
     }
-    public class Option
-    {
-        public required string Content { get; set; }
-        public required bool IsCorrect { get; set; }
-    }
+    public sealed record Option(string Content, bool IsCorrect);
 }

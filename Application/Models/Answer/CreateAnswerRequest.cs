@@ -7,10 +7,5 @@ using System.Threading.Tasks;
 
 namespace Application.Models.Answer
 {
-    public class CreateAnswerRequest
-    {
-        [Required]
-        public required string Content { get; set; }
-        public required bool IsCorrect { get; set; }
-    }
+    public record CreateAnswerRequest(string Content, bool IsCorrect);
 }

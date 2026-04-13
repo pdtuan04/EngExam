@@ -6,9 +6,5 @@ using System.Threading.Tasks;
 
 namespace Application.Models.Answer
 {
-    public class AnswerToTakeResponse
-    {
-        public required Guid Id { get; set; }
-        public required string Content { get; set; }
-    }
+    public sealed record AnswerToTakeResponse(Guid Id, string Content);
 }

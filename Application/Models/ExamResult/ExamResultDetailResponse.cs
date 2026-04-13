@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 
 namespace Application.Models.ExamResult
 {
-    public class ExamResultDetailResponse
+    public sealed record ExamResultDetailResponse(
+        Guid Id,
+        DateTime CompleteAt,
+        double TotalScore,
+        IReadOnlyCollection<UserAnswerResponse> UserAnswers)
     {
-        public required Guid Id { get; set; }
-        public required DateTime CompleteAt { get; set; }
-        public required double TotalScore { get; set; }
-        public ICollection<UserAnswerResponse> UserAnswers { get; set; } = [];
+        public IReadOnlyCollection<UserAnswerResponse> UserAnswers { get; init; } = UserAnswers ?? [];
     }
 }

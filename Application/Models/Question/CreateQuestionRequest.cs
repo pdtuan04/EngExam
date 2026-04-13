@@ -10,18 +10,14 @@ using System.Threading.Tasks;
 
 namespace Application.Models.Question
 {
-    public class CreateQuestionRequest
+    public record CreateQuestionRequest(
+        string Content,
+        double Score,
+        QuestionTypes QuestionTypes,
+        Guid TopicId,
+        string? Explanation = null,
+        IReadOnlyCollection<CreateAnswerRequest> Answers = null!)
     {
-        [Required]
-        public required string Content { get; set; }
-        [Range(0.1, double.MaxValue)]
-        public required double Score { get; set; }
-        [Required]
-        public required QuestionTypes QuestionTypes { get; set; }
-        public string? Explanation { get; set; }
-        [Required]
-        public required Guid TopicId { get; set; }
-        [MinLength(1)]
-        public ICollection<CreateAnswerRequest> Answers { get; set; } = [];
+        public IReadOnlyCollection<CreateAnswerRequest> Answers { get; init; } = Answers ?? [];
     }
 }

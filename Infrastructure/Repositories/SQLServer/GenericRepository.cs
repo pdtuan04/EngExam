@@ -84,7 +84,8 @@ namespace Infrastructure.Repositories.SQLServer
             Func<IQueryable<TDomain>, IQueryable<TDomain>>? include = null,
             Expression<Func<TDomain, object>>? orderBy = null,
             bool ascending = true,
-            Expression<Func<TDomain, TResult>> selector = null)
+            Expression<Func<TDomain, TResult>> selector = null,
+            CancellationToken cancellationToken = default)
         {
             IQueryable<TEntity> query = _dbSet.AsNoTracking();
 

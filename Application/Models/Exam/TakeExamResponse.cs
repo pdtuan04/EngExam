@@ -7,12 +7,13 @@ using System.Threading.Tasks;
 
 namespace Application.Models.Exam
 {
-    public class TakeExamResponse
+    public sealed record TakeExamResponse(
+        Guid Id,
+        string? Title,
+        string? Description,
+        int DurationInMinutes,
+        IReadOnlyCollection<QuestionToTakeResponse> Questions)
     {
-        public required Guid Id { get; set; }
-        public string? Title { get; set; }
-        public string? Description { get; set; }
-        public required int DurationInMinutes { get; set; }
-        public required ICollection<QuestionToTakeResponse> Questions { get; set; } = [];
+        public IReadOnlyCollection<QuestionToTakeResponse> Questions { get; init; } = Questions ?? [];
     }
 }

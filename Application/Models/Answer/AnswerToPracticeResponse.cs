@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace Application.Models.Answer
 {
-    public class AnswerToPracticeResponse
-    {
-        public required Guid Id { get; set; }
-        public required string Content { get; set; }
-        public required bool IsCorrect { get; set; } = false;
-    }
+    public sealed record AnswerToPracticeResponse(
+    Guid Id,
+    string Content,
+    bool IsCorrect);
 }
