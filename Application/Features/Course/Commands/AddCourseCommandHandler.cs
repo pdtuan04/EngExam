@@ -1,5 +1,5 @@
-﻿using Application.Abstractions.Messaging;
-using Application.Common.Interfaces;
+﻿using Application.Abstractions;
+using Application.Abstractions.Messaging;
 using Application.Features.Course.Command;
 using Application.Models.Course;
 using Domain.Entity;

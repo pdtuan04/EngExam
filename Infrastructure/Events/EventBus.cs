@@ -9,5 +9,9 @@ namespace Infrastructure.Events
 {
     internal sealed class EventBus : IEventBus
     {
+        public async Task PublishAsync<TEvent>(TEvent integrationEvent, CancellationToken cancellationToken = default) where TEvent : IIntegationEvent
+        {
+            throw new NotImplementedException();
+        }
     }
 }

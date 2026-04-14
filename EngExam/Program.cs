@@ -1,11 +1,11 @@
 using Application;
+using Application.Abstractions;
 using Application.Abstractions.Caching;
+using Application.Abstractions.Repositories;
 using Application.Behaviors;
 using Application.Common.Interfaces;
 using Application.Handler;
 using Application.Handler.InterfaceHandler;
-using Application.Repositories;
-using Application.Services;
 using AutoMapper;
 using Domain.Enums;
 using EngExam.Extensions;
@@ -15,7 +15,6 @@ using Hangfire;
 using Hangfire.SqlServer;
 using Infrastructure.Authentication;
 using Infrastructure.Cache;
-using Infrastructure.Cache.CacheOptions;
 using Infrastructure.Email;
 using Infrastructure.FileServices;
 using Infrastructure.Realtime;
@@ -244,29 +243,6 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
         services.GetRequiredService<IConfiguration>(),
         services.GetRequiredService<IEmailService>(),
         services.GetRequiredService<IBackgroundJobClient>()
-        ));
-    services.AddTransient<IAuthService>(service => new AuthenService(
-        service.GetRequiredService<IUnitOfWork>(),
-        service.GetRequiredService<IAuthIdentityService>()
-        ));
-    services.AddTransient<IExamService>(services => new CachableExam(
-        new ExamService(
-            services.GetRequiredService<IUnitOfWork>(),
-            services.GetRequiredService<IDictionary<QuestionTypes, IQuestionTypesHandler>>()),
-        services.GetRequiredService<IDistributedCache>(),
-        configuration.GetSection("CachableExamSetting").Get<CachableExamOption>() ?? new CachableExamOption()
-        ));
-    services.AddTransient<IExamCategoryService>(services => new CachableExamCategory(
-        new ExamCategoryService(services.GetRequiredService<IUnitOfWork>()
-        ),
-        services.GetRequiredService<IDistributedCache>(),
-        configuration.GetSection("CachableExamCategorySetting").Get<CachableExamCategoryOption>() ?? new CachableExamCategoryOption()
-        ));
-    services.AddTransient<IPracticeService>(service => new PracticeService(
-        service.GetRequiredService<IUnitOfWork>()
-        ));
-    services.AddTransient<IFileService>(service => new Application.Services.FileService(
-        service.GetRequiredService<IUploadImageService>()
         ));
     services.AddSignalR();
 

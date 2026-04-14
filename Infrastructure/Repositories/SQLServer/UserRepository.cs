@@ -1,4 +1,4 @@
-﻿using Application.Repositories;
+﻿using Application.Abstractions.Repositories;
 using AutoMapper;
 using Domain.Entity;
 using Infrastructure.Repositories.SQLServer.DataContext;

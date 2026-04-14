@@ -1,5 +1,5 @@
-﻿using Application.Models.Pagination;
-using Application.Repositories;
+﻿using Application.Abstractions.Repositories;
+using Application.Models.Pagination;
 using AutoMapper;
 using AutoMapper.Extensions.ExpressionMapping;
 using AutoMapper.QueryableExtensions;

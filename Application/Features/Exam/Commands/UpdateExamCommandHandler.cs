@@ -1,6 +1,6 @@
-﻿using Application.Abstractions.Messaging;
+﻿using Application.Abstractions;
+using Application.Abstractions.Messaging;
 using Application.Common.Exceptions;
-using Application.Common.Interfaces;
 using Application.Models.Answer;
 using Application.Models.Exam;
 using Application.Models.Question;
@@ -16,7 +16,7 @@ namespace Application.Features.Exam.Commands
     public sealed class UpdateExamCommandHandler : ICommandHandler<UpdateExamCommand, ExamDetailResponse>
     {
         private readonly IUnitOfWork _unitOfWork;
-        UpdateExamCommandHandler(IUnitOfWork unitOfWork)
+        public UpdateExamCommandHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }

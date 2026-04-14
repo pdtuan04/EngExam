@@ -17,6 +17,8 @@
     <Folder Include="Features\ExamResult\Queries\" />
     <Folder Include="Features\Practice\Commands\" />
     <Folder Include="Features\Practice\Events\" />
+    <Folder Include="Features\User\Events\" />
+    <Folder Include="Features\User\Queries\" />
   </ItemGroup>
 
   <ItemGroup>

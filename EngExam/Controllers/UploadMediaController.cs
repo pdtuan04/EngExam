@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces;
+using Application.Features.File.Commands;
 using Application.Models.File;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -8,32 +9,29 @@ namespace EngExam.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UploadMediaController : ControllerBase
+    public class UploadMediaController : ApiController
     {
-        private readonly IFileService _uploadImages;
-        public UploadMediaController(IFileService uploadImages)
-        {
-            _uploadImages = uploadImages;
-        }
         [HttpPost("upload-images")]
         public async Task<IActionResult> UploadImages(IFormFile file)
         {
-            var request = new UploadImageRequest { 
-                Content = file.OpenReadStream(),
-                FileName = file.FileName
-            };
-            var path = await _uploadImages.UploadImageAsync(request);
+            var request = new UploadImageRequest(
+                file.OpenReadStream(),
+                file.FileName
+            );
+            var command = new UploadImageCommand(request.Content,request.FileName);
+            var result = await Sender.Send(command);
 
             return Ok(new
             {
                 success = true,
-                data = path,
+                data = result,
                 message = "Upload image successfully"
             });
         }
         [HttpPost("upload-videos")]
         public async Task<IActionResult> UploadVideos(IFormFile file)
         {
+            //not implemented yet, just return success for testing
             return Ok("Media uploaded successfully.");
         }
     }

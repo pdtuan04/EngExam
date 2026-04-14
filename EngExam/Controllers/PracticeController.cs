@@ -1,6 +1,5 @@
 ﻿using Application.Common.Interfaces;
 using Application.Features.Practice.Queries;
-using Application.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

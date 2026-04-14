@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace Application.Models.Practice
 {
-    public class PracticeResponse
-    {
-        public required Guid Id { get; set; }
-        public required string Title { get; set; }
-        public string? Description { get; set; }
-    }
+    public sealed record PracticeResponse(
+    Guid Id,
+    string Title,
+    string? Description = null);
 }

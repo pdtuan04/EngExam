@@ -81,7 +81,7 @@ namespace Infrastructure.Authentication
             var result = await _userManager.CheckPasswordAsync(userByName, password);
             if (!result) throw new Exception("Sai tai khoan hoac mat khau");
             var token = await JwtTokenGen(_mapper.Map<Domain.Entity.User>(userByName));
-            var response = new SignInResponse { Token = token };
+            var response = new SignInResponse(token);
             return response;
         }
         public async Task<string> JwtTokenGen(Domain.Entity.User user)
@@ -143,7 +143,7 @@ namespace Infrastructure.Authentication
                 userByName = newUser;
             }
             var token = await JwtTokenGen(_mapper.Map<Domain.Entity.User>(userByName));
-            var response = new SignInResponse { Token = token};
+            var response = new SignInResponse(token);
             return response;
         }
 

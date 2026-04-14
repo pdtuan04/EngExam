@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 
 namespace Application.Models.File
 {
-    public class UploadImageRequest
-    {
-        public required Stream Content { get; set; }
-        public required string FileName { get; set; }
-    }
+    public sealed record UploadImageRequest(
+    Stream Content,
+    string FileName);
 }

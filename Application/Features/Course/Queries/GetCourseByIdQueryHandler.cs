@@ -1,6 +1,6 @@
-﻿using Application.Abstractions.Messaging;
+﻿using Application.Abstractions;
+using Application.Abstractions.Messaging;
 using Application.Common.Exceptions;
-using Application.Common.Interfaces;
 using Application.Models.Course;
 using System;
 using System.Collections.Generic;

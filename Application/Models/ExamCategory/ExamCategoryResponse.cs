@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace Application.Models.ExamCategory
 {
-    public class ExamCategoryResponse
-    {
-        public required Guid Id { get; set; }
-        public required string Name { get; set; }
-        public required string? Description { get; set; }
-        public string? ImageUrl { get; set; }
-    }
+    public sealed record ExamCategoryResponse(
+    Guid Id,
+    string Name,
+    string? Description,
+    string? ImageUrl);
 }

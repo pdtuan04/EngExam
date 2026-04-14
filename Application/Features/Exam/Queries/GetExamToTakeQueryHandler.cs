@@ -1,5 +1,5 @@
-﻿using Application.Abstractions.Messaging;
-using Application.Common.Interfaces;
+﻿using Application.Abstractions;
+using Application.Abstractions.Messaging;
 using Application.Models.Answer;
 using Application.Models.Exam;
 using Application.Models.Question;

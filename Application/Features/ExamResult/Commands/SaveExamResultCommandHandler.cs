@@ -1,6 +1,6 @@
-﻿using Application.Abstractions.Messaging;
+﻿using Application.Abstractions;
+using Application.Abstractions.Messaging;
 using Application.Common.Exceptions;
-using Application.Common.Interfaces;
 using Application.Handler.InterfaceHandler;
 using Application.Models.Exam;
 using Application.Models.ExamResult;
@@ -40,7 +40,6 @@ namespace Application.Features.ExamResult.Commands
                 AnswerHistory = histories
             };
             await _unitOfWork.ExamResultRepository.AddAsync(examResult);
-            await _unitOfWork.SaveChangesAsync();
             var examResultDto = new ExamResultDetailResponse
             (
                 Id: examResult.Id,

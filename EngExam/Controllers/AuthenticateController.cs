@@ -1,4 +1,4 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Features.User.Commands;
 using Application.Models.Authen;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
@@ -9,20 +9,19 @@ namespace EngExam.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthenticateController : ControllerBase
+    public class AuthenticateController : ApiController
     {
         private readonly IConfiguration _configuration;
-        private readonly IAuthService _authService;
 
-        public AuthenticateController(IConfiguration configuration, IAuthService authService)
+        public AuthenticateController(IConfiguration configuration)
         {
             _configuration = configuration;
-            _authService = authService;
         }
         [HttpPost("register-account")]
         public async Task<IActionResult> SignUp([FromBody]SignUpRequest request)
         {
-            var result = await _authService.SignUp(request);
+            var command = new SignUpCommand(request.UserName, request.Email, request.Password, request.ConfirmPassword, request.Age);
+            var result = await Sender.Send(command);
             if(!result)
             {
                 return BadRequest("Authentication failed");
@@ -32,7 +31,8 @@ namespace EngExam.Controllers
         [HttpPost("login-account")]
         public async Task<IActionResult> LoginAccount([FromBody] SignInRequest request)
         {
-            var result = await _authService.SignIn(request.UserName, request.Password, request.RememberMe);
+            var command = new SignInCommand(request.UserName, request.Password, request.RememberMe);
+            var result = await Sender.Send(command);
             //var token = 
             Response.Cookies.Append("jwt", result.Token, new CookieOptions
             {
@@ -46,7 +46,8 @@ namespace EngExam.Controllers
         [HttpPost("login-google")]
         public async Task<IActionResult> LoginByGoogle([FromBody] string idToken)
         {
-            var result = await _authService.LoginByGoogle(idToken);
+            var command = new SignInByGoogleCommand(idToken);
+            var result = await Sender.Send(command);
             //var token = 
             Response.Cookies.Append("jwt", result.Token, new CookieOptions
             {

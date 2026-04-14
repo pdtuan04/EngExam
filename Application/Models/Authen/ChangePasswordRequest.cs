@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace Application.Models.Authen
 {
-    public class ChangePasswordRequest
-    {
-        public required Guid UserId { get; set; }
-        public required string CurrentPassword { get; set; }
-        public required string NewPassword { get; set; }
-    }
+    public sealed record ChangePasswordRequest(
+    Guid UserId,
+    string CurrentPassword,
+    string NewPassword);
 }

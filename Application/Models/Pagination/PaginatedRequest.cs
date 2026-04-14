@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 
 namespace Application.Models.Pagination
 {
-    public class PaginatedRequest
-    {
-        public int PageIndex { get; set; } = 1;
-        public int PageSize { get; set; } = 10;
-    }
+    public sealed record PaginatedRequest(
+    int PageIndex = 1,
+    int PageSize = 10);
 }

@@ -1,5 +1,5 @@
-﻿using Application.Abstractions.Messaging;
-using Application.Common.Interfaces;
+﻿using Application.Abstractions;
+using Application.Abstractions.Messaging;
 using Application.Models.Course;
 using System;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ namespace Application.Features.Course.Commands
     public sealed class UpdateCourseCommandHandler : ICommandHandler<UpdateCourseCommand, CourseResponse>
     {
         private readonly IUnitOfWork _unitOfWork;
-        UpdateCourseCommandHandler(IUnitOfWork unitOfWork)
+        public UpdateCourseCommandHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException();
         }

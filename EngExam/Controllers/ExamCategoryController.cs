@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces;
+using Application.Features.ExamCategory.Queries;
 using Application.Models.Pagination;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -8,17 +9,13 @@ namespace EngExam.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ExamCategoryController : ControllerBase
+    public class ExamCategoryController : ApiController
     {
-        private readonly IExamCategoryService _examCategoryService;
-        public ExamCategoryController(IExamCategoryService examCategoryService)
-        {
-            _examCategoryService = examCategoryService ?? throw new ArgumentNullException(nameof(examCategoryService));
-        }
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var result = await _examCategoryService.GetAll();
+            var query = new GetAllCategoryQuery();
+            var result = await Sender.Send(query);
             if (result == null)
             {
                 return NotFound(new
@@ -38,7 +35,8 @@ namespace EngExam.Controllers
         [HttpGet("paginated")]
         public async Task<IActionResult> GetPaginated([FromQuery] PaginatedRequest request)
         {
-            var result = await _examCategoryService.GetPaginated(request);
+            var query = new GetExamCategoryPaginatedQuery(request.PageIndex, request.PageSize);
+            var result = await Sender.Send(query);
             if (result == null)
             {
                 return NotFound(new

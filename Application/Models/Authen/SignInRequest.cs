@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace Application.Models.Authen
 {
-    public class SignInRequest
-    {
-        public required string UserName { get; set; }
-        public required string Password { get; set; }
-        public required bool RememberMe { get; set; } = false;
-    }
+    public sealed record SignInRequest(
+    string UserName,
+    string Password,
+    bool RememberMe = false);
 }

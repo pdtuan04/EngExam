@@ -6,8 +6,5 @@ using System.Threading.Tasks;
 
 namespace Application.Models.Authen
 {
-    public class SignInResponse
-    {
-        public required string Token { get; set; }
-    }
+    public sealed record SignInResponse(string Token);
 }

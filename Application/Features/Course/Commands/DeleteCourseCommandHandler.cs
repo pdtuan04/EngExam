@@ -1,5 +1,5 @@
-﻿using Application.Abstractions.Messaging;
-using Application.Common.Interfaces;
+﻿using Application.Abstractions;
+using Application.Abstractions.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +11,7 @@ namespace Application.Features.Course.Commands
     public class DeleteCourseCommandHandler : ICommandHandler<DeleteCourseCommand, bool>
     {
         private readonly IUnitOfWork _unitOfWork;
-        DeleteCourseCommandHandler(IUnitOfWork unitOfWork)
+        public DeleteCourseCommandHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException();
         }

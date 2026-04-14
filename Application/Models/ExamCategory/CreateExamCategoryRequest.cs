@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace Application.Models.ExamCategory
 {
-    public class CreateExamCategoryRequest
-    {
-        public required string Name { get; set; }
-        public required string Description { get; set; }
-        public string? ImageUrl { get; set; }
-    }
+    public sealed record CreateExamCategoryRequest(
+    string Name,
+    string Description,
+    string? ImageUrl = null);
 }
