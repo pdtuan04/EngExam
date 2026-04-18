@@ -1,4 +1,6 @@
 ﻿using Application.Abstractions;
+using Application.Abstractions.Caching;
+using Application.Abstractions.Events;
 using Application.Abstractions.Messaging;
 using Application.Models.ExamCategory;
 using System;
@@ -12,9 +14,11 @@ namespace Application.Features.ExamCategory.Commands
     public sealed class CreateExamCategoryCommandHandler : ICommandHandler<CreateExamCategoryCommand, ExamCategoryResponse>
     {
         private readonly IUnitOfWork _unitOfWork;
-        public CreateExamCategoryCommandHandler(IUnitOfWork unitOfWork)
+        private readonly IEventBus _eventBus;
+        public CreateExamCategoryCommandHandler(IUnitOfWork unitOfWork, IEventBus eventBus)
         {
             _unitOfWork = unitOfWork;
+            _eventBus = eventBus;
         }
 
         public async Task<ExamCategoryResponse> Handle(CreateExamCategoryCommand request, CancellationToken cancellationToken)

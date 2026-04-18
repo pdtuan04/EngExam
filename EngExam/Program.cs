@@ -33,6 +33,7 @@ using StackExchange.Redis;
 using System.Text;
 using Application.Abstractions.Repositories.Read;
 using Infrastructure.Repositories.SQLServer_Read;
+using Infrastructure;
 //    /\_____/\
 //   / o   o   \
 //  (==  ^    ==)
@@ -73,6 +74,7 @@ RegisterServicesForSecurity(builder.Configuration, builder.Services, externalAut
 
 builder.Services.AddControllers();
 builder.Services.AddApplication();
+builder.Services.AddInfrastructure();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
