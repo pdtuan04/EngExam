@@ -22,6 +22,17 @@ namespace EngExam.Controllers
                 data = result
             });
         }
-
+        [HttpGet("paginated-topic")]
+        public async Task<IActionResult> GetPracticePaginatedByTopicId([FromQuery] int pageIndex, int pageSize, Guid topicId)
+        {
+            var query = new GetPracticePaginatedByTopicIdQuery(pageIndex,pageSize,topicId);
+            var result = await Sender.Send(query);  
+            return Ok(new
+            {
+                success = true,
+                message = "Get practice paginated successfully",
+                data = result
+            });
+        }
     }
 }

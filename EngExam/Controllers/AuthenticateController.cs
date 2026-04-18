@@ -29,11 +29,10 @@ namespace EngExam.Controllers
             return Ok("Authentication successful");
         }
         [HttpPost("login-account")]
-        public async Task<IActionResult> LoginAccount([FromBody] SignInRequest request)
+        public async Task<IActionResult> SignIn([FromBody] SignInRequest request)
         {
             var command = new SignInCommand(request.UserName, request.Password, request.RememberMe);
             var result = await Sender.Send(command);
-            //var token = 
             Response.Cookies.Append("jwt", result.Token, new CookieOptions
             {
                 HttpOnly = true,
@@ -41,7 +40,12 @@ namespace EngExam.Controllers
                 SameSite = SameSiteMode.Strict,
                 Expires = DateTime.UtcNow.AddHours(Convert.ToDouble(_configuration["JWTKey:TokenExpiryTimeInHour"]))
             });
-            return Ok("Login successful");
+            return Ok(new
+            {
+                success = true,
+                data = result,
+                message = "Login successful"
+            });
         }
         [HttpPost("login-google")]
         public async Task<IActionResult> LoginByGoogle([FromBody] string idToken)
@@ -56,7 +60,12 @@ namespace EngExam.Controllers
                 SameSite = SameSiteMode.Strict,
                 Expires = DateTime.UtcNow.AddHours(Convert.ToDouble(_configuration["JWTKey:TokenExpiryTimeInHour"]))
             });
-            return Ok("Login successful");
+            return Ok(new
+            {
+                success = true,
+                data = result,
+                message = "Login successful"
+            });
         }
     }
 }

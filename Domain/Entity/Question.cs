@@ -8,7 +8,7 @@ using Domain.Enums;
 
 namespace Domain.Entity
 {
-    public class Question:BaseEntity
+    public class Question:BaseEntity, ISoftDeletable
     {
         public required string Content { get; set; }
         public required QuestionTypes QuestionTypes { get; set; }
@@ -19,5 +19,6 @@ namespace Domain.Entity
         public ICollection<ExamDetail> ExamDetail { get; set; } = [];
         public ICollection<AnswerHistory> AnswerHistory { get; set; } = [];
         public ICollection<PracticeDetail> PracticeDetail { get; set; } = null!;
+        public bool IsDeleted { get; set; }
     }
 }

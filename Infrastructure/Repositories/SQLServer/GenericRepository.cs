@@ -3,6 +3,7 @@ using Application.Models.Pagination;
 using AutoMapper;
 using AutoMapper.Extensions.ExpressionMapping;
 using AutoMapper.QueryableExtensions;
+using Domain.Common;
 using Domain.Entity;
 using Infrastructure.Common;
 using Infrastructure.Repositories.SQLServer.DataContext;
@@ -106,12 +107,17 @@ namespace Infrastructure.Repositories.SQLServer
             }
 
             query = ascending ? query.OrderBy(dbOrderBy) : query.OrderByDescending(dbOrderBy);
-
-            var dbSelector = _mapper.MapExpression<Expression<Func<TEntity, TResult>>>(selector);
-            var projectedQuery = query.Select(dbSelector);
-
+            IQueryable<TResult> projectedQuery;
+            if (selector != null)
+            {
+                var dbSelector = _mapper.MapExpression<Expression<Func<TEntity, TResult>>>(selector);
+                projectedQuery = query.Select(dbSelector);
+            }
+            else
+            {
+                projectedQuery = query.ProjectTo<TResult>(_mapper.ConfigurationProvider, cancellationToken);
+            }
             var queryExecute = await PaginationDb<TResult>.ToPagedList(projectedQuery, pageIndex, pageSize);
-
             return new PaginationResponse<TResult>(queryExecute.Items, queryExecute.TotalCount, pageIndex, pageSize);
         }
 
@@ -174,8 +180,12 @@ namespace Infrastructure.Repositories.SQLServer
             TEntity entity = await _dbSet.FindAsync(id);
             if (entity != null)
             {
-                _dbSet.Remove(entity);
-                return true;
+                if(entity is ISoftDeletable softDeletableEntity)
+                {
+                    softDeletableEntity.IsDeleted = true;
+                    _dbSet.Update(entity);
+                    return true;
+                }
             }
             return false;
         }

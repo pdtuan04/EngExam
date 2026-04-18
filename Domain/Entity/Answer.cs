@@ -7,10 +7,11 @@ using Domain.Common;
 
 namespace Domain.Entity
 {
-    public class Answer : BaseEntity
+    public class Answer : BaseEntity, ISoftDeletable
     {
         public required string Content { get; set; }
         public required bool IsCorrect { get; set; } = false;
         public required Guid QuestionId { get; set; }
+        public bool IsDeleted { get ; set ; }
     }
 }

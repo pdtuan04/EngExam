@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories.SQLServer.DataContext
 {
-    public class Course : BaseEntity
+    public class Course : BaseEntity, ISoftDeletable
     {
         public required string Name { get; set; }
         public string Description { get; set; } = null!;
@@ -14,5 +15,6 @@ namespace Infrastructure.Repositories.SQLServer.DataContext
         public string? ImageUrl { get; set; }
         public required Guid TopicId { get; set; }
         public Topic? Topic { get; set; }
+        public bool IsDeleted { get; set; } = false;
     }
 }

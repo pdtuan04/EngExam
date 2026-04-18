@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 
 namespace Domain.Entity
 {
-    public class Topic: BaseEntity
+    public class Topic: BaseEntity, ISoftDeletable
     {
         public required string Name { get; set; }
         public required string Description { get; set; }
         public ICollection<Question> Questions { get; set; } = [];
         public ICollection<Course> Course { get; set; } = [];
+        public bool IsDeleted { get; set; }
     }
 }

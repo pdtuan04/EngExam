@@ -7,12 +7,13 @@ using System.Threading.Tasks;
 
 namespace Domain.Entity
 {
-    public class Course : BaseEntity
+    public class Course : BaseEntity, ISoftDeletable
     {
         public required string Name { get; set; }
         public string Description { get; set; } = null!;
         public required string Content { get; set; }
         public string? ImageUrl { get; set; }
         public required Guid TopicId { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

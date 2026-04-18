@@ -18,7 +18,8 @@ namespace Application.Features.ExamCategory.Queries
         }
         public async Task<List<ExamCategoryResponse>> Handle(GetAllCategoryQuery request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var result = await _unitOfWork.ExamCategoryRepository.GetAllAsync();
+            return result.Select(x => new ExamCategoryResponse(x.Id, x.Name, x.Description, x.ImageUrl)).ToList();
         }
     }
 }
