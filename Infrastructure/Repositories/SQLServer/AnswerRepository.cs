@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Application.Abstractions.Repositories;
 using AutoMapper;
 using Infrastructure.Repositories.SQLServer.DataContext;
-using Infrastructure.Repositories.SQLServer.Mappers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories.SQLServer

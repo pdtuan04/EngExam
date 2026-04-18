@@ -1,4 +1,4 @@
-﻿using Infrastructure.Repositories.SQLServer.DataContext;
+﻿using Infrastructure.Repositories.SQLServer_Read.DataContext;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Extensions
+namespace Infrastructure.Repositories.SQLServer_Read.Extensions
 {
     public static class ModelBuilderExtentions
     {
@@ -81,7 +81,7 @@ namespace Infrastructure.Extensions
                     Description = "Grammar examination category",
                     ImageUrl = "/uploads/images/category_img.jpg",
                     CreatedAt = new DateTime(2026, 01, 01),
-                    IsActicve = true,
+                    IsActive = true,
                 },
                 new ExamCategory
                 {
@@ -90,7 +90,7 @@ namespace Infrastructure.Extensions
                     Description = "Reading",
                     ImageUrl = "/uploads/images/category_img.jpg",
                     CreatedAt = new DateTime(2026, 01, 01),
-                    IsActicve = true,
+                    IsActive = true,
                 },
                 new ExamCategory
                 {
@@ -99,7 +99,7 @@ namespace Infrastructure.Extensions
                     Description = "Vocabulary exam",
                     ImageUrl = "/uploads/images/category_img.jpg",
                     CreatedAt = new DateTime(2026, 01, 01),
-                    IsActicve = true,
+                    IsActive = true,
                 },
                 new ExamCategory
                 {
@@ -108,7 +108,7 @@ namespace Infrastructure.Extensions
                     Description = "Listening exam",
                     ImageUrl = "/uploads/images/category_img.jpg",
                     CreatedAt = new DateTime(2026, 01, 01),
-                    IsActicve = true,
+                    IsActive = true,
                 }
             );
 
@@ -119,7 +119,7 @@ namespace Infrastructure.Extensions
                     Name = "Basic Grammar",
                     Description = "Basic grammar rules",
                     CreatedAt = new DateTime(2026, 01, 01),
-                    IsActicve = true,
+                    IsActive = true,
                 }
             );
 
@@ -132,7 +132,7 @@ namespace Infrastructure.Extensions
                     Explanation = "With third person singular, use 'goes'.",
                     TopicId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
                     CreatedAt = new DateTime(2026, 01, 01),
-                    IsActicve = true,
+                    IsActive = true,
                 }
             );
             modelBuilder.Entity<Answer>().HasData(
@@ -143,7 +143,7 @@ namespace Infrastructure.Extensions
                     IsCorrect = false,
                     QuestionId = Guid.Parse("33333333-3333-3333-3333-333333333333"),
                     CreatedAt = new DateTime(2026, 01, 01),
-                    IsActicve = true,
+                    IsActive = true,
                 },
                 new Answer
                 {
@@ -152,7 +152,7 @@ namespace Infrastructure.Extensions
                     IsCorrect = true,
                     QuestionId = Guid.Parse("33333333-3333-3333-3333-333333333333"),
                     CreatedAt = new DateTime(2026, 01, 01),
-                    IsActicve = true,
+                    IsActive = true,
                 },
                 new Answer
                 {
@@ -161,7 +161,7 @@ namespace Infrastructure.Extensions
                     IsCorrect = false,
                     QuestionId = Guid.Parse("33333333-3333-3333-3333-333333333333"),
                     CreatedAt = new DateTime(2026, 01, 01),
-                    IsActicve = true,
+                    IsActive = true,
                 }
             );
 
@@ -174,7 +174,7 @@ namespace Infrastructure.Extensions
                     ExamCategoryId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
                     DurationInMinutes = 10,
                     CreatedAt = new DateTime(2026, 01, 01),
-                    IsActicve = true,
+                    IsActive = true,
                 }
             );
             modelBuilder.Entity<ExamDetail>().HasData(

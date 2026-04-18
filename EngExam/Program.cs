@@ -19,8 +19,9 @@ using Infrastructure.Email;
 using Infrastructure.FileServices;
 using Infrastructure.Realtime;
 using Infrastructure.Repositories.SQLServer;
-using Infrastructure.Repositories.SQLServer.DataContext;
 using Infrastructure.Repositories.SQLServer.Mappers;
+using Infrastructure.Repositories.SQLServer_Read.DataContext;
+using Infrastructure.Repositories.SQLServer.DataContext;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
 using System.Text;
+using Application.Abstractions.Repositories.Read;
+using Infrastructure.Repositories.SQLServer_Read;
 //    /\_____/\
 //   / o   o   \
 //  (==  ^    ==)
@@ -113,7 +116,7 @@ void RegisterServicesForSecurity(ConfigurationManager configuration, IServiceCol
                 throw new Exception("GoogleAuthOptions is not configured.");
             }
 
-            services.AddIdentity<User, IdentityRole<Guid>>()
+            services.AddIdentity<Infrastructure.Repositories.SQLServer.DataContext.User, IdentityRole<Guid>>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
             services.AddAuthorization();
@@ -167,6 +170,7 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
     {
         //services.AddAutoMapper(typeof(MapperProfile));
         services.AddAutoMapper(cfg => { }, typeof(MapperProfile));
+        //Write Database side
         services.AddDbContext<ApplicationDbContext>(options =>
         {
             options.UseSqlServer(configuration.GetConnectionString("EngExamConnection"));
@@ -210,6 +214,40 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
         services.AddScoped<IUnitOfWork>(service => new UnitOfWork(
             service.GetRequiredService<ApplicationDbContext>(),
             service.GetRequiredService<IMapper>()));
+        //Read Database side
+        services.AddDbContext<ApplicationDbReadContext>(options =>
+        {
+            options.UseSqlServer(configuration.GetConnectionString("EngExamReadDBConnection"));
+            options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+        });
+
+        services.AddTransient<IQuestionReadRepository>(service => new QuestionReadRepository(
+            service.GetRequiredService<ApplicationDbReadContext>(),
+            service.GetRequiredService<IMapper>()));
+
+        services.AddTransient<IExamReadRepository>(service => new ExamReadRepository(
+            service.GetRequiredService<ApplicationDbReadContext>(),
+            service.GetRequiredService<IMapper>()));
+
+        services.AddTransient<IAnswerReadRepository>(service => new AnswerReadRepository(
+            service.GetRequiredService<ApplicationDbReadContext>(),
+            service.GetRequiredService<IMapper>()));
+
+        services.AddTransient<IExamResultReadRepository>(service => new ExamResultReadRepository(
+            service.GetRequiredService<ApplicationDbReadContext>(),
+            service.GetRequiredService<IMapper>()));
+        services.AddTransient<IExamCategoryReadRepository>(service => new ExamCategoryReadRepository(
+            service.GetRequiredService<ApplicationDbReadContext>(),
+            service.GetRequiredService<IMapper>()));
+        services.AddTransient<IPracticeReadRepository>(service => new PracticeReadRepository(
+            service.GetRequiredService<ApplicationDbReadContext>(),
+            service.GetRequiredService<IMapper>()));
+        services.AddTransient<ITopicReadRepository>(service => new TopicReadRepository(
+            service.GetRequiredService<ApplicationDbReadContext>(),
+            service.GetRequiredService<IMapper>()));
+        services.AddTransient<ICourseReadRepository>(service => new CourseReadRepository(
+            service.GetRequiredService<ApplicationDbReadContext>(),
+            service.GetRequiredService<IMapper>()));
     }
     //CQRS
     services.AddMediatR(cfg => {
@@ -236,8 +274,8 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
 
     //usecase
     services.AddTransient<IAuthIdentityService>(services => new AuthIdentityService(
-        services.GetRequiredService<UserManager<User>>(),
-        services.GetRequiredService<SignInManager<User>>(),
+        services.GetRequiredService<UserManager<Infrastructure.Repositories.SQLServer.DataContext.User>>(),
+        services.GetRequiredService<SignInManager<Infrastructure.Repositories.SQLServer.DataContext.User>>(),
         services.GetRequiredService<RoleManager<IdentityRole<Guid>>>(),
         services.GetRequiredService<IMapper>(),
         services.GetRequiredService<IConfiguration>(),
