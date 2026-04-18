@@ -1,25 +1,17 @@
-﻿using Application.Common.Interfaces;
+﻿
+
+using Application.Common.Interfaces;
 using Application.Models.Authen;
 using AutoMapper;
-using Azure;
-using Azure.Core;
-using Domain.Entity;
 using Google.Apis.Auth;
 using Hangfire;
 using Infrastructure.Repositories.SQLServer.DataContext;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using StackExchange.Redis;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Authentication
 {
@@ -33,8 +25,8 @@ namespace Infrastructure.Authentication
         private readonly IEmailService _emailService;
         private readonly IBackgroundJobClient _backgroundJobClient;
         public AuthIdentityService(
-            UserManager<Repositories.SQLServer.DataContext.User> userManager,
-            SignInManager<Repositories.SQLServer.DataContext.User> signInManager,
+            UserManager<User> userManager,
+            SignInManager<User> signInManager,
             RoleManager<IdentityRole<Guid>> roleManager,
             IMapper mapper,
             IConfiguration configuration,

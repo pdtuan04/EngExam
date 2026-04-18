@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class initForReadDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -32,7 +32,7 @@ namespace Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Age = table.Column<int>(type: "int", nullable: false),
+                    Age = table.Column<int>(type: "int", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -61,8 +61,10 @@ namespace Infrastructure.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -76,8 +78,10 @@ namespace Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -199,8 +203,10 @@ namespace Infrastructure.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DurationInMinutes = table.Column<int>(type: "int", nullable: false),
                     ExamCategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -209,6 +215,56 @@ namespace Infrastructure.Migrations
                         name: "FK_Exams_ExamCategories_ExamCategoryId",
                         column: x => x.ExamCategoryId,
                         principalTable: "ExamCategories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Courses",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TopicId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Courses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Courses_Topics_TopicId",
+                        column: x => x.TopicId,
+                        principalTable: "Topics",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Practices",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TopicId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Practices", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Practices_Topics_TopicId",
+                        column: x => x.TopicId,
+                        principalTable: "Topics",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -223,8 +279,10 @@ namespace Infrastructure.Migrations
                     Explanation = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TopicId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -272,8 +330,10 @@ namespace Infrastructure.Migrations
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsCorrect = table.Column<bool>(type: "bit", nullable: false),
                     QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -312,11 +372,35 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PracticeDetails",
+                columns: table => new
+                {
+                    PracticeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PracticeDetails", x => new { x.PracticeId, x.QuestionId });
+                    table.ForeignKey(
+                        name: "FK_PracticeDetails_Practices_PracticeId",
+                        column: x => x.PracticeId,
+                        principalTable: "Practices",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PracticeDetails_Questions_QuestionId",
+                        column: x => x.QuestionId,
+                        principalTable: "Questions",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "DetailResults",
                 columns: table => new
                 {
                     ExamResultId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserAnswer = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsCorrect = table.Column<bool>(type: "bit", nullable: false),
                     Score = table.Column<double>(type: "float", nullable: false)
@@ -334,8 +418,7 @@ namespace Infrastructure.Migrations
                         name: "FK_DetailResults_Questions_QuestionId",
                         column: x => x.QuestionId,
                         principalTable: "Questions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.InsertData(
@@ -352,25 +435,25 @@ namespace Infrastructure.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "Age", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { new Guid("8d581a98-361e-4333-a651-74e88ef572a4"), 0, 0, "f67e2437-61a2-4458-ac14-de7ab48158b6", "user@gmail.com", true, false, null, "USER@GMAIL.COM", "USER", "AQAAAAIAAYagAAAAEN8TWXW9pNZ+VVyeftOLixsSfyDOtPTZpv84QtbFESyzd6kZ0i70eIPvnvNBKX0Q9Q==", null, false, "DF7GIIY7UNBVCVLZD73QO6PGSVQXBSTW", false, "user" },
-                    { new Guid("9ae1058d-b602-4025-ab1d-74e7bced8f3b"), 0, 0, "6e66d8c1-89da-46df-bc24-ec54c7e7e7cf", "admin@gmail.com", true, false, null, "ADMIN@GMAIL.COM", "ADMIN", "AQAAAAIAAYagAAAAEFY87mzNg88TIJtuXRcRIeT0MXYto4NkcukxwFGpl+p5IHBJVqlPbyFx9UJIOmu7eA==", null, false, "3XVVZIW5RPRWT7MKN3Y6VRNTHXY2JGK5", false, "admin" }
+                    { new Guid("8d581a98-361e-4333-a651-74e88ef572a4"), 0, null, "f67e2437-61a2-4458-ac14-de7ab48158b6", "user@gmail.com", true, false, null, "USER@GMAIL.COM", "USER", "AQAAAAIAAYagAAAAEN8TWXW9pNZ+VVyeftOLixsSfyDOtPTZpv84QtbFESyzd6kZ0i70eIPvnvNBKX0Q9Q==", null, false, "DF7GIIY7UNBVCVLZD73QO6PGSVQXBSTW", false, "user" },
+                    { new Guid("9ae1058d-b602-4025-ab1d-74e7bced8f3b"), 0, null, "6e66d8c1-89da-46df-bc24-ec54c7e7e7cf", "admin@gmail.com", true, false, null, "ADMIN@GMAIL.COM", "ADMIN", "AQAAAAIAAYagAAAAEFY87mzNg88TIJtuXRcRIeT0MXYto4NkcukxwFGpl+p5IHBJVqlPbyFx9UJIOmu7eA==", null, false, "3XVVZIW5RPRWT7MKN3Y6VRNTHXY2JGK5", false, "admin" }
                 });
 
             migrationBuilder.InsertData(
                 table: "ExamCategories",
-                columns: new[] { "Id", "CreatedAt", "Description", "ImageUrl", "Name", "UpdatedAt" },
+                columns: new[] { "Id", "CreatedAt", "Description", "ImageUrl", "IsActive", "IsDeleted", "Name", "UpdatedAt" },
                 values: new object[,]
                 {
-                    { new Guid("11111111-1111-1111-1111-111111111111"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Grammar examination category", "/uploads/images/category_img.jpg", "Grammar", null },
-                    { new Guid("2af67565-75f7-4511-9b67-3762e917c173"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Vocabulary exam", "/uploads/images/category_img.jpg", "Vocabulary", null },
-                    { new Guid("48b31fd9-e2a2-4b6a-9884-e2b6c664715b"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Listening exam", "/uploads/images/category_img.jpg", "Listening", null },
-                    { new Guid("c5f9dd20-276f-4a4a-bbb1-26b795a8514c"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Reading", "/uploads/images/category_img.jpg", "Reading", null }
+                    { new Guid("11111111-1111-1111-1111-111111111111"), new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Grammar examination category", "/uploads/images/category_img.jpg", true, false, "Grammar", null },
+                    { new Guid("2af67565-75f7-4511-9b67-3762e917c173"), new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Vocabulary exam", "/uploads/images/category_img.jpg", true, false, "Vocabulary", null },
+                    { new Guid("48b31fd9-e2a2-4b6a-9884-e2b6c664715b"), new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Listening exam", "/uploads/images/category_img.jpg", true, false, "Listening", null },
+                    { new Guid("c5f9dd20-276f-4a4a-bbb1-26b795a8514c"), new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Reading", "/uploads/images/category_img.jpg", true, false, "Reading", null }
                 });
 
             migrationBuilder.InsertData(
                 table: "Topics",
-                columns: new[] { "Id", "CreatedAt", "Description", "Name", "UpdatedAt" },
-                values: new object[] { new Guid("22222222-2222-2222-2222-222222222222"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Basic grammar rules", "Basic Grammar", null });
+                columns: new[] { "Id", "CreatedAt", "Description", "IsActive", "IsDeleted", "Name", "UpdatedAt" },
+                values: new object[] { new Guid("22222222-2222-2222-2222-222222222222"), new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Basic grammar rules", true, false, "Basic Grammar", null });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
@@ -383,22 +466,22 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.InsertData(
                 table: "Exams",
-                columns: new[] { "Id", "CreatedAt", "Description", "DurationInMinutes", "ExamCategoryId", "Title", "UpdatedAt" },
-                values: new object[] { new Guid("77777777-7777-7777-7777-777777777777"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Basic Grammar Test", 10, new Guid("11111111-1111-1111-1111-111111111111"), "Basic Grammar Test", null });
+                columns: new[] { "Id", "CreatedAt", "Description", "DurationInMinutes", "ExamCategoryId", "IsActive", "IsDeleted", "Title", "UpdatedAt" },
+                values: new object[] { new Guid("77777777-7777-7777-7777-777777777777"), new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Basic Grammar Test", 10, new Guid("11111111-1111-1111-1111-111111111111"), true, false, "Basic Grammar Test", null });
 
             migrationBuilder.InsertData(
                 table: "Questions",
-                columns: new[] { "Id", "Content", "CreatedAt", "Explanation", "ImageUrl", "QuestionTypes", "TopicId", "UpdatedAt" },
-                values: new object[] { new Guid("33333333-3333-3333-3333-333333333333"), "She ___ to school every day.", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "With third person singular, use 'goes'.", null, 0, new Guid("22222222-2222-2222-2222-222222222222"), null });
+                columns: new[] { "Id", "Content", "CreatedAt", "Explanation", "ImageUrl", "IsActive", "IsDeleted", "QuestionTypes", "TopicId", "UpdatedAt" },
+                values: new object[] { new Guid("33333333-3333-3333-3333-333333333333"), "She ___ to school every day.", new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "With third person singular, use 'goes'.", null, true, false, 0, new Guid("22222222-2222-2222-2222-222222222222"), null });
 
             migrationBuilder.InsertData(
                 table: "Answers",
-                columns: new[] { "Id", "Content", "CreatedAt", "IsCorrect", "QuestionId", "UpdatedAt" },
+                columns: new[] { "Id", "Content", "CreatedAt", "IsActive", "IsCorrect", "IsDeleted", "QuestionId", "UpdatedAt" },
                 values: new object[,]
                 {
-                    { new Guid("44444444-4444-4444-4444-444444444444"), "go", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, new Guid("33333333-3333-3333-3333-333333333333"), null },
-                    { new Guid("55555555-5555-5555-5555-555555555555"), "goes", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), true, new Guid("33333333-3333-3333-3333-333333333333"), null },
-                    { new Guid("66666666-6666-6666-6666-666666666666"), "going", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, new Guid("33333333-3333-3333-3333-333333333333"), null }
+                    { new Guid("44444444-4444-4444-4444-444444444444"), "go", new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), true, false, false, new Guid("33333333-3333-3333-3333-333333333333"), null },
+                    { new Guid("55555555-5555-5555-5555-555555555555"), "goes", new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), true, true, false, new Guid("33333333-3333-3333-3333-333333333333"), null },
+                    { new Guid("66666666-6666-6666-6666-666666666666"), "going", new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), true, false, false, new Guid("33333333-3333-3333-3333-333333333333"), null }
                 });
 
             migrationBuilder.InsertData(
@@ -451,6 +534,11 @@ namespace Infrastructure.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Courses_TopicId",
+                table: "Courses",
+                column: "TopicId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_DetailResults_QuestionId",
                 table: "DetailResults",
                 column: "QuestionId");
@@ -474,6 +562,16 @@ namespace Infrastructure.Migrations
                 name: "IX_Exams_ExamCategoryId",
                 table: "Exams",
                 column: "ExamCategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PracticeDetails_QuestionId",
+                table: "PracticeDetails",
+                column: "QuestionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Practices_TopicId",
+                table: "Practices",
+                column: "TopicId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Questions_TopicId",
@@ -503,16 +601,25 @@ namespace Infrastructure.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Courses");
+
+            migrationBuilder.DropTable(
                 name: "DetailResults");
 
             migrationBuilder.DropTable(
                 name: "ExamDetails");
 
             migrationBuilder.DropTable(
+                name: "PracticeDetails");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "ExamResults");
+
+            migrationBuilder.DropTable(
+                name: "Practices");
 
             migrationBuilder.DropTable(
                 name: "Questions");

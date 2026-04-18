@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions;
 using Application.Abstractions.Messaging;
+using Application.Abstractions.Repositories.Read;
 using Application.Models.Exam;
 using Application.Models.Pagination;
 using System;
@@ -12,14 +13,14 @@ namespace Application.Features.Exam.Queries
 {
     public sealed class GetExamPaginatedQueryHandler : IQueryHandler<GetExamPaginatedQuery, PaginationResponse<ExamResponse>>
     {
-        private readonly IUnitOfWork _unitOfWork;
-        public GetExamPaginatedQueryHandler(IUnitOfWork unitOfWork)
+        private readonly IExamReadRepository _examReadRepository;
+        public GetExamPaginatedQueryHandler(IExamReadRepository examReadRepository)
         {
-            _unitOfWork = unitOfWork;
+            _examReadRepository = examReadRepository;
         }
         public async Task<PaginationResponse<ExamResponse>> Handle(GetExamPaginatedQuery request, CancellationToken cancellationToken)
         {
-            return await _unitOfWork.ExamRepository.ToPagination<ExamResponse>(request.PageNumber, request.PageSize, cancellationToken: cancellationToken);
+            return await _examReadRepository.ToPagination<ExamResponse>(request.PageNumber, request.PageSize, cancellationToken: cancellationToken);
         }
     }
 }

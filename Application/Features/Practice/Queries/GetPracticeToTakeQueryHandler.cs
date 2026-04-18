@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions;
 using Application.Abstractions.Messaging;
+using Application.Abstractions.Repositories.Read;
 using Application.Models.Answer;
 using Application.Models.Practice;
 using Application.Models.Question;
@@ -13,14 +14,14 @@ namespace Application.Features.Practice.Queries
 {
     public sealed class GetPracticeToTakeQueryHandler : IQueryHandler<GetPracticeToTakeQuery, DoPracticeResponse>
     {
-        private readonly IUnitOfWork _unitOfWork;
-        public GetPracticeToTakeQueryHandler(IUnitOfWork unitOfWork)
+        private readonly IPracticeReadRepository _practiceReadRepository;
+        public GetPracticeToTakeQueryHandler(IPracticeReadRepository practiceReadRepository)
         {
-            _unitOfWork = unitOfWork;
+            _practiceReadRepository = practiceReadRepository;
         }
         public async Task<DoPracticeResponse> Handle(GetPracticeToTakeQuery request, CancellationToken cancellationToken)
         {
-            var result = await _unitOfWork.PracticeRepository.GetPracticeToTake(request.Id) ?? throw new NullReferenceException();
+            var result = await _practiceReadRepository.GetPracticeToTake(request.Id) ?? throw new NullReferenceException();
             return new DoPracticeResponse
             (
                 Id: result.Id,

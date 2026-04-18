@@ -1,20 +1,19 @@
-﻿using System;
+﻿using Application.Abstractions.Repositories;
+using Application.Abstractions.Repositories.Read;
+using AutoMapper;
+using Infrastructure.Repositories.SQLServer_Read.DataContext;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Application.Abstractions.Repositories;
-using Application.Common;
-using AutoMapper;
-using Infrastructure.Common;
-using Infrastructure.Repositories.SQLServer.DataContext;
-using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Repositories.SQLServer
+namespace Infrastructure.Repositories.SQLServer_Read
 {
-    public class ExamRepository : GenericRepository<Domain.Entity.Exam, Exam>, IExamRepository
+    public class ExamReadRepository : GenericReadRepository<Domain.Entity.Exam, Exam>, IExamReadRepository
     {
-        public ExamRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper)
+        public ExamReadRepository(ApplicationDbReadContext context, IMapper mapper) : base(context, mapper)
         {
         }
         public async Task<IEnumerable<Domain.Entity.Exam>> GetAllAsync()
@@ -42,13 +41,6 @@ namespace Infrastructure.Repositories.SQLServer
             return _mapper.Map<IEnumerable<Domain.Entity.Exam>>(dbExams);
         }
 
-        public async Task<Guid> AddAsync(Domain.Entity.Exam exam)
-        {
-            var dbExam = _mapper.Map<DataContext.Exam>(exam);
-            await _dbContext.Exams.AddAsync(dbExam);
-            return dbExam.Id;
-        }
-
         public async Task<Domain.Entity.Exam> GetExamToTake(Guid id)
         {
             var dbExam = await _dbContext.Exams
@@ -68,12 +60,6 @@ namespace Infrastructure.Repositories.SQLServer
                 .ThenInclude(q => q.Answers)
                 .FirstOrDefaultAsync(e => e.Id == id);
             return _mapper.Map<Domain.Entity.Exam>(dbExam);
-        }
-        public async Task<bool> SoftDelete(Guid id)
-        {
-            var dbExam = await _dbContext.Exams.FirstOrDefaultAsync(e => e.Id == id) ?? throw new NullReferenceException();
-            dbExam.IsActive = false;
-            return true;
         }
     }
 }

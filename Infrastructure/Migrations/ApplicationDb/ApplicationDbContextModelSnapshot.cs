@@ -4,19 +4,16 @@ using Infrastructure.Repositories.SQLServer.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Infrastructure.Migrations
+namespace Infrastructure.Migrations.ApplicationDb
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260412091854_add_course")]
-    partial class add_course
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,10 +35,13 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsActicve")
+                    b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsCorrect")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<Guid>("QuestionId")
@@ -62,8 +62,9 @@ namespace Infrastructure.Migrations
                             Id = new Guid("44444444-4444-4444-4444-444444444444"),
                             Content = "go",
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsActicve = true,
+                            IsActive = true,
                             IsCorrect = false,
+                            IsDeleted = false,
                             QuestionId = new Guid("33333333-3333-3333-3333-333333333333")
                         },
                         new
@@ -71,8 +72,9 @@ namespace Infrastructure.Migrations
                             Id = new Guid("55555555-5555-5555-5555-555555555555"),
                             Content = "goes",
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsActicve = true,
+                            IsActive = true,
                             IsCorrect = true,
+                            IsDeleted = false,
                             QuestionId = new Guid("33333333-3333-3333-3333-333333333333")
                         },
                         new
@@ -80,8 +82,9 @@ namespace Infrastructure.Migrations
                             Id = new Guid("66666666-6666-6666-6666-666666666666"),
                             Content = "going",
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsActicve = true,
+                            IsActive = true,
                             IsCorrect = false,
+                            IsDeleted = false,
                             QuestionId = new Guid("33333333-3333-3333-3333-333333333333")
                         });
                 });
@@ -134,7 +137,10 @@ namespace Infrastructure.Migrations
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsActicve")
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
@@ -172,7 +178,10 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("ExamCategoryId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("IsActicve")
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<string>("Title")
@@ -196,7 +205,8 @@ namespace Infrastructure.Migrations
                             Description = "Basic Grammar Test",
                             DurationInMinutes = 10,
                             ExamCategoryId = new Guid("11111111-1111-1111-1111-111111111111"),
-                            IsActicve = true,
+                            IsActive = true,
+                            IsDeleted = false,
                             Title = "Basic Grammar Test"
                         });
                 });
@@ -217,7 +227,10 @@ namespace Infrastructure.Migrations
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsActicve")
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
@@ -238,7 +251,8 @@ namespace Infrastructure.Migrations
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Grammar examination category",
                             ImageUrl = "/uploads/images/category_img.jpg",
-                            IsActicve = true,
+                            IsActive = true,
+                            IsDeleted = false,
                             Name = "Grammar"
                         },
                         new
@@ -247,7 +261,8 @@ namespace Infrastructure.Migrations
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Reading",
                             ImageUrl = "/uploads/images/category_img.jpg",
-                            IsActicve = true,
+                            IsActive = true,
+                            IsDeleted = false,
                             Name = "Reading"
                         },
                         new
@@ -256,7 +271,8 @@ namespace Infrastructure.Migrations
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Vocabulary exam",
                             ImageUrl = "/uploads/images/category_img.jpg",
-                            IsActicve = true,
+                            IsActive = true,
+                            IsDeleted = false,
                             Name = "Vocabulary"
                         },
                         new
@@ -265,7 +281,8 @@ namespace Infrastructure.Migrations
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Listening exam",
                             ImageUrl = "/uploads/images/category_img.jpg",
-                            IsActicve = true,
+                            IsActive = true,
+                            IsDeleted = false,
                             Name = "Listening"
                         });
                 });
@@ -335,7 +352,10 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsActicve")
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<string>("Title")
@@ -389,7 +409,10 @@ namespace Infrastructure.Migrations
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsActicve")
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<int>("QuestionTypes")
@@ -414,7 +437,8 @@ namespace Infrastructure.Migrations
                             Content = "She ___ to school every day.",
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Explanation = "With third person singular, use 'goes'.",
-                            IsActicve = true,
+                            IsActive = true,
+                            IsDeleted = false,
                             QuestionTypes = 0,
                             TopicId = new Guid("22222222-2222-2222-2222-222222222222")
                         });
@@ -433,7 +457,10 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsActicve")
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
@@ -453,7 +480,8 @@ namespace Infrastructure.Migrations
                             Id = new Guid("22222222-2222-2222-2222-222222222222"),
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Basic grammar rules",
-                            IsActicve = true,
+                            IsActive = true,
+                            IsDeleted = false,
                             Name = "Basic Grammar"
                         });
                 });

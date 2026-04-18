@@ -1,0 +1,20 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Domain.Common;
+
+namespace Infrastructure.Repositories.SQLServer_Read.DataContext
+{
+    public class Exam:BaseEntity, ISoftDeletable
+    {
+        public required string Title { get; set; }
+        public string? Description { get; set; }
+        public required int DurationInMinutes { get; set; }
+        public ICollection<ExamDetail> ExamDetail { get; set; } = null!;
+        public required Guid ExamCategoryId { get; set; }
+        public ExamCategory? ExamCategory { get; set; }
+        public bool IsDeleted { get; set; }
+    }
+}

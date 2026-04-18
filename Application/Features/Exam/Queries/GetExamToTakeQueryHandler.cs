@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions;
 using Application.Abstractions.Messaging;
+using Application.Abstractions.Repositories.Read;
 using Application.Models.Answer;
 using Application.Models.Exam;
 using Application.Models.Question;
@@ -13,14 +14,14 @@ namespace Application.Features.Exam.Queries
 {
     public sealed class GetExamToTakeQueryHandler : IQueryHandler<GetExamToTakeQuery, TakeExamResponse>
     {
-        private readonly IUnitOfWork _unitOfWork;
-        public GetExamToTakeQueryHandler(IUnitOfWork unitOfWork)
+        private readonly IExamReadRepository _examReadRepository;
+        public GetExamToTakeQueryHandler(IExamReadRepository examReadRepository)
         {
-            _unitOfWork = unitOfWork;
+            _examReadRepository = examReadRepository;
         }
         public async Task<TakeExamResponse> Handle(GetExamToTakeQuery request, CancellationToken cancellationToken)
         {
-            var result = await _unitOfWork.ExamRepository.GetExamToTake(request.Id);
+            var result = await _examReadRepository.GetExamToTake(request.Id);
             return new TakeExamResponse
             (
                 Id: result.Id,

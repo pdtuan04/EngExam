@@ -5,15 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Domain.Common;
 using Domain.Entity;
-using Infrastructure.Repositories.SQLServer.Extensions;
-using Infrastructure.Repositories.SQLServer_Read.DataContext;
+using Infrastructure.Repositories.SQLServer_Read.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Repositories.SQLServer.DataContext
+namespace Infrastructure.Repositories.SQLServer_Read.DataContext
 {
-    public class ApplicationDbContext : IdentityDbContext<User,IdentityRole<Guid>,Guid>
+    public class ApplicationDbReadContext : IdentityDbContext<User,IdentityRole<Guid>,Guid>
     {
         //private readonly string _connectionString;
         //public ApplicationDbContext()
@@ -28,7 +27,7 @@ namespace Infrastructure.Repositories.SQLServer.DataContext
         //{
         //    optionsBuilder.UseSqlServer(_connectionString);
         //}
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        public ApplicationDbReadContext(DbContextOptions<ApplicationDbReadContext> options)
         : base(options)
         {
         }
@@ -42,7 +41,6 @@ namespace Infrastructure.Repositories.SQLServer.DataContext
         public DbSet<ExamCategory> ExamCategories { get; set; }
         public DbSet<Practice> Practices { get; set; }
         public DbSet<PracticeDetail> PracticeDetails { get; set; }
-
         public DbSet<Course> Courses { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

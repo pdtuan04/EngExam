@@ -1,22 +1,17 @@
-﻿using Application.Abstractions.Repositories;
-using AutoMapper;
-using Infrastructure.Repositories.SQLServer.DataContext;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 
-namespace Infrastructure.Repositories.SQLServer
+using Application.Abstractions.Repositories.Read;
+using AutoMapper;
+using Infrastructure.Repositories.SQLServer_Read.DataContext;
+using Microsoft.AspNetCore.Identity;
+
+namespace Infrastructure.Repositories.SQLServer_Read
 {
-    public class UserRepository : GenericRepository<Domain.Entity.User, User>, IUserRepository
+    public class UserReadRepository : GenericReadRepository<Domain.Entity.User, User>, IUserReadRepository
     {
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
-        public UserRepository(UserManager<User> userManager, IMapper mapper) : base(null,mapper)
+        public UserReadRepository(UserManager<User> userManager, IMapper mapper) : base(null,mapper)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         }

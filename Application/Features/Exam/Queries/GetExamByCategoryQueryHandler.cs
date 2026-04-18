@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions;
 using Application.Abstractions.Messaging;
+using Application.Abstractions.Repositories.Read;
 using Application.Models.Exam;
 using System;
 using System.Collections.Generic;
@@ -11,14 +12,14 @@ namespace Application.Features.Exam.Queries
 {
     public sealed class GetExamByCategoryQueryHandler: IQueryHandler<GetExamByCategoryQuery, IEnumerable<ExamResponse>>
     {
-        private readonly IUnitOfWork _unitOfWork;
-        public GetExamByCategoryQueryHandler(IUnitOfWork unitOfWork)
+        private readonly IExamReadRepository _examReadRepository;
+        public GetExamByCategoryQueryHandler(IExamReadRepository examReadRepository)
         {
-            _unitOfWork = unitOfWork;
+            _examReadRepository = examReadRepository;
         }
         public async Task<IEnumerable<ExamResponse>> Handle(GetExamByCategoryQuery request, CancellationToken cancellationToken)
         {
-            var exams = await _unitOfWork.ExamRepository.GetExamsByCategoryIdAsync(request.CategoryId);
+            var exams = await _examReadRepository.GetExamsByCategoryIdAsync(request.CategoryId);
             return exams.Select(e => new ExamResponse
             (
                 Id: e.Id,

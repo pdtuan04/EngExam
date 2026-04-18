@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Repositories.SQLServer.DataContext
+namespace Infrastructure.Repositories.SQLServer_Read.DataContext
 {
     public abstract class BaseEntity
     {

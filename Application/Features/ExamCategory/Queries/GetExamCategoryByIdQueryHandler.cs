@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions;
 using Application.Abstractions.Messaging;
+using Application.Abstractions.Repositories.Read;
 using Application.Common.Exceptions;
 using Application.Models.ExamCategory;
 using System;
@@ -12,14 +13,14 @@ namespace Application.Features.ExamCategory.Queries
 {
     internal class GetExamCategoryByIdQueryHandler : IQueryHandler<GetExamCategoryByIdQuery, ExamCategoryResponse>
     {
-        private readonly IUnitOfWork _unitOfWork;
-        public GetExamCategoryByIdQueryHandler(IUnitOfWork unitOfWork)
+        private readonly IExamCategoryReadRepository _examCategoryReadRepository;
+        public GetExamCategoryByIdQueryHandler(IExamCategoryReadRepository examCategoryReadRepository)
         {
-            _unitOfWork = unitOfWork;
+            _examCategoryReadRepository = examCategoryReadRepository;
         }
         public async Task<ExamCategoryResponse> Handle(GetExamCategoryByIdQuery request, CancellationToken cancellationToken)
         {
-            var examCategory = await _unitOfWork.ExamCategoryRepository.GetByIdAsync(request.Id) ?? throw new NotFoundException("Category", request.Id);
+            var examCategory = await _examCategoryReadRepository.GetByIdAsync(request.Id) ?? throw new NotFoundException("Category", request.Id);
             return new ExamCategoryResponse(examCategory.Id, examCategory.Name, examCategory.Description, examCategory.ImageUrl);
         }
     }
