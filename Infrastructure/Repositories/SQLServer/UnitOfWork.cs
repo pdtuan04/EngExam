@@ -21,6 +21,7 @@ namespace Infrastructure.Repositories.SQLServer
         public IExamCategoryRepository ExamCategoryRepository { get; }
         public IPracticeRepository PracticeRepository { get; }
         public ICourseRepository CourseRepository { get; }
+        public ITopicRepository TopicRepository { get; }
         public UnitOfWork(ApplicationDbContext applicationDbContext, IMapper mapper)
         {
             this._applicationDbContext = applicationDbContext ?? throw new ArgumentNullException(nameof(applicationDbContext));
@@ -32,6 +33,7 @@ namespace Infrastructure.Repositories.SQLServer
             ExamCategoryRepository = new ExamCategoryRepository(_applicationDbContext, _mapper);
             PracticeRepository = new PracticeRepository(_applicationDbContext, _mapper);
             CourseRepository = new CourseRepository(_applicationDbContext, _mapper);
+            TopicRepository = new TopicRepository(_applicationDbContext, _mapper);
         }
         //modify later to support real transaction
         public Task BeginTransactionAsync()

@@ -12,7 +12,6 @@ namespace Domain.Common
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; set; }
         public required bool IsActive { get; set; }
-        public bool IsDeleted { get; set; } = false;
         private void AddCreateAt()
         {
             CreatedAt = DateTime.UtcNow;

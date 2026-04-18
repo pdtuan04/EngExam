@@ -20,7 +20,7 @@ namespace Application.Features.Practice.Queries
         }
         public async Task<DoPracticeResponse> Handle(GetPracticeToTakeQuery request, CancellationToken cancellationToken)
         {
-            var result = await _unitOfWork.PracticeRepository.GetPracticeToTake(request.Id);
+            var result = await _unitOfWork.PracticeRepository.GetPracticeToTake(request.Id) ?? throw new NullReferenceException();
             return new DoPracticeResponse
             (
                 Id: result.Id,

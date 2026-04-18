@@ -16,6 +16,7 @@ namespace Application.Abstractions
         IExamCategoryRepository ExamCategoryRepository { get; }
         IPracticeRepository PracticeRepository { get; }
         ICourseRepository  CourseRepository { get; }
+        ITopicRepository TopicRepository { get; }
         Task BeginTransactionAsync();
         Task SaveChangesAsync();
         Task CancelAsync();

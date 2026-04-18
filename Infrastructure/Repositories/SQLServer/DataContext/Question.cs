@@ -8,7 +8,7 @@ using Domain.Enums;
 
 namespace Infrastructure.Repositories.SQLServer.DataContext
 {
-    public class Question:BaseEntity
+    public class Question:BaseEntity, ISoftDeletable
     {
         public required string Content { get; set; }
         public QuestionTypes QuestionTypes { get; set; }
@@ -20,6 +20,6 @@ namespace Infrastructure.Repositories.SQLServer.DataContext
         public ICollection<PracticeDetail> PracticeDetails { get; set; } = null!;
         public required Guid TopicId { get; set; }
         public Topic? Topic { get; set; } = null!;
-
+        public bool IsDeleted { get; set; }
     }
 }

@@ -7,7 +7,7 @@ using Domain.Common;
 
 namespace Domain.Entity
 {
-    public class Exam:BaseEntity
+    public class Exam:BaseEntity , ISoftDeletable
     {
         public required string Title { get; set; }
         public string? Description { get; set; }
@@ -49,5 +49,6 @@ namespace Domain.Entity
             }
             examDetail.Score = score;
         }
+        public bool IsDeleted { get ; set ; }
     }
 }

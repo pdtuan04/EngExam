@@ -7,7 +7,7 @@ using Domain.Common;
 
 namespace Infrastructure.Repositories.SQLServer.DataContext
 {
-    public class Exam:BaseEntity
+    public class Exam:BaseEntity, ISoftDeletable
     {
         public required string Title { get; set; }
         public string? Description { get; set; }
@@ -15,5 +15,6 @@ namespace Infrastructure.Repositories.SQLServer.DataContext
         public ICollection<ExamDetail> ExamDetail { get; set; } = null!;
         public required Guid ExamCategoryId { get; set; }
         public ExamCategory? ExamCategory { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

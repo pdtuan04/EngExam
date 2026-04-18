@@ -154,5 +154,25 @@ namespace EngExam.Controllers
                 message = "Get paginated exams successfully"
             });
         }
+        [HttpGet("do-exam/{id}")]
+        public async Task<IActionResult> GetExamToTake(Guid id)
+        {
+            var query = new GetExamToTakeQuery(id);
+            var result = await Sender.Send(query);
+            if (result == null)
+            {
+                return NotFound(new
+                {
+                    success = false,
+                    message = "No exam found"
+                });
+            }
+            return Ok(new
+            {
+                success = true,
+                data = result,
+                message = "Get exam by id successfully"
+            });
+        }
     }
 }

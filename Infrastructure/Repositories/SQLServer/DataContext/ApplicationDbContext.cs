@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Domain.Common;
 using Domain.Entity;
 using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Identity;
@@ -45,6 +46,10 @@ namespace Infrastructure.Repositories.SQLServer.DataContext
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Exam>().HasQueryFilter(x => !x.IsDeleted);
+            modelBuilder.Entity<ExamCategory>().HasQueryFilter(x => !x.IsDeleted);
+            modelBuilder.Entity<ExamCategory>().HasQueryFilter(x => !x.IsDeleted);
+
             modelBuilder.Entity<ExamDetail>()
                 .HasKey(ed => new { ed.ExamId, ed.QuestionId });
             modelBuilder.Entity<ExamDetail>()

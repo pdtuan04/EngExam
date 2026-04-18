@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories.SQLServer.DataContext
 {
-    public class ExamCategory : BaseEntity
+    public class ExamCategory : BaseEntity , ISoftDeletable
     {
         public required string Name { get; set; }
         public required string Description { get; set; }
         public string? ImageUrl { get; set; }
         public ICollection<Exam> Exams { get; set; } = null!;
+        public bool IsDeleted { get; set; }
     }
 }

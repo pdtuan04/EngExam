@@ -79,7 +79,7 @@ RegisterServicesForApp(builder.Configuration, builder.Services);
 
 builder.Services.AddHttpClient();
 var app = builder.Build();
-
+app.UseStaticFiles();
 // Configure the HTTP request pipeline.
 app.UseCors(MyAllowSpecificOrigins);
 if (app.Environment.IsDevelopment())
