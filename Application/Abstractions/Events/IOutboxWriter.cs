@@ -1,5 +1,4 @@
-﻿using MediatR;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Application.Abstractions.Events
 {
-    public interface IIntegationEvent : INotification
+    public interface IOutboxWriter
     {
-        Guid EventId { get; init; }
+        void Enqueue<T>(T @event) where T : IEventBus;
     }
 }

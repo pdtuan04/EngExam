@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Events
 {
-    internal sealed class EventBus : IEventBus
+    public sealed class EventBus(InmemoryEventBus queue) : IEventBus
     {
         public async Task PublishAsync<TEvent>(TEvent integrationEvent, CancellationToken cancellationToken = default) where TEvent : IIntegationEvent
         {
-            throw new NotImplementedException();
+            await queue.Writer.WriteAsync(integrationEvent, cancellationToken);
         }
     }
 }
