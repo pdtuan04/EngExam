@@ -1,15 +1,16 @@
-﻿using System;
+﻿using Domain.Common;
+using Domain.Entity;
+using Infrastructure.Repositories.SQLServer.Extensions;
+using Infrastructure.Repositories.SQLServer_Read.DataContext;
+using MassTransit;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Domain.Common;
-using Domain.Entity;
-using Infrastructure.Repositories.SQLServer.Extensions;
-using Infrastructure.Repositories.SQLServer_Read.DataContext;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories.SQLServer.DataContext
 {
@@ -43,10 +44,12 @@ namespace Infrastructure.Repositories.SQLServer.DataContext
         public DbSet<Practice> Practices { get; set; }
         public DbSet<PracticeDetail> PracticeDetails { get; set; }
         public DbSet<Course> Courses { get; set; }
-        public DbSet<OutboxMessage> OutboxMessages { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.AddInboxStateEntity();
+            modelBuilder.AddOutboxMessageEntity();
+            modelBuilder.AddOutboxStateEntity();
             modelBuilder.Entity<Exam>().HasQueryFilter(x => !x.IsDeleted);
             modelBuilder.Entity<ExamCategory>().HasQueryFilter(x => !x.IsDeleted);
             modelBuilder.Entity<Answer>().HasQueryFilter(x => !x.IsDeleted);

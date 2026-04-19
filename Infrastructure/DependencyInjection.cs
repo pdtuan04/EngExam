@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Events;
+using Application.Abstractions.Handler;
 using Infrastructure.Events;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -13,9 +14,7 @@ namespace Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
-            services.AddSingleton<InmemoryEventBus>();
-            services.AddScoped<IEventBus, EventBus>();
-            services.AddHostedService<IntegrationEventProcessJob>();
+            services.AddTransient<IEventBus, EventBus>();
             return services;
         }
     }

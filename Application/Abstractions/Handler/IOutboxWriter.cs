@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Abstractions.Events
+namespace Application.Abstractions.Handler
 {
     public interface IOutboxWriter
     {
-        void Enqueue<T>(T @event) where T : IEventBus;
+        Task AddOutboxMessage<T>(T message) where T : notnull;
     }
 }

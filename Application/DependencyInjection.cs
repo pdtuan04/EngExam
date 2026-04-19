@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Application.Behaviors;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,12 @@ namespace Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly));
+            services.AddMediatR(cfg => {
+                cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly);
+                //cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));//implement later
+                cfg.AddOpenBehavior(typeof(QueryCachingBehavior<,>));
+                cfg.AddOpenBehavior(typeof(TransactionBehavior<,>));
+            });
             return services;
         }   
     }

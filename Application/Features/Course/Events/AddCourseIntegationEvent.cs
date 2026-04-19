@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace Application.Features.Course.Events
 {
-    public record AddCourseIntegationEvent(Guid Id) : IIntegationEvent;
+    public record AddCourseIntegationEvent(Guid Id);
 }

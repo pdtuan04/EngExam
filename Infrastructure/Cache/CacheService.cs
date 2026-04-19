@@ -42,5 +42,10 @@ namespace Infrastructure.Cache
             await _cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(value, serializerOptions), options, cancellationToken);
             return value;
         }
+
+        public async Task RemoveCacheAsync(string cacheKey, CancellationToken cancellationToken = default)
+        {
+            await _cache.RemoveAsync(cacheKey, cancellationToken);
+        }
     }
 }
