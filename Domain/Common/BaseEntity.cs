@@ -11,7 +11,7 @@ namespace Domain.Common
         public required Guid Id { get; set; } 
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; set; }
-        public required bool IsActive { get; set; }
+        public bool IsActive { get; set; }
         private void AddCreateAt()
         {
             CreatedAt = DateTime.UtcNow;

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Abstractions.Events
+namespace Application.Features.ExamCategory.Events
 {
-    public abstract record Integation(Guid Id) : IIntegationEvent;
+    public sealed record DeletedExamCategoryEvent(Guid Id);
 }

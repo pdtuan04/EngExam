@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Repositories;
 using Application.Abstractions.Repositories.Read;
 using AutoMapper;
+using EFCore.BulkExtensions;
 using Infrastructure.Repositories.SQLServer_Read.DataContext;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -17,10 +18,24 @@ namespace Infrastructure.Repositories.SQLServer_Read
         {
         }
 
+        public async Task DeleteAsync(Guid categoryId)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<ICollection<Domain.Entity.ExamCategory>> GetAllAsync()
         {
             var result = await _dbContext.ExamCategories.Where(e => e.IsActive == true).ToListAsync();
             return _mapper.Map<ICollection<Domain.Entity.ExamCategory>>(result);
+        }
+
+        public async Task UpsertAsync(Domain.Entity.ExamCategory examCategory)
+        {
+            var dbExamCategory = _mapper.Map<ExamCategory>(examCategory);
+            await _dbContext.BulkInsertOrUpdateAsync(new List<ExamCategory>
+            {
+                dbExamCategory
+            });
         }
     }
 }

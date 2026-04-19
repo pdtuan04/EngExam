@@ -22,6 +22,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Abstractions\Handler\IOutboxWriter.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MassTransit.Abstractions" Version="9.1.0" />
     <PackageReference Include="MediatR" Version="14.1.0" />
   </ItemGroup>
 

@@ -1,9 +1,12 @@
 using Application;
 using Application.Abstractions;
 using Application.Abstractions.Caching;
+using Application.Abstractions.Handler;
 using Application.Abstractions.Repositories;
+using Application.Abstractions.Repositories.Read;
 using Application.Behaviors;
 using Application.Common.Interfaces;
+using Application.Features.ExamCategory.Consumers;
 using Application.Handler;
 using Application.Handler.InterfaceHandler;
 using AutoMapper;
@@ -13,15 +16,20 @@ using EngExam.Middlewares;
 using EngExam.OptionsModels;
 using Hangfire;
 using Hangfire.SqlServer;
+using Infrastructure;
 using Infrastructure.Authentication;
 using Infrastructure.Cache;
 using Infrastructure.Email;
+using Infrastructure.Events;
 using Infrastructure.FileServices;
 using Infrastructure.Realtime;
 using Infrastructure.Repositories.SQLServer;
-using Infrastructure.Repositories.SQLServer.Mappers;
-using Infrastructure.Repositories.SQLServer_Read.DataContext;
 using Infrastructure.Repositories.SQLServer.DataContext;
+using Infrastructure.Repositories.SQLServer.Mappers;
+using Infrastructure.Repositories.SQLServer_Read;
+using Infrastructure.Repositories.SQLServer_Read.DataContext;
+using MassTransit;
+using MassTransit.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -31,9 +39,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
 using System.Text;
-using Application.Abstractions.Repositories.Read;
-using Infrastructure.Repositories.SQLServer_Read;
-using Infrastructure;
 //    /\_____/\
 //   / o   o   \
 //  (==  ^    ==)
@@ -251,11 +256,6 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
             service.GetRequiredService<ApplicationDbReadContext>(),
             service.GetRequiredService<IMapper>()));
     }
-    //CQRS
-    services.AddMediatR(cfg => {
-        cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
-        cfg.AddOpenBehavior(typeof(QueryCachingBehavior<,>));
-    });
 
     //cache
     services.AddSingleton<ICacheService, CacheService>();
@@ -273,7 +273,7 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
         });
     services.AddTransient<IUploadImageService>(service => new Infrastructure.FileServices.FileService(
         ));
-
+    
     //usecase
     services.AddTransient<IAuthIdentityService>(services => new AuthIdentityService(
         services.GetRequiredService<UserManager<Infrastructure.Repositories.SQLServer.DataContext.User>>(),
@@ -285,7 +285,48 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
         services.GetRequiredService<IBackgroundJobClient>()
         ));
     services.AddSignalR();
-
+    services.Configure<MessageBrokerOptions>(configuration.GetSection("MessageBrokerSetting"));
+    services.AddSingleton(services => services.GetRequiredService<IOptions<MessageBrokerOptions>>().Value);
+    services.AddMassTransit(busConfig =>
+    {
+        busConfig.AddConsumer<UpdateExamCategoryCacheConsumer>();
+        busConfig.AddConsumer<SyncExamCategoryReadDbConsumer>();
+        busConfig.AddConfigureEndpointsCallback((context, name, cfg) =>
+        {
+            cfg.UseMessageRetry(r => r.Immediate(5));
+            cfg.UseInMemoryOutbox(context);
+        });
+        busConfig.AddEntityFrameworkOutbox<ApplicationDbContext>(o =>
+        {
+            o.UseSqlServer();
+            o.UseBusOutbox(options =>
+            {
+                options.MessageDeliveryLimit = 100;
+                options.MessageDeliveryTimeout = TimeSpan.FromSeconds(45);
+                options.ConcurrentDeliveryLimit = 10;
+            });
+        });
+        busConfig.AddConfigureEndpointsCallback((context, name, cfg) =>
+        {
+            cfg.UseEntityFrameworkOutbox<ApplicationDbContext>(context, options =>
+            {
+                options.MessageDeliveryLimit = 100;
+                options.MessageDeliveryTimeout = TimeSpan.FromSeconds(45);
+                options.ConcurrentDeliveryLimit = 10;
+            });
+        });
+        busConfig.SetKebabCaseEndpointNameFormatter();
+        busConfig.UsingRabbitMq((context, config) =>
+        {
+            MessageBrokerOptions setting = context.GetRequiredService<MessageBrokerOptions>();
+            config.Host(new Uri(setting.Host), h =>
+            {
+                h.Username(setting.UserName);
+                h.Password(setting.Password);
+            });
+            config.ConfigureEndpoints(context);
+        });
+    }); 
 }
 void RegisterAIServices(ConfigurationManager configuration, IServiceCollection services, AIOptions aiOption)
 {

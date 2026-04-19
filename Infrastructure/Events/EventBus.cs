@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Events;
+using MassTransit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,11 +8,16 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Events
 {
-    public sealed class EventBus(InmemoryEventBus queue) : IEventBus
+    public sealed class EventBus : IEventBus
     {
-        public async Task PublishAsync<TEvent>(TEvent integrationEvent, CancellationToken cancellationToken = default) where TEvent : IIntegationEvent
+        private readonly IPublishEndpoint _publishEndpoint;
+        public EventBus(IPublishEndpoint publishEndpoint)
         {
-            await queue.Writer.WriteAsync(integrationEvent, cancellationToken);
+            _publishEndpoint = publishEndpoint;
+        }
+        public async Task PublishAsync<T>(T message, CancellationToken cancellationToken = default) where T : class
+        {
+            await _publishEndpoint.Publish(message, cancellationToken);
         }
     }
 }

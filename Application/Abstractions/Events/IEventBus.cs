@@ -8,6 +8,6 @@ namespace Application.Abstractions.Events
 {
     public interface IEventBus
     {
-        Task PublishAsync<TEvent>(TEvent integrationEvent, CancellationToken cancellationToken = default) where TEvent : IIntegationEvent;
+        Task PublishAsync<T>(T integrationEvent, CancellationToken cancellationToken = default) where T : class;
     }
 }

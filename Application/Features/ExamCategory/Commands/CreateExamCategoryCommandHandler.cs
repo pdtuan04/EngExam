@@ -1,7 +1,9 @@
 ﻿using Application.Abstractions;
 using Application.Abstractions.Caching;
 using Application.Abstractions.Events;
+using Application.Abstractions.Handler;
 using Application.Abstractions.Messaging;
+using Application.Features.ExamCategory.Events;
 using Application.Models.ExamCategory;
 using System;
 using System.Collections.Generic;
@@ -32,6 +34,8 @@ namespace Application.Features.ExamCategory.Commands
                 IsActive = true
             };
             await _unitOfWork.ExamCategoryRepository.AddAsync(examCategory);
+            var examCategoryCreatedEvent = new CreateExamCategoryEvent(examCategory.Id, examCategory.Name, examCategory.Description, examCategory.ImageUrl, examCategory.IsActive);
+            await _eventBus.PublishAsync(examCategoryCreatedEvent,cancellationToken);
             return new ExamCategoryResponse(examCategory.Id, examCategory.Name, examCategory.Description, examCategory.ImageUrl);
         }
     }
