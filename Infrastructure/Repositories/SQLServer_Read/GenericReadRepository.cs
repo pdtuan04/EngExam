@@ -6,7 +6,9 @@ using AutoMapper.Extensions.ExpressionMapping;
 using AutoMapper.QueryableExtensions;
 using Domain.Common;
 using Domain.Entity;
+using EFCore.BulkExtensions;
 using Infrastructure.Common;
+using Infrastructure.Repositories.SQLServer.DataContext;
 using Infrastructure.Repositories.SQLServer_Read;
 using Infrastructure.Repositories.SQLServer_Read.DataContext;
 using Microsoft.EntityFrameworkCore;
@@ -137,6 +139,22 @@ namespace Infrastructure.Repositories.SQLServer_Read
             var dbEntity = await query.FirstOrDefaultAsync();
 
             return _mapper.Map<TDomain>(dbEntity);
+        }
+
+        public async Task<bool> DeleteAsync(Guid id)
+        {
+            var dbEntity = await _dbSet.FindAsync(id);
+            if (dbEntity == null)
+                return false;
+            _dbSet.Remove(dbEntity);
+            await _dbContext.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task UpsertAsync(TDomain entity)
+        {
+            var dbEntity = _mapper.Map<TEntity>(entity);
+            await _dbContext.BulkInsertOrUpdateAsync(new List<TEntity> { dbEntity });
         }
     }
 }

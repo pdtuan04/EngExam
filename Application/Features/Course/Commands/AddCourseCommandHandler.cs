@@ -1,6 +1,8 @@
 ﻿using Application.Abstractions;
+using Application.Abstractions.Events;
 using Application.Abstractions.Messaging;
 using Application.Features.Course.Command;
+using Application.Features.Course.Events;
 using Application.Models.Course;
 using Domain.Entity;
 using System;
@@ -14,9 +16,11 @@ namespace Application.Features.Course.Commands
     public sealed class AddCourseCommandHandler : ICommandHandler<AddCourseCommand, CourseResponse>
     {
         private readonly IUnitOfWork _unitOfWork;
-        public AddCourseCommandHandler(IUnitOfWork unitOfWork)
+        private readonly IEventBus _eventBus;
+        public AddCourseCommandHandler(IUnitOfWork unitOfWork, IEventBus eventBus)
         {
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException();
+            _eventBus = eventBus ?? throw new ArgumentNullException();
         }
         public async Task<CourseResponse> Handle(AddCourseCommand request, CancellationToken cancellationToken)
         {
@@ -31,6 +35,16 @@ namespace Application.Features.Course.Commands
                 TopicId = request.TopicId,
             };
             await _unitOfWork.CourseRepository.AddAsync(course);
+            await _eventBus.PublishAsync(new CreateCourseEvent(
+                course.Id,
+                course.Name,
+                course.Description,
+                course.Content,
+                course.ImageUrl,
+                course.TopicId,
+                course.IsActive,
+                course.CreatedAt
+            ), cancellationToken);
             return new CourseResponse(course.Id, course.Name,course.Description, course.Content, course.ImageUrl, course.TopicId);
         }
     }

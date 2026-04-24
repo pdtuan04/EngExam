@@ -11,7 +11,7 @@ namespace Application.Abstractions.Repositories
 {
     public interface IPracticeRepository : IGenericRepository<Practice>
     {
-        Task<Practice> GetPracticeToTake(Guid id);
+        Task<Practice> GetPracticeDetail(Guid id);
         Task<PaginationResponse<PracticeResponse>> GetPracticePaginatedByTopicIdAsync(Guid topicId, int pageIndex, int pageSize, CancellationToken cancellationToken);
     }
 }

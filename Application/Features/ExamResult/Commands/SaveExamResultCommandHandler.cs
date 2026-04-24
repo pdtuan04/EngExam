@@ -1,6 +1,8 @@
 ﻿using Application.Abstractions;
+using Application.Abstractions.Events;
 using Application.Abstractions.Messaging;
 using Application.Common.Exceptions;
+using Application.Features.ExamResult.Events;
 using Application.Handler.InterfaceHandler;
 using Application.Models.Exam;
 using Application.Models.ExamResult;
@@ -18,10 +20,12 @@ namespace Application.Features.ExamResult.Commands
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IDictionary<QuestionTypes, IQuestionTypesHandler> _questionHandlers;
-        public SaveExamResultCommandHandler(IUnitOfWork unitOfWork, IDictionary<QuestionTypes, IQuestionTypesHandler> questionHandlers)
+        private readonly IEventBus _eventBus;
+        public SaveExamResultCommandHandler(IUnitOfWork unitOfWork, IDictionary<QuestionTypes, IQuestionTypesHandler> questionHandlers, IEventBus eventBus)
         {
             _unitOfWork = unitOfWork;
             _questionHandlers = questionHandlers;
+            _eventBus = eventBus;
         }
         public async Task<ExamResultDetailResponse> Handle(SaveExamResultCommand request, CancellationToken cancellationToken)
         {
@@ -40,6 +44,8 @@ namespace Application.Features.ExamResult.Commands
                 AnswerHistory = histories
             };
             await _unitOfWork.ExamResultRepository.AddAsync(examResult);
+            var examResultEvent = new CreateExamResultEvent(examResultId);
+            await _eventBus.PublishAsync(examResultEvent);
             var examResultDto = new ExamResultDetailResponse
             (
                 Id: examResult.Id,

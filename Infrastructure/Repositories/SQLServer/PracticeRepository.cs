@@ -26,7 +26,7 @@ namespace Infrastructure.Repositories.SQLServer
             return await ToPagination<PracticeResponse>(pageIndex, pageSize, filter, cancellationToken: cancellationToken);
         }
 
-        public async Task<Domain.Entity.Practice> GetPracticeToTake(Guid id)
+        public async Task<Domain.Entity.Practice> GetPracticeDetail(Guid id)
         {
             var practice = await _dbContext.Practices
                 .AsNoTracking()

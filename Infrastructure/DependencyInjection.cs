@@ -1,5 +1,4 @@
 ﻿using Application.Abstractions.Events;
-using Application.Abstractions.Handler;
 using Infrastructure.Events;
 using Microsoft.Extensions.DependencyInjection;
 using System;

@@ -12,21 +12,23 @@ using System.Threading.Tasks;
 
 namespace Application.Features.Practice.Queries
 {
-    public sealed class GetPracticeToTakeQueryHandler : IQueryHandler<GetPracticeToTakeQuery, DoPracticeResponse>
+    public sealed class GetPracticeToTakeQueryHandler : IQueryHandler<GetPracticeToTakeQuery, PracticeDetailResponse>
     {
         private readonly IPracticeReadRepository _practiceReadRepository;
         public GetPracticeToTakeQueryHandler(IPracticeReadRepository practiceReadRepository)
         {
             _practiceReadRepository = practiceReadRepository;
         }
-        public async Task<DoPracticeResponse> Handle(GetPracticeToTakeQuery request, CancellationToken cancellationToken)
+        public async Task<PracticeDetailResponse> Handle(GetPracticeToTakeQuery request, CancellationToken cancellationToken)
         {
             var result = await _practiceReadRepository.GetPracticeToTake(request.Id) ?? throw new NullReferenceException();
-            return new DoPracticeResponse
+            return new PracticeDetailResponse
             (
                 Id: result.Id,
                 Title: result.Title,
                 Description: result.Description,
+                TopicId: result.TopicId,
+                CreatedAt: result.CreatedAt,
                 Questions: result.PracticeDetails.Select(x => new QuestionToPracticeResponse
                 (
                     Id: x.QuestionId,

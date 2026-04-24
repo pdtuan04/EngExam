@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Messaging;
+using Application.Common.Caching;
 using Application.Models.Exam;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace Application.Features.Exam.Queries
 {
     public sealed record GetExamByIdQuery(Guid Id) : ICacheQuery<ExamResponse>
     {
-        public string CacheKey => $"exam_{Id}";
+        public string CacheKey => CacheKeys.ExamDetail(Id);
 
         public TimeSpan? Expiration => null;
     }

@@ -1,5 +1,7 @@
 ﻿using Application.Abstractions;
+using Application.Abstractions.Events;
 using Application.Abstractions.Messaging;
+using Application.Features.Exam.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,14 +13,17 @@ namespace Application.Features.Exam.Commands
     public sealed class DeleteExamCommandHandler : ICommandHandler<DeleteExamCommand, bool>
     {
         private readonly IUnitOfWork _unitOfWork;
-        public DeleteExamCommandHandler(IUnitOfWork unitOfWork)
+        private readonly IEventBus _eventBus;   
+        public DeleteExamCommandHandler(IUnitOfWork unitOfWork, IEventBus eventBus)
         {
             _unitOfWork = unitOfWork;
+            _eventBus = eventBus;
         }
         public async Task<bool> Handle(DeleteExamCommand request, CancellationToken cancellationToken)
         {
-            await _unitOfWork.ExamRepository.SoftDelete(request.Id);
-            return true;
+            var result = await _unitOfWork.ExamRepository.SoftDelete(request.Id);
+            await _eventBus.PublishAsync(new DeletedExamEvent(request.Id));
+            return result;
         }
     }
 }
