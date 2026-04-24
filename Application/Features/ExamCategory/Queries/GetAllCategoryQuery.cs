@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Messaging;
+using Application.Common.Caching;
 using Application.Models.ExamCategory;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace Application.Features.ExamCategory.Queries
 {
     public sealed record class GetAllCategoryQuery : ICacheQuery<List<ExamCategoryResponse>>
     {
-        public string CacheKey => $"examCategory:all";
+        public string CacheKey => CacheKeys.AllExamCategories;
 
         public TimeSpan? Expiration => null;
     }

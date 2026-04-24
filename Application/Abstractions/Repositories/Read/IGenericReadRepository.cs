@@ -25,5 +25,7 @@ namespace Application.Abstractions.Repositories.Read
            Expression<Func<T, bool>> filter,
            Func<IQueryable<T>, IQueryable<T>>? include = null);
         Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> filter, Expression<Func<T, object>> sort, bool ascending = true);
+        Task UpsertAsync(T entity);
+        Task<bool> DeleteAsync(Guid id);
     }
 }

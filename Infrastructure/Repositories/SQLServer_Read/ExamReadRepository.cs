@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Repositories;
 using Application.Abstractions.Repositories.Read;
 using AutoMapper;
+using EFCore.BulkExtensions;
 using Infrastructure.Repositories.SQLServer_Read.DataContext;
 using Microsoft.EntityFrameworkCore;
 using System;

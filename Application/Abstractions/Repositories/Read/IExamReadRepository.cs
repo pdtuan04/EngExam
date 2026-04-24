@@ -16,5 +16,6 @@ namespace Application.Abstractions.Repositories.Read
         Task<IEnumerable<Exam>> GetExamsByCategoryIdAsync(Guid id);
         Task<Exam> GetExamToTake(Guid id);
         Task<Exam> GetExamDetail(Guid id);
+        Task UpsertAsync(Exam exam);
     }
 }

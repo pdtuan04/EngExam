@@ -1,7 +1,6 @@
 using Application;
 using Application.Abstractions;
 using Application.Abstractions.Caching;
-using Application.Abstractions.Handler;
 using Application.Abstractions.Repositories;
 using Application.Abstractions.Repositories.Read;
 using Application.Behaviors;
@@ -289,7 +288,7 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
     services.AddSingleton(services => services.GetRequiredService<IOptions<MessageBrokerOptions>>().Value);
     services.AddMassTransit(busConfig =>
     {
-        busConfig.AddConsumer<UpdateExamCategoryCacheConsumer>();
+        busConfig.AddConsumer<InvalidateExamCategoryCacheConsumer>();
         busConfig.AddConsumer<SyncExamCategoryReadDbConsumer>();
         busConfig.AddConfigureEndpointsCallback((context, name, cfg) =>
         {

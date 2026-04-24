@@ -1,6 +1,9 @@
 ﻿using Application.Abstractions;
+using Application.Abstractions.Events;
 using Application.Abstractions.Messaging;
 using Application.Common.Exceptions;
+using Application.Features.Exam.Events;
+using Application.Features.ExamCategory.Events;
 using Application.Models.Answer;
 using Application.Models.Exam;
 using Application.Models.Question;
@@ -16,9 +19,11 @@ namespace Application.Features.Exam.Commands
     public sealed class UpdateExamCommandHandler : ICommandHandler<UpdateExamCommand, ExamDetailResponse>
     {
         private readonly IUnitOfWork _unitOfWork;
-        public UpdateExamCommandHandler(IUnitOfWork unitOfWork)
+        private readonly IEventBus _eventBus;
+        public UpdateExamCommandHandler(IUnitOfWork unitOfWork, IEventBus eventBus)
         {
             _unitOfWork = unitOfWork;
+            _eventBus = eventBus;
         }
         public async Task<ExamDetailResponse> Handle(UpdateExamCommand request, CancellationToken cancellationToken)
         {
@@ -80,6 +85,7 @@ namespace Application.Features.Exam.Commands
 
             }
             await _unitOfWork.ExamRepository.Update(exam);
+            await _eventBus.PublishAsync(new UpdateExamEvent(exam.Id, exam.ExamCategoryId), cancellationToken);
             return new ExamDetailResponse
             (
                 Id: exam.Id,
