@@ -22,6 +22,8 @@ namespace Infrastructure.Repositories.SQLServer
         public IPracticeRepository PracticeRepository { get; }
         public ICourseRepository CourseRepository { get; }
         public ITopicRepository TopicRepository { get; }
+        public IFlashCardRepository FlashCardRepository { get; }
+        public IWordRepository WordRepository { get; }
         public UnitOfWork(ApplicationDbContext applicationDbContext, IMapper mapper)
         {
             this._applicationDbContext = applicationDbContext ?? throw new ArgumentNullException(nameof(applicationDbContext));
@@ -34,6 +36,8 @@ namespace Infrastructure.Repositories.SQLServer
             PracticeRepository = new PracticeRepository(_applicationDbContext, _mapper);
             CourseRepository = new CourseRepository(_applicationDbContext, _mapper);
             TopicRepository = new TopicRepository(_applicationDbContext, _mapper);
+            FlashCardRepository = new FlashCardRepository(_applicationDbContext, _mapper);
+            WordRepository = new WordRepository(_applicationDbContext, _mapper);
         }
         //modify later to support real transaction
         public Task BeginTransactionAsync()

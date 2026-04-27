@@ -26,5 +26,17 @@ namespace Application.Common.Caching
         // Practice
         public static string PracticeToTake(Guid id) => $"practice:take:{id}";
         public static string PracticeDetails(Guid id) => $"practice:detail:{id}";
+
+        //Topic
+        public static string AllTopics = "topic:all";
+        public static string TopicDetail(Guid id) => $"topic:{id}";
+
+        //User
+        public static string UserDetail(Guid id) => $"user:detail:{id}";
+        //Auth
+        public static string JwtToken(string token) => $"jwt:{token}";
+
+        //Word
+        public static string WordMeaning(string word) => $"word:meaning:{word}";
     }
 }

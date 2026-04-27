@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Application.Abstractions.Messaging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace Application.Features.User.Commands
 {
-    internal class LogOutCommand
-    {
-    }
+    public sealed record LogOutCommand(string Token) : ICommand<bool>;
 }

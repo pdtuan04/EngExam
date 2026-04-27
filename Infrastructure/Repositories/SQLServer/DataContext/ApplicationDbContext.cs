@@ -44,6 +44,8 @@ namespace Infrastructure.Repositories.SQLServer.DataContext
         public DbSet<Practice> Practices { get; set; }
         public DbSet<PracticeDetail> PracticeDetails { get; set; }
         public DbSet<Course> Courses { get; set; }
+        public DbSet<Word> Words { get; set; }
+        public DbSet<FlashCard> FlashCards { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
