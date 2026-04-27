@@ -17,6 +17,8 @@ namespace Application.Abstractions
         IPracticeRepository PracticeRepository { get; }
         ICourseRepository  CourseRepository { get; }
         ITopicRepository TopicRepository { get; }
+        IFlashCardRepository FlashCardRepository { get; }
+        IWordRepository WordRepository { get; }
         Task BeginTransactionAsync();
         Task SaveChangesAsync();
         Task CancelAsync();

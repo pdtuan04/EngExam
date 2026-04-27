@@ -7,15 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Common\Enums\**" />
+    <EmbeddedResource Remove="Common\Enums\**" />
+    <None Remove="Common\Enums\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Common\Enums\" />
     <Folder Include="Features\FlashCard\Events\" />
-    <Folder Include="Features\Topic\Consumers\" />
-    <Folder Include="Features\Word\" />
-    <Folder Include="Features\User\Events\" />
     <Folder Include="Features\User\Queries\" />
   </ItemGroup>
 
