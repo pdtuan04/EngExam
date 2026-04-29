@@ -74,7 +74,7 @@ namespace Infrastructure.Repositories.SQLServer
 
         public async Task<TDomain> GetByIdAsync(object id)
         {
-            var dbEntity = await _dbSet.FindAsync(id);
+            var dbEntity = await _dbSet.FindAsync(id).;
             return _mapper.Map<TDomain>(dbEntity);
         }
 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Models.Word
+namespace Application.Features.Word.Events
 {
-    public sealed record TranslateResponse(IEnumerable<string> Meanings);
+    public sealed record UpdateWordEvent(Guid Id, string Text, string Meaning);
 }

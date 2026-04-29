@@ -9,6 +9,6 @@ namespace Application.Abstractions.Repositories.Read
 {
     public interface IWordReadRepository : IGenericReadRepository<Word>
     {
-
+        Task<IEnumerable<Word>> GetWordMeanigsByTextAsync(string text);
     }
 }

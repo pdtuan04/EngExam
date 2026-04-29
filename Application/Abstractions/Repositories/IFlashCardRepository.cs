@@ -1,13 +1,10 @@
-﻿using Domain.Entity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Application.Models.FlashCard;
+using Domain.Entity;
 
 namespace Application.Abstractions.Repositories
 {
     public interface IFlashCardRepository : IGenericRepository<FlashCard>
     {
+        Task<FlashCard> GetFlashCardDetailAsync(Guid id);
     }
 }

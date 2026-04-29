@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 
 namespace Application.Features.Word.Commands
 {
-    public sealed record CreateWordCommand(string Text, IEnumerable<string> Meanings) : ICommand<WordResponse>;
+    public sealed record CreateWordCommand(string Text, string Meaning) : ICommand<WordResponse>;
 }

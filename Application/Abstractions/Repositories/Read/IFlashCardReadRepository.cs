@@ -10,7 +10,7 @@ namespace Application.Abstractions.Repositories.Read
 {
     public interface IFlashCardReadRepository : IGenericReadRepository<FlashCard>
     {
-        public Task<IEnumerable<FlashCard>> GetFlashCardsByUserIdAsync(Guid userId);
-        public Task<FlashCard> GetFlashCardDetailByIdAsync(Guid flashCardId);
+        public Task<IEnumerable<FlashCardResponse>> GetFlashCardsByUserIdAsync(Guid userId, CancellationToken cancellationToken);
+        public Task<FlashCardDetailResponse> GetFlashCardDetailByIdAsync(Guid flashCardId, CancellationToken cancellationToken);
     }
 }

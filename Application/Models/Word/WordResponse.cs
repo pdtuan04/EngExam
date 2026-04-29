@@ -6,6 +6,6 @@ using System.Threading.Tasks;
 
 namespace Application.Models.Word
 {
-    public sealed record WordResponse(Guid Id, string Text, IEnumerable<string> Meanings);
+    public sealed record WordResponse(Guid Id, string Text, string Meaning);
 
 }

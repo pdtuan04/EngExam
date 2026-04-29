@@ -5,7 +5,12 @@ using Application.Abstractions.Repositories;
 using Application.Abstractions.Repositories.Read;
 using Application.Behaviors;
 using Application.Common.Interfaces;
+using Application.Features.Course.Consumers;
+using Application.Features.Exam.Consumers;
 using Application.Features.ExamCategory.Consumers;
+using Application.Features.ExamResult.Consumers;
+using Application.Features.FlashCard.Consumers;
+using Application.Features.Word.Consumers;
 using Application.Handler;
 using Application.Handler.InterfaceHandler;
 using AutoMapper;
@@ -34,6 +39,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
@@ -216,7 +222,18 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
         services.AddTransient<IPracticeRepository>(service => new PracticeRepository(
             service.GetRequiredService<ApplicationDbContext>(),
             service.GetRequiredService<IMapper>()));
-
+        services.AddTransient<IFlashCardRepository>(service => new FlashCardRepository(
+            service.GetRequiredService<ApplicationDbContext>(),
+            service.GetRequiredService<IMapper>()));
+        services.AddTransient<IWordRepository>(service => new WordRepository(
+            service.GetRequiredService<ApplicationDbContext>(),
+            service.GetRequiredService<IMapper>()));
+        services.AddTransient<ITopicRepository>(service => new TopicRepository(
+            service.GetRequiredService<ApplicationDbContext>(),
+            service.GetRequiredService<IMapper>()));
+        services.AddTransient<ICourseRepository>(service => new CourseRepository(
+            service.GetRequiredService<ApplicationDbContext>(),
+            service.GetRequiredService<IMapper>()));
         services.AddScoped<IUnitOfWork>(service => new UnitOfWork(
             service.GetRequiredService<ApplicationDbContext>(),
             service.GetRequiredService<IMapper>()));
@@ -254,6 +271,12 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
         services.AddTransient<ICourseReadRepository>(service => new CourseReadRepository(
             service.GetRequiredService<ApplicationDbReadContext>(),
             service.GetRequiredService<IMapper>()));
+        services.AddTransient<IFlashCardReadRepository>(service => new FlashCardReadRepository(
+            service.GetRequiredService<ApplicationDbReadContext>(),
+            service.GetRequiredService<IMapper>()));
+        services.AddTransient<IWordReadRepository>(service => new WordReadRepository(
+            service.GetRequiredService<ApplicationDbReadContext>(),
+            service.GetRequiredService<IMapper>()));
     }
 
     //cache
@@ -288,8 +311,19 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
     services.AddSingleton(services => services.GetRequiredService<IOptions<MessageBrokerOptions>>().Value);
     services.AddMassTransit(busConfig =>
     {
+        busConfig.AddConsumer<InvalidateCourseCacheConsumer>();
+        busConfig.AddConsumer<SyncCourseReadDbConsumer>();
         busConfig.AddConsumer<InvalidateExamCategoryCacheConsumer>();
         busConfig.AddConsumer<SyncExamCategoryReadDbConsumer>();
+        busConfig.AddConsumer<InvalidateWordCacheConsumer>();
+        busConfig.AddConsumer<SyncWordReadDbConsumer>();
+        busConfig.AddConsumer<InvalidateExamCacheConsumer>();
+        busConfig.AddConsumer<SyncExamReadDbConsumer>();
+        busConfig.AddConsumer<InvalidateExamCategoryCacheConsumer>();
+        busConfig.AddConsumer<SyncExamCategoryReadDbConsumer>();
+        busConfig.AddConsumer<SyncExamResultReadDbConsumer>();
+        busConfig.AddConsumer<InvalidateFlashCardCacheConsumer>();
+        busConfig.AddConsumer<SyncFlashCardReadDbConsumer>();
         busConfig.AddConfigureEndpointsCallback((context, name, cfg) =>
         {
             cfg.UseMessageRetry(r => r.Immediate(5));

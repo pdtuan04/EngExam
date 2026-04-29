@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.Features.Word.Queries
 {
-    public sealed record GetWordQuery(string Text) : ICacheQuery<WordResponse>
+    public sealed record GetWordMeaningQuery(string Text) : ICacheQuery<IEnumerable<WordMeaningsResponse>>
     {
         public string CacheKey => CacheKeys.WordMeaning(Text);
 

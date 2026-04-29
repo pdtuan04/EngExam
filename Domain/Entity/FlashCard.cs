@@ -12,15 +12,10 @@ namespace Domain.Entity
         public required Guid Id { get; init; }
         public required string Title { get; set; }
         public string? Description { get; set; }
+        public DateTime CreatedAt { get; set; }
         public required Guid UserId { get; init; }
-        private readonly List<Word> _words = new List<Word>();
-        public IReadOnlyCollection<Word> Words
-        {
-            get
-            {
-                return _words.AsReadOnly();
-            }
-        }
+        private readonly List<Word> _words = [];
+        public ICollection<Word> Words { get; private set; } = [];
 
         public void AddWord(Word word)
         {

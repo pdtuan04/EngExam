@@ -37,6 +37,9 @@ namespace Application.Common.Caching
         public static string JwtToken(string token) => $"jwt:{token}";
 
         //Word
-        public static string WordMeaning(string word) => $"word:meaning:{word}";
+        public static string WordMeaning(string word) => $"word:meanings:{word}";
+        //FlashCard
+        public static string FlashCardsByUser(Guid userId) => $"flashCards:user:{userId}";
+        public static string FlashCardDetail(Guid id) => $"flashCard:detail:{id}";
     }
 }
