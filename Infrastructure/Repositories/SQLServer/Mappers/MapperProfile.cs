@@ -1,14 +1,16 @@
-﻿using System;
+﻿using Application.Models.Exam;
+using Application.Models.ExamResult;
+using Application.Models.FlashCard;
+using Application.Models.Practice;
+using Application.Models.Topic;
+using Application.Models.Word;
+using AutoMapper;
+using Infrastructure.Repositories.SQLServer.DataContext;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Application.Models.Exam;
-using Application.Models.ExamResult;
-using Application.Models.Practice;
-using Application.Models.Topic;
-using AutoMapper;
-using Infrastructure.Repositories.SQLServer.DataContext;
 
 namespace Infrastructure.Repositories.SQLServer.Mappers
 {
@@ -29,11 +31,15 @@ namespace Infrastructure.Repositories.SQLServer.Mappers
             CreateMap<PracticeDetail, Domain.Entity.PracticeDetail>().ReverseMap();
             CreateMap<Course, Domain.Entity.Course>().ReverseMap();
             CreateMap<Topic, Domain.Entity.Topic>().ReverseMap();
+            CreateMap<Word, Domain.Entity.Word>().ReverseMap();
+            CreateMap<FlashCard, Domain.Entity.FlashCard>().ReverseMap();
             //Map between Infrastructure and Application Models for reading
             CreateMap<Topic, TopicResponse>().ReverseMap();
             CreateMap<Exam, ExamResponse>().ReverseMap();
             CreateMap<Practice, PracticeResponse>().ReverseMap();
             CreateMap<ExamResult, ExamResultResponse>().ReverseMap();
+            CreateMap<Word, WordResponse>().ReverseMap();
+            CreateMap<FlashCard, FlashCardResponse>().ReverseMap();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Repositories.Read;
+using Application.Models.FlashCard;
 using AutoMapper;
 using Infrastructure.Repositories.SQLServer_Read.DataContext;
 using Microsoft.EntityFrameworkCore;
@@ -16,21 +17,21 @@ namespace Infrastructure.Repositories.SQLServer_Read
         {
         }
 
-        public async Task<Domain.Entity.FlashCard> GetFlashCardDetailByIdAsync(Guid flashCardId)
+        public async Task<FlashCardDetailResponse> GetFlashCardDetailByIdAsync(Guid flashCardId, CancellationToken cancellationToken)
         {
             var flashCard = 
                 await _dbContext.FlashCards
                 .Include(f=>f.Words)
-                .FirstOrDefaultAsync(f => f.Id == flashCardId);
-            return _mapper.Map<Domain.Entity.FlashCard>(flashCard);
+                .FirstOrDefaultAsync(f => f.Id == flashCardId, cancellationToken);
+            return _mapper.Map<FlashCardDetailResponse>(flashCard);
         }
 
-        public async Task<IEnumerable<Domain.Entity.FlashCard>> GetFlashCardsByUserIdAsync(Guid userId)
+        public async Task<IEnumerable<FlashCardResponse>> GetFlashCardsByUserIdAsync(Guid userId, CancellationToken cancellationToken)
         {
             var flashCards = await _dbContext.FlashCards
                 .Where(f => f.UserId == userId)
-                .ToListAsync();
-            return _mapper.Map<IEnumerable<Domain.Entity.FlashCard>>(flashCards);
+                .ToListAsync(cancellationToken);
+            return _mapper.Map<IEnumerable<FlashCardResponse>>(flashCards);
         }
     }
 }

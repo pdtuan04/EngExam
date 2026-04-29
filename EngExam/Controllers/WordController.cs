@@ -1,6 +1,7 @@
 ﻿using Application.Common.Interfaces;
 using Application.Features.Word.Commands;
 using Application.Features.Word.Queries;
+using Application.Models.Word;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,21 +11,19 @@ namespace EngExam.Controllers
     [ApiController]
     public class WordController : ApiController
     {
-        private readonly ITranslateService _translateService;
-        public WordController(ITranslateService translateService)
+        [HttpPost]
+        public async Task<IActionResult> CreateWord([FromBody] CreateWordRequest request)
         {
-            _translateService = translateService;
-        }
-        [HttpPost("translate")]
-        public async Task<IActionResult> Translate([FromBody] string text)
-        {
-            var query = new GetWordQuery(text);
-            var result = await Sender.Send(query);
-            if (result != null) return Ok(result);
-            var translations = await _translateService.TranslateAsync(text);
-            var command = new CreateWordCommand(text, translations);
+            var command = new CreateWordCommand(request.Text, request.Meaning);
             var createdWord = await Sender.Send(command);
             return Ok(createdWord);
+        }
+        [HttpGet("meaning")]
+        public async Task<IActionResult> GetWordMeaning([FromQuery]string text)
+        {
+            var query = new GetWordMeaningQuery(text);
+            var meaning = await Sender.Send(query);
+            return Ok(meaning);
         }
     }
 }

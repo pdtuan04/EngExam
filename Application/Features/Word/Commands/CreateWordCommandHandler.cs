@@ -2,6 +2,7 @@
 using Application.Abstractions.Events;
 using Application.Abstractions.Messaging;
 using Application.Common.Interfaces;
+using Application.Features.Word.Events;
 using Application.Models.Word;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace Application.Features.Word.Commands
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEventBus _eventBus;
-        public CreateWordCommandHandler(IUnitOfWork unitOfWork, IEventBus eventBus, ITranslateService translate)
+        public CreateWordCommandHandler(IUnitOfWork unitOfWork, IEventBus eventBus)
         {
             _unitOfWork = unitOfWork;
             _eventBus = eventBus;
@@ -26,10 +27,11 @@ namespace Application.Features.Word.Commands
             {
                 Id = Guid.NewGuid(),
                 Text = request.Text,
-                Meanings = request.Meanings.ToList()
             };
+            word.UpdateMeaning(request.Meaning);
             await _unitOfWork.WordRepository.AddAsync(word);
-            return new WordResponse(word.Id, word.Text, word.Meanings);
+            await _eventBus.PublishAsync(new CreateWordEvent(word.Id, word.Text, word.Meaning));
+            return new WordResponse(word.Id, word.Text, word.Meaning);
         }
     }
 }

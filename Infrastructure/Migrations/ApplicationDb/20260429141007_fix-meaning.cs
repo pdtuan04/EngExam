@@ -1,0 +1,28 @@
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
+
+namespace Infrastructure.Migrations.ApplicationDb
+{
+    /// <inheritdoc />
+    public partial class fixmeaning : Migration
+    {
+        /// <inheritdoc />
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.RenameColumn(
+                name: "Meanings",
+                table: "Words",
+                newName: "Meaning");
+        }
+
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.RenameColumn(
+                name: "Meaning",
+                table: "Words",
+                newName: "Meanings");
+        }
+    }
+}

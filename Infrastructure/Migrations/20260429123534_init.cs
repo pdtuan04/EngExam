@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class initForReadDb : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -69,6 +69,19 @@ namespace Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ExamCategories", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FlashCards",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FlashCards", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -217,6 +230,25 @@ namespace Infrastructure.Migrations
                         principalTable: "ExamCategories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Words",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Text = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Meanings = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FlashCardId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Words", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Words_FlashCards_FlashCardId",
+                        column: x => x.FlashCardId,
+                        principalTable: "FlashCards",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -577,6 +609,11 @@ namespace Infrastructure.Migrations
                 name: "IX_Questions_TopicId",
                 table: "Questions",
                 column: "TopicId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Words_FlashCardId",
+                table: "Words",
+                column: "FlashCardId");
         }
 
         /// <inheritdoc />
@@ -613,6 +650,9 @@ namespace Infrastructure.Migrations
                 name: "PracticeDetails");
 
             migrationBuilder.DropTable(
+                name: "Words");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
@@ -623,6 +663,9 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Questions");
+
+            migrationBuilder.DropTable(
+                name: "FlashCards");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

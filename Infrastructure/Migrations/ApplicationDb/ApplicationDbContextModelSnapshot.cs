@@ -340,6 +340,30 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.ToTable("ExamResults");
                 });
 
+            modelBuilder.Entity("Infrastructure.Repositories.SQLServer.DataContext.FlashCard", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FlashCards");
+                });
+
             modelBuilder.Entity("Infrastructure.Repositories.SQLServer.DataContext.Practice", b =>
                 {
                     b.Property<Guid>("Id")
@@ -587,6 +611,30 @@ namespace Infrastructure.Migrations.ApplicationDb
                             TwoFactorEnabled = false,
                             UserName = "user"
                         });
+                });
+
+            modelBuilder.Entity("Infrastructure.Repositories.SQLServer.DataContext.Word", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("FlashCardId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Meaning")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FlashCardId");
+
+                    b.ToTable("Words");
                 });
 
             modelBuilder.Entity("MassTransit.EntityFrameworkCoreIntegration.InboxState", b =>
@@ -1053,6 +1101,13 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Navigation("Topic");
                 });
 
+            modelBuilder.Entity("Infrastructure.Repositories.SQLServer.DataContext.Word", b =>
+                {
+                    b.HasOne("Infrastructure.Repositories.SQLServer.DataContext.FlashCard", null)
+                        .WithMany("Words")
+                        .HasForeignKey("FlashCardId");
+                });
+
             modelBuilder.Entity("MassTransit.EntityFrameworkCoreIntegration.OutboxMessage", b =>
                 {
                     b.HasOne("MassTransit.EntityFrameworkCoreIntegration.OutboxState", null)
@@ -1129,6 +1184,11 @@ namespace Infrastructure.Migrations.ApplicationDb
             modelBuilder.Entity("Infrastructure.Repositories.SQLServer.DataContext.ExamResult", b =>
                 {
                     b.Navigation("AnswerHistory");
+                });
+
+            modelBuilder.Entity("Infrastructure.Repositories.SQLServer.DataContext.FlashCard", b =>
+                {
+                    b.Navigation("Words");
                 });
 
             modelBuilder.Entity("Infrastructure.Repositories.SQLServer.DataContext.Practice", b =>
