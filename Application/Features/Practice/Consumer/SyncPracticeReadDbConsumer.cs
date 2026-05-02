@@ -23,6 +23,10 @@ namespace Application.Features.Practice.Consumer
         {
             var message = context.Message;
             var practice = await _practiceRepository.GetByIdAsync(message.PracticeId);
+            if (practice == null)
+            {
+                return;
+            }
             await _practiceReadRepository.UpsertAsync(practice);
         }
 
@@ -30,6 +34,11 @@ namespace Application.Features.Practice.Consumer
         {
             var message = context.Message;
             var practice = await _practiceRepository.GetByIdAsync(message.PracticeId);
+            if (practice == null)
+            {
+                await _practiceReadRepository.DeleteAsync(message.PracticeId);
+                return;
+            }
             await _practiceReadRepository.UpsertAsync(practice);
         }
 

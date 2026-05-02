@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories.SQLServer
 {
-    public class PracticeRepository : GenericRepository<Domain.Entity.Practice, Practice>, IPracticeRepository
+    public class PracticeRepository : GenericRepository<Domain.Entity.Practice, Practice, Guid>, IPracticeRepository
     {
         public PracticeRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper) 
         {

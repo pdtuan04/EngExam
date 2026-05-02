@@ -352,6 +352,9 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -619,8 +622,14 @@ namespace Infrastructure.Migrations.ApplicationDb
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("FlashCardId")
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("FlashCardId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsMemorized")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Meaning")
                         .IsRequired()
@@ -1103,9 +1112,13 @@ namespace Infrastructure.Migrations.ApplicationDb
 
             modelBuilder.Entity("Infrastructure.Repositories.SQLServer.DataContext.Word", b =>
                 {
-                    b.HasOne("Infrastructure.Repositories.SQLServer.DataContext.FlashCard", null)
+                    b.HasOne("Infrastructure.Repositories.SQLServer.DataContext.FlashCard", "FlashCard")
                         .WithMany("Words")
-                        .HasForeignKey("FlashCardId");
+                        .HasForeignKey("FlashCardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FlashCard");
                 });
 
             modelBuilder.Entity("MassTransit.EntityFrameworkCoreIntegration.OutboxMessage", b =>

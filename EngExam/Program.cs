@@ -5,6 +5,7 @@ using Application.Abstractions.Repositories;
 using Application.Abstractions.Repositories.Read;
 using Application.Behaviors;
 using Application.Common.Interfaces;
+using Application.Exceptions;
 using Application.Features.Course.Consumers;
 using Application.Features.Exam.Consumers;
 using Application.Features.ExamCategory.Consumers;
@@ -324,11 +325,6 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
         busConfig.AddConsumer<SyncExamResultReadDbConsumer>();
         busConfig.AddConsumer<InvalidateFlashCardCacheConsumer>();
         busConfig.AddConsumer<SyncFlashCardReadDbConsumer>();
-        busConfig.AddConfigureEndpointsCallback((context, name, cfg) =>
-        {
-            cfg.UseMessageRetry(r => r.Immediate(5));
-            cfg.UseInMemoryOutbox(context);
-        });
         busConfig.AddEntityFrameworkOutbox<ApplicationDbContext>(o =>
         {
             o.UseSqlServer();
@@ -341,6 +337,11 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
         });
         busConfig.AddConfigureEndpointsCallback((context, name, cfg) =>
         {
+            cfg.UseMessageRetry(r =>
+            {
+                r.Interval(5, TimeSpan.FromSeconds(3));
+                r.Ignore<BusinessException>();
+            });
             cfg.UseEntityFrameworkOutbox<ApplicationDbContext>(context, options =>
             {
                 options.MessageDeliveryLimit = 100;

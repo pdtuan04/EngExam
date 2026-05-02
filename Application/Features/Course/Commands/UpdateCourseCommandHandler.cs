@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Application.Features.Course.Commands
 {
-    public sealed class UpdateCourseCommandHandler : ICommandHandler<UpdateCourseCommand, CourseResponse>
+    public sealed class UpdateCourseCommandHandler : ICommandHandler<UpdateCourseCommand, CourseDetailResponse>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEventBus _eventBus;
@@ -20,7 +20,7 @@ namespace Application.Features.Course.Commands
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException();
             _eventBus = eventBus ?? throw new ArgumentNullException();
         }
-        public async Task<CourseResponse> Handle(UpdateCourseCommand request, CancellationToken cancellationToken)
+        public async Task<CourseDetailResponse> Handle(UpdateCourseCommand request, CancellationToken cancellationToken)
         {
             var course = await _unitOfWork.CourseRepository.GetByIdAsync(request.Id);
             course.Name = request.Name;
@@ -36,7 +36,7 @@ namespace Application.Features.Course.Commands
                                             course.TopicId, 
                                             course.IsActive, 
                                             course.CreatedAt), cancellationToken);
-            return new CourseResponse(course.Id, course.Name, course.Description, course.Content, course.ImageUrl, course.TopicId);
+            return new CourseDetailResponse(course.Id, course.Name, course.Description, course.Content, course.ImageUrl, course.TopicId);
         }
     }
 }

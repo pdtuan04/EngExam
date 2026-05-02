@@ -14,5 +14,5 @@ namespace Application.Features.Course.Command
         string Content,
         string? ImageUrl,
         Guid TopicId
-    ) : ICommand<CourseResponse>;
+    ) : ICommand<CourseDetailResponse>;
 }

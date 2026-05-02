@@ -28,7 +28,6 @@ namespace EngExam.Middlewares
                 context.Response.StatusCode = ex switch
                 {
                     BusinessException busEx => busEx.StatusCode,
-                    NotFoundException nfEx => StatusCodes.Status404NotFound,
                     BadRequestException brEx => StatusCodes.Status400BadRequest,
                     _ => StatusCodes.Status500InternalServerError
                 };

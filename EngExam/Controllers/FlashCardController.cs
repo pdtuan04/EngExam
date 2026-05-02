@@ -57,23 +57,6 @@ namespace EngExam.Controllers
             var result = await Sender.Send(query);
             return Ok(result);
         }
-        [Authorize]
-        [HttpPatch("add-word")]
-        public async Task<IActionResult> AddWordIntoFlashCard([FromBody] AddWordIntoFlashCardRequest request)
-        {
-            var command = new AddWordIntoFlashCardCommand(request.FlashCardId, request.WordId);
-            var result = await Sender.Send(command);
-            return Ok(result);
-        }
-        [Authorize]
-        [HttpPatch("remove-word")]
-        public async Task<IActionResult> RemoveWordFromFlashCard([FromBody] RemoveWordFromFlashCardRequest request)
-        {
-            var command = new RemoveWordFromFlashcardCommand(request.FlashCardId, request.WordId);
-            var result = await Sender.Send(command);
-            return Ok(result);
-        }
-        
     }
 }
  

@@ -23,6 +23,10 @@ namespace Application.Features.ExamResult.Consumers
         {
             var message = context.Message;
             var examResult = await _examResultRepository.GetByIdAsync(message.Id);
+            if (examResult == null)
+            {
+                return;
+            }
             await _examResultReadRepository.UpsertAsync(examResult);
         }
     }

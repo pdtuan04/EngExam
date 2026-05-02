@@ -6,6 +6,6 @@ using System.Threading.Tasks;
 
 namespace Application.Models.Word
 {
-    public sealed record WordResponse(Guid Id, string Text, string Meaning);
+    public sealed record WordResponse(Guid Id, string Text, string Meaning, DateTime CreatedAt, bool IsMemorized);
 
 }

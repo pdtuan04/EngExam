@@ -40,6 +40,7 @@ namespace Infrastructure.Repositories.SQLServer.Mappers
             CreateMap<ExamResult, ExamResultResponse>().ReverseMap();
             CreateMap<Word, WordResponse>().ReverseMap();
             CreateMap<FlashCard, FlashCardResponse>().ReverseMap();
+
         }
     }
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories.SQLServer.DataContext
 {
-    public class ExamCategory : BaseEntity , ISoftDeletable
+    public class ExamCategory : BaseEntity<Guid> , ISoftDeletable
     {
         public required string Name { get; set; }
         public required string Description { get; set; }

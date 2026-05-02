@@ -7,7 +7,7 @@ using Domain.Common;
 
 namespace Domain.Entity
 {
-    public class Answer : BaseEntity, ISoftDeletable
+    public class Answer : BaseEntity<Guid>, ISoftDeletable
     {
         public required string Content { get; set; }
         public required bool IsCorrect { get; set; } = false;

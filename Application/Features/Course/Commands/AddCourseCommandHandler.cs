@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Application.Features.Course.Commands
 {
-    public sealed class AddCourseCommandHandler : ICommandHandler<AddCourseCommand, CourseResponse>
+    public sealed class AddCourseCommandHandler : ICommandHandler<AddCourseCommand, CourseDetailResponse>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEventBus _eventBus;
@@ -22,11 +22,12 @@ namespace Application.Features.Course.Commands
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException();
             _eventBus = eventBus ?? throw new ArgumentNullException();
         }
-        public async Task<CourseResponse> Handle(AddCourseCommand request, CancellationToken cancellationToken)
+        public async Task<CourseDetailResponse> Handle(AddCourseCommand request, CancellationToken cancellationToken)
         {
             var course = new Domain.Entity.Course
             {
                 Id = Guid.NewGuid(),
+                CreatedAt = DateTime.UtcNow,
                 Name = request.Name,
                 Description = request.Description,
                 Content = request.Content,
@@ -45,7 +46,7 @@ namespace Application.Features.Course.Commands
                 course.IsActive,
                 course.CreatedAt
             ), cancellationToken);
-            return new CourseResponse(course.Id, course.Name,course.Description, course.Content, course.ImageUrl, course.TopicId);
+            return new CourseDetailResponse(course.Id, course.Name,course.Description, course.Content, course.ImageUrl, course.TopicId);
         }
     }
 }

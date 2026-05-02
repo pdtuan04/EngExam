@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Application.Features.Word.Events
 {
-    public sealed record UpdateWordEvent(Guid Id, string Text, string Meaning);
+    public sealed record UpdateWordEvent(Guid Id, string Text, string Meaning, Guid FlashCardId);
 }

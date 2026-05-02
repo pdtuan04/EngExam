@@ -15,6 +15,10 @@ namespace Application.Features.Exam.Consumers
         {
             var message = context.Message;
             var examExists = await examRepository.GetExamDetail(message.ExamId);
+            if (examExists == null)
+            {
+                return;
+            }
             await examReadRepository.UpsertAsync(examExists);
         }
 
@@ -22,6 +26,11 @@ namespace Application.Features.Exam.Consumers
         {
             var message = context.Message;
             var examExists = await examRepository.GetExamDetail(message.ExamId);
+            if (examExists == null)
+            {
+                await examReadRepository.DeleteAsync(message.ExamId);
+                return;
+            };
             await examReadRepository.UpsertAsync(examExists);
         }
 

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories.SQLServer
 {
-    public class AnswerRepository: GenericRepository<Domain.Entity.Answer, Answer>, IAnswerRepository
+    public class AnswerRepository: GenericRepository<Domain.Entity.Answer, Answer, Guid>, IAnswerRepository
     {
         public AnswerRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper)
         {

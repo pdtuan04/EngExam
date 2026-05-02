@@ -12,7 +12,7 @@ namespace Infrastructure.Repositories.SQLServer_Read.DataContext
         public required string Title { get; set; }
         public string? Description { get; set; }
         public DateTime CreatedAt { get; set; }
-        public ICollection<Word> Words { get; set; } = new List<Word>();
+        public ICollection<Word> Words { get; set; } = null!;
         public required Guid UserId { get; set; }
     }
 }

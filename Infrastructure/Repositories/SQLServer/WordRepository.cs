@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories.SQLServer
 {
-    public sealed class WordRepository : GenericRepository<Domain.Entity.Word, Word>, IWordRepository
+    public sealed class WordRepository : GenericRepository<Domain.Entity.Word, Word, Guid>, IWordRepository
     {
         public WordRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper)
         {
@@ -19,6 +19,13 @@ namespace Infrastructure.Repositories.SQLServer
         {
             var word = await _dbContext.Words.FirstOrDefaultAsync(t => t.Text == text);
             return _mapper.Map<Domain.Entity.Word>(word);
+        }
+
+        public async Task<bool> ToggleMemorizedStatusAsync(Guid wordId)
+        {
+            var word = await _dbContext.Words.FirstOrDefaultAsync(w => w.Id == wordId);
+            word.IsMemorized = !word.IsMemorized;
+            return word.IsMemorized;
         }
     }
 }

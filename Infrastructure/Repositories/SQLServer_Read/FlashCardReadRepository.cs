@@ -21,7 +21,8 @@ namespace Infrastructure.Repositories.SQLServer_Read
         {
             var flashCard = 
                 await _dbContext.FlashCards
-                .Include(f=>f.Words)
+                .Include(f => f.Words)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(f => f.Id == flashCardId, cancellationToken);
             return _mapper.Map<FlashCardDetailResponse>(flashCard);
         }

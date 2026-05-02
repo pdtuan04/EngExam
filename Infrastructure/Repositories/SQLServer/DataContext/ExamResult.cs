@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Domain.Abstractions.Entity;
 using Domain.Entity;
 
 namespace Infrastructure.Repositories.SQLServer.DataContext
 {
-    public class ExamResult
+    public class ExamResult : IEntity<Guid>
     {
         public required Guid Id { get; set; }
         public required DateTime CompleteAt { get; set; }

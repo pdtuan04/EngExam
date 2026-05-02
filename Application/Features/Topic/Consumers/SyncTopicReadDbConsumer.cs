@@ -23,6 +23,10 @@ namespace Application.Features.Topic.Consumers
         {
             var message = context.Message;
             var topic = await _topicRepository.GetByIdAsync(message.Id);
+            if (topic == null)
+            {
+                return;
+            }
             await _topicReadRepository.UpsertAsync(topic);
         }
 
@@ -30,6 +34,11 @@ namespace Application.Features.Topic.Consumers
         {
             var message = context.Message;
             var topic = await _topicRepository.GetByIdAsync(message.Id);
+            if(topic == null)
+            {
+                await _topicReadRepository.DeleteAsync(message.Id);
+                return;
+            }
             await _topicReadRepository.UpsertAsync(topic);
         }
 

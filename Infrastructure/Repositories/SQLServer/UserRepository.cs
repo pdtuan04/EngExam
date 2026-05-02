@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories.SQLServer
 {
-    public class UserRepository : GenericRepository<Domain.Entity.User, User>, IUserRepository
+    public class UserRepository : GenericRepository<Domain.Entity.User, User, Guid>, IUserRepository
     {
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;

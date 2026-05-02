@@ -13,9 +13,7 @@ namespace Application.Features.FlashCard.Consumers
     public sealed class InvalidateFlashCardCacheConsumer : 
         IConsumer<CreateFlashCardEvent>,
         IConsumer<UpdateFlashCardEvent>,
-        IConsumer<DeleteFlashCardEvent>,
-        IConsumer<WordAddedIntoFlashcardEvent>,
-        IConsumer<WordRemovedFromFlashcardEvent>
+        IConsumer<DeleteFlashCardEvent>
     {
         private readonly ICacheService _cacheService;
         public InvalidateFlashCardCacheConsumer(ICacheService cacheService)
@@ -37,16 +35,5 @@ namespace Application.Features.FlashCard.Consumers
             await _cacheService.RemoveCacheAsync(CacheKeys.FlashCardDetail(context.Message.Id));
             await _cacheService.RemoveCacheAsync(CacheKeys.FlashCardsByUser(context.Message.UserId));
         }
-
-        public async Task Consume(ConsumeContext<WordAddedIntoFlashcardEvent> context)
-        {
-            await _cacheService.RemoveCacheAsync(CacheKeys.FlashCardDetail(context.Message.FlashCardId));
-        }
-
-        public async Task Consume(ConsumeContext<WordRemovedFromFlashcardEvent> context)
-        {
-            await _cacheService.RemoveCacheAsync(CacheKeys.FlashCardDetail(context.Message.FlashCardId));
-        }
-
     }
 }
