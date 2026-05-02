@@ -1,6 +1,8 @@
 ﻿using Application.Features.Exam.Queries;
+using Application.Features.Topic.Commands;
 using Application.Features.Topic.Queries;
 using Application.Models.Pagination;
+using Application.Models.Topic;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,6 +22,53 @@ namespace EngExam.Controllers
                 success = true,
                 data = result,
                 message = "Get paginated topics successfully"
+            });
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetAllTopic(CancellationToken cancellationToken)
+        {
+            var query = new GetAllTopicQuery();
+            var result = await Sender.Send(query, cancellationToken);
+            return Ok(new
+            {
+                success = true,
+                data = result,
+                message = "Get topic by id successfully"
+            });
+        }
+        [HttpPost]
+        public async Task<IActionResult> CreateTopic([FromBody]CreateTopicRequest request, CancellationToken cancellationToken)
+        {
+            var command = new CreateTopicCommand(request.Name, request.Description);
+            var result = await Sender.Send(command, cancellationToken);
+            return Ok(new
+            {
+                success = true,
+                data = result,
+                message = "Create topic successfully"
+            });
+        }
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateTopic(Guid id, [FromBody] UpdateTopicRequest request, CancellationToken cancellationToken)
+        {
+            var command = new UpdateTopicCommand(id, request.Name, request.Description);
+            var result = await Sender.Send(command, cancellationToken);
+            return Ok(new
+            {
+                success = true,
+                data = result,
+                message = "Update topic successfully"
+            });
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteTopic(Guid id, CancellationToken cancellationToken)
+        {
+            var command = new DeleteTopicCommand(id);
+            var result = await Sender.Send(command, cancellationToken);
+            return Ok(new
+            {
+                success = result,
+                message = "Delete topic successfully"
             });
         }
     }

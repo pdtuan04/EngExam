@@ -12,6 +12,7 @@ using Application.Features.ExamCategory.Consumers;
 using Application.Features.ExamResult.Consumers;
 using Application.Features.FlashCard.Consumers;
 using Application.Features.Practice.Consumer;
+using Application.Features.Topic.Consumers;
 using Application.Features.Word.Consumers;
 using Application.Handler;
 using Application.Handler.InterfaceHandler;
@@ -328,6 +329,8 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
         busConfig.AddConsumer<SyncFlashCardReadDbConsumer>();
         busConfig.AddConsumer<InvalidatePracticeCacheConsumer>();
         busConfig.AddConsumer<SyncPracticeReadDbConsumer>();
+        busConfig.AddConsumer<InvalidateTopicCacheConsumer>();
+        busConfig.AddConsumer<SyncTopicReadDbConsumer>();
         busConfig.AddEntityFrameworkOutbox<ApplicationDbContext>(o =>
         {
             o.UseSqlServer();
