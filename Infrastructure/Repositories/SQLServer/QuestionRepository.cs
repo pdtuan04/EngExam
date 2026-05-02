@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories.SQLServer
 {
-    public class QuestionRepository : GenericRepository<Domain.Entity.Question, Question>, IQuestionRepository
+    public class QuestionRepository : GenericRepository<Domain.Entity.Question, Question, Guid>, IQuestionRepository
     {
         public QuestionRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper)
         {

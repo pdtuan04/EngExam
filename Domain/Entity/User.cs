@@ -1,4 +1,5 @@
-﻿using Domain.Exceptions;
+﻿using Domain.Common;
+using Domain.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +8,8 @@ using System.Threading.Tasks;
 
 namespace Domain.Entity
 {
-    public class User
+    public class User : BaseEntity<Guid>
     {
-        public required Guid Id { get; set; }
         public required string UserName { get; set; }
         private string _password;
 

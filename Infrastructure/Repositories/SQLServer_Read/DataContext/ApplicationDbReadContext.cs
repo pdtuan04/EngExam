@@ -55,6 +55,14 @@ namespace Infrastructure.Repositories.SQLServer_Read.DataContext
             modelBuilder.Entity<Question>().HasQueryFilter(x => !x.IsDeleted);
             modelBuilder.Entity<Topic>().HasQueryFilter(x => !x.IsDeleted);
 
+            modelBuilder.Entity<FlashCard>()
+                .HasMany(fc => fc.Words)
+                .WithOne(w => w.FlashCard)
+                .HasForeignKey(w => w.FlashCardId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+
+
             modelBuilder.Entity<ExamDetail>()
                 .HasKey(ed => new { ed.ExamId, ed.QuestionId });
             modelBuilder.Entity<ExamDetail>()

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Application.Models.Course;
 using Application.Models.Exam;
 using Application.Models.ExamResult;
 using Application.Models.FlashCard;
@@ -40,6 +41,9 @@ namespace Infrastructure.Repositories.SQLServer_Read.Mappers
             CreateMap<ExamResult, ExamResultResponse>().ReverseMap();
             CreateMap<Word, WordResponse>().ReverseMap();
             CreateMap<FlashCard, FlashCardResponse>().ReverseMap();
+            CreateMap<FlashCard, FlashCardDetailResponse>().ReverseMap();
+            CreateMap<Course, CourseDetailResponse>().ReverseMap();
+            CreateMap<Course, CourseResponse>().ReverseMap();
         }
     }
 }

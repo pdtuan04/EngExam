@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories.SQLServer
 {
-    public class ExamRepository : GenericRepository<Domain.Entity.Exam, Exam>, IExamRepository
+    public class ExamRepository : GenericRepository<Domain.Entity.Exam, Exam, Guid>, IExamRepository
     {
         public ExamRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper)
         {

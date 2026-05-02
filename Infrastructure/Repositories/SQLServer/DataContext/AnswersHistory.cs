@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Abstractions.Entity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories.SQLServer.DataContext
 {
-    public class AnswersHistory
+    public class AnswersHistory : IEntity<Guid>
     {
         public required Guid Id { get; set; }
         public required Guid ExamResultId { get; set; }

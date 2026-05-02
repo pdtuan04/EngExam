@@ -10,7 +10,11 @@ using System.Threading.Tasks;
 
 namespace Application.Features.Word.Consumers
 {
-    public sealed class InvalidateWordCacheConsumer : IConsumer<CreateWordEvent>, IConsumer<UpdateWordEvent>, IConsumer<DeleteWordEvent>
+    public sealed class InvalidateWordCacheConsumer : 
+        IConsumer<CreateWordEvent>,
+        IConsumer<UpdateWordEvent>,
+        IConsumer<DeleteWordEvent>,
+        IConsumer<WordMemorizationToggledEvent>
     {
         private readonly ICacheService _cacheService;
         public InvalidateWordCacheConsumer(ICacheService cacheService)
@@ -29,6 +33,11 @@ namespace Application.Features.Word.Consumers
         public async Task Consume(ConsumeContext<CreateWordEvent> context)
         {
             await _cacheService.RemoveCacheAsync(CacheKeys.WordMeaning(context.Message.Text));
+        }
+
+        public async Task Consume(ConsumeContext<WordMemorizationToggledEvent> context)
+        {
+            await _cacheService.RemoveCacheAsync(CacheKeys.FlashCardDetail(context.Message.FlashCardId));
         }
     }
 }

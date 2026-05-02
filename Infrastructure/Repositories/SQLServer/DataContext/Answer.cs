@@ -7,7 +7,7 @@ using Domain.Common;
 
 namespace Infrastructure.Repositories.SQLServer.DataContext
 {
-    public class Answer : BaseEntity, ISoftDeletable
+    public class Answer : BaseEntity<Guid>, ISoftDeletable
     {
         public required string Content { get; set; }
         public required bool IsCorrect { get; set; } = false;

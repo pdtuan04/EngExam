@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories.SQLServer
 {
-    public sealed class TopicRepository : GenericRepository<Domain.Entity.Topic, Topic>, ITopicRepository
+    public sealed class TopicRepository : GenericRepository<Domain.Entity.Topic, Topic, Guid>, ITopicRepository
     {
         public TopicRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper) 
         {

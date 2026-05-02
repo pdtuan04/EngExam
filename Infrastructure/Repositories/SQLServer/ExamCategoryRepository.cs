@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories.SQLServer
 {
-    public class ExamCategoryRepository : GenericRepository<Domain.Entity.ExamCategory, ExamCategory>,IExamCategoryRepository
+    public class ExamCategoryRepository : GenericRepository<Domain.Entity.ExamCategory, ExamCategory, Guid>,IExamCategoryRepository
     {
         public ExamCategoryRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper)
         {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Entity
 {
-    public class Topic: BaseEntity, ISoftDeletable
+    public class Topic: BaseEntity<Guid>, ISoftDeletable
     {
         public required string Name { get; set; }
         public required string Description { get; set; }

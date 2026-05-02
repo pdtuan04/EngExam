@@ -18,20 +18,28 @@ namespace Application.Features.Course.Consumers
         {
             var message = context.Message;
             var course = await courseRepository.GetByIdAsync(message.CourseId);
+            if (course == null)
+            {
+                return;
+            }
             await courseReadRepository.UpsertAsync(course);
         }
 
         public async Task Consume(ConsumeContext<DeletedCourseEvent> context)
         {
             var message = context.Message;
-            var course = await courseRepository.GetByIdAsync(message.Id);
-            await courseReadRepository.UpsertAsync(course);
+            await courseReadRepository.DeleteAsync(message.Id);
         }
 
         public async Task Consume(ConsumeContext<UpdateCourseEvent> context)
         {
             var message = context.Message;
             var course = await courseRepository.GetByIdAsync(message.CourseId);
+            if (course == null)
+            {
+                await courseReadRepository.DeleteAsync(message.CourseId);
+                return;
+            }
             await courseReadRepository.UpsertAsync(course);
         }
     }

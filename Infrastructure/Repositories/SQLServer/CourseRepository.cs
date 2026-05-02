@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories.SQLServer
 {
-    public class CourseRepository : GenericRepository<Domain.Entity.Course, Course>, ICourseRepository
+    public class CourseRepository : GenericRepository<Domain.Entity.Course, Course, Guid>, ICourseRepository
     {
         public CourseRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper)
         {

@@ -10,7 +10,6 @@ namespace Application.Models.Course
         Guid Id,
         string Name,
         string Description,
-        string Content,
         string? ImageUrl,
         Guid TopicId
     );

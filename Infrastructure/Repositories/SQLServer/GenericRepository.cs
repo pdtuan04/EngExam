@@ -3,6 +3,7 @@ using Application.Models.Pagination;
 using AutoMapper;
 using AutoMapper.Extensions.ExpressionMapping;
 using AutoMapper.QueryableExtensions;
+using Domain.Abstractions.Entity;
 using Domain.Common;
 using Domain.Entity;
 using Infrastructure.Common;
@@ -18,9 +19,9 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories.SQLServer
 {
-    public class GenericRepository<TDomain, TEntity> : IGenericRepository<TDomain>
-        where TDomain : class
-        where TEntity : class
+    public class GenericRepository<TDomain, TEntity, TKey> : IGenericRepository<TDomain>
+        where TDomain : class, IEntity<TKey>
+        where TEntity : class, IEntity<TKey>
     {
         protected readonly ApplicationDbContext _dbContext;
         protected readonly DbSet<TEntity> _dbSet;
@@ -74,7 +75,7 @@ namespace Infrastructure.Repositories.SQLServer
 
         public async Task<TDomain> GetByIdAsync(object id)
         {
-            var dbEntity = await _dbSet.FindAsync(id).;
+            var dbEntity = await _dbSet.AsNoTracking().FirstOrDefaultAsync(e => e.Id.Equals(id));
             return _mapper.Map<TDomain>(dbEntity);
         }
 
@@ -158,8 +159,8 @@ namespace Infrastructure.Repositories.SQLServer
 
         public virtual async Task Update(TDomain entity)
         {
-            var dbExam = _mapper.Map<TEntity>(entity);
-            _dbSet.Update(dbExam);
+            var dbentity = _mapper.Map<TEntity>(entity);
+            _dbSet.Update(dbentity);
         }
 
         public void UpdateRange(IEnumerable<TDomain> entities)

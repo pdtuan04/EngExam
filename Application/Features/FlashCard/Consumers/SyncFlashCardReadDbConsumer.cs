@@ -13,9 +13,7 @@ namespace Application.Features.FlashCard.Consumers
     public sealed class SyncFlashCardReadDbConsumer :
         IConsumer<CreateFlashCardEvent>,
         IConsumer<UpdateFlashCardEvent>,
-        IConsumer<DeleteFlashCardEvent>,
-        IConsumer<WordAddedIntoFlashcardEvent>,
-        IConsumer<WordRemovedFromFlashcardEvent>
+        IConsumer<DeleteFlashCardEvent>
     {
         private readonly IFlashCardRepository _flashCardRepository;
         private readonly IFlashCardReadRepository _flashCardReadRepository;
@@ -26,25 +24,23 @@ namespace Application.Features.FlashCard.Consumers
         }
         public async Task Consume(ConsumeContext<CreateFlashCardEvent> context)
         {
-            await _flashCardReadRepository.UpsertAsync(new Domain.Entity.FlashCard
+            var flashCard = await _flashCardRepository.GetByIdAsync(context.Message.Id);
+            if (flashCard == null)
             {
-                Id = context.Message.Id,
-                Title = context.Message.Title,
-                Description = context.Message.Description,
-                UserId = context.Message.UserId,
-                CreatedAt = context.Message.CreatedAt,
-            });
+                return;
+            }
+            await _flashCardReadRepository.UpsertAsync(flashCard);
         }
 
         public async Task Consume(ConsumeContext<UpdateFlashCardEvent> context)
         {
-            await _flashCardReadRepository.UpsertAsync(new Domain.Entity.FlashCard
-            {
-                Id = context.Message.Id,
-                Title = context.Message.Title,
-                Description = context.Message.Description,
-                UserId = context.Message.UserId
-            });
+            var flashCard = await _flashCardRepository.GetByIdAsync(context.Message.Id);
+            if (flashCard == null) 
+            { 
+                await _flashCardReadRepository.DeleteAsync(context.Message.Id);
+                return; 
+            }
+            await _flashCardReadRepository.UpsertAsync(flashCard);
         }
 
         public async Task Consume(ConsumeContext<DeleteFlashCardEvent> context)
@@ -52,16 +48,5 @@ namespace Application.Features.FlashCard.Consumers
             await _flashCardReadRepository.DeleteAsync(context.Message.Id);
         }
 
-        public async Task Consume(ConsumeContext<WordAddedIntoFlashcardEvent> context)
-        {
-            var flashCard = await _flashCardRepository.GetFlashCardDetailAsync(context.Message.FlashCardId);
-            await _flashCardReadRepository.UpsertAsync(flashCard);
-        }
-
-        public async Task Consume(ConsumeContext<WordRemovedFromFlashcardEvent> context)
-        {
-            var flashCard = await _flashCardRepository.GetFlashCardDetailAsync(context.Message.FlashCardId);
-            await _flashCardReadRepository.UpsertAsync(flashCard);
-        }
     }
 }

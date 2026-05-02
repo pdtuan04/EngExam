@@ -27,11 +27,13 @@ namespace Application.Features.Word.Commands
             {
                 Id = Guid.NewGuid(),
                 Text = request.Text,
+                FlashCardId = request.FlashCardId,
+                CreatedAt = DateTime.UtcNow,
             };
             word.UpdateMeaning(request.Meaning);
             await _unitOfWork.WordRepository.AddAsync(word);
-            await _eventBus.PublishAsync(new CreateWordEvent(word.Id, word.Text, word.Meaning));
-            return new WordResponse(word.Id, word.Text, word.Meaning);
+            await _eventBus.PublishAsync(new CreateWordEvent(word.Id, word.Text, word.Meaning, word.FlashCardId));
+            return new WordResponse(word.Id, word.Text, word.Meaning, word.CreatedAt, word.IsMemorized);
         }
     }
 }

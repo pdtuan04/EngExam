@@ -8,7 +8,7 @@ using Domain.Enums;
 
 namespace Domain.Entity
 {
-    public class Question:BaseEntity, ISoftDeletable
+    public class Question: BaseEntity<Guid>, ISoftDeletable
     {
         public required string Content { get; set; }
         public required QuestionTypes QuestionTypes { get; set; }

@@ -8,7 +8,7 @@ using Domain.Enums;
 
 namespace Infrastructure.Repositories.SQLServer.DataContext
 {
-    public class Question:BaseEntity, ISoftDeletable
+    public class Question: BaseEntity<Guid>, ISoftDeletable
     {
         public required string Content { get; set; }
         public QuestionTypes QuestionTypes { get; set; }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.Features.Course.Queries
 {
-    public sealed record GetCourseByIdQuery(Guid Id) : ICacheQuery<CourseResponse>
+    public sealed record GetCourseByIdQuery(Guid Id) : ICacheQuery<CourseDetailResponse>
     {
         public string CacheKey => CacheKeys.CourseDetail(Id);
         public TimeSpan? Expiration => null;

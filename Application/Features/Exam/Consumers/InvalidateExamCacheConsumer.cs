@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Application.Features.Exam.Consumers
 {
-    public class InvalidateExamCacheConsumer : 
+    public class InvalidateExamCacheConsumer :
         IConsumer<UpdateExamEvent>, 
         IConsumer<DeletedExamEvent>
     {

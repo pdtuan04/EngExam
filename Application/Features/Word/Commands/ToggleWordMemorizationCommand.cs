@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Features.FlashCard.Commands
+namespace Application.Features.Word.Commands
 {
-    public record RemoveWordFromFlashcardCommand(Guid FlashCardId, Guid WordId) : ICommand<bool>;
+    public sealed record ToggleWordMemorizationCommand(Guid Id) : ICommand<bool>;
 }

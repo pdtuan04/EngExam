@@ -619,8 +619,14 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("FlashCardId")
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("FlashCardId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsMemorized")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Meaning")
                         .IsRequired()
@@ -927,9 +933,13 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Infrastructure.Repositories.SQLServer_Read.DataContext.Word", b =>
                 {
-                    b.HasOne("Infrastructure.Repositories.SQLServer_Read.DataContext.FlashCard", null)
+                    b.HasOne("Infrastructure.Repositories.SQLServer_Read.DataContext.FlashCard", "FlashCard")
                         .WithMany("Words")
-                        .HasForeignKey("FlashCardId");
+                        .HasForeignKey("FlashCardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FlashCard");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
