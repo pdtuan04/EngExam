@@ -14,6 +14,7 @@ namespace Application.Features.Practice.Commands
     public sealed record UpdatePracticeCommand(
         Guid Id,
         string Title,
+        Guid TopicId,
         string? Description = null,
         bool? IsActive = null,
         IReadOnlyCollection<UpdateQuestionRequest> Questions = null!) : ICommand<PracticeDetailResponse>;

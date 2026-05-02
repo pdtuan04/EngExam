@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions;
 using Application.Abstractions.Messaging;
 using Application.Abstractions.Repositories.Read;
+using Application.Common.Exceptions;
 using Application.Models.Answer;
 using Application.Models.Practice;
 using Application.Models.Question;
@@ -21,7 +22,7 @@ namespace Application.Features.Practice.Queries
         }
         public async Task<PracticeDetailResponse> Handle(GetPracticeToTakeQuery request, CancellationToken cancellationToken)
         {
-            var result = await _practiceReadRepository.GetPracticeToTake(request.Id) ?? throw new NullReferenceException();
+            var result = await _practiceReadRepository.GetPracticeToTake(request.Id) ?? throw new NotFoundException("Practice",request.Id);
             return new PracticeDetailResponse
             (
                 Id: result.Id,

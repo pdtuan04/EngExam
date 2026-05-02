@@ -3,6 +3,7 @@ using Application.Abstractions.Repositories.Read;
 using Application.Models.Pagination;
 using Application.Models.Practice;
 using AutoMapper;
+using EFCore.BulkExtensions;
 using Infrastructure.Repositories.SQLServer_Read.DataContext;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -36,6 +37,25 @@ namespace Infrastructure.Repositories.SQLServer_Read
                         .ThenInclude(q => q.Answers)
                 .FirstOrDefaultAsync(p => p.Id == id);
             return _mapper.Map<Domain.Entity.Practice>(practice);
+        }
+        public override async Task UpsertAsync(Domain.Entity.Practice practice)
+        {
+            var practiceDb = _mapper.Map<Practice>(practice);
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            try
+            {
+                var existingPractice = await _dbContext.Practices
+                                                       .Where(p => p.Id == practiceDb.Id)
+                                                       .ExecuteDeleteAsync();
+                _dbContext.Practices.Add(practiceDb);
+                await _dbContext.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                throw new Exception($"Upsert practice failed: {ex.Message}");
+            }
         }
     }
 }

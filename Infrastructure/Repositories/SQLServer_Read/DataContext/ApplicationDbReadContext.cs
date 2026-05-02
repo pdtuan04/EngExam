@@ -85,6 +85,7 @@ namespace Infrastructure.Repositories.SQLServer_Read.DataContext
                 .WithMany(q => q.AnswerHistory)
                 .HasForeignKey(ed => ed.QuestionId)
                 .OnDelete(DeleteBehavior.NoAction);
+
             modelBuilder.Entity<PracticeDetail>()
                 .HasKey(pd => new { pd.PracticeId, pd.QuestionId });
             modelBuilder.Entity<PracticeDetail>()

@@ -35,6 +35,7 @@ namespace Application.Features.Practice.Commands
             practice.Title = request.Title;
             practice.Description = request.Description;
             practice.UpdatedAt = now;
+            practice.TopicId = request.TopicId;
             foreach (var q in request.Questions)
             {
                 var existQues = practice.PracticeDetails.FirstOrDefault(pd => pd.QuestionId == q.Id);

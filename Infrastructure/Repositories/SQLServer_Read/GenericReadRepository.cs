@@ -151,7 +151,7 @@ namespace Infrastructure.Repositories.SQLServer_Read
             return true;
         }
 
-        public async Task UpsertAsync(TDomain entity)
+        public async virtual Task UpsertAsync(TDomain entity)
         {
             var dbEntity = _mapper.Map<TEntity>(entity);
             await _dbContext.BulkInsertOrUpdateAsync(new List<TEntity> { dbEntity });

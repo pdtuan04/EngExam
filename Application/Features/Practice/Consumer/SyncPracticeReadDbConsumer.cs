@@ -22,7 +22,7 @@ namespace Application.Features.Practice.Consumer
         public async Task Consume(ConsumeContext<CreatePracticeEvent> context)
         {
             var message = context.Message;
-            var practice = await _practiceRepository.GetByIdAsync(message.PracticeId);
+            var practice = await _practiceRepository.GetPracticeDetail(message.PracticeId);
             if (practice == null)
             {
                 return;
