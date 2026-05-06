@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Repositories.Read;
 using Application.Features.Word.Events;
+using Application.Models.Word;
 using MassTransit;
 using System;
 using System.Collections.Generic;
@@ -23,42 +24,23 @@ namespace Application.Features.Word.Consumers
         public async Task Consume(ConsumeContext<CreateWordEvent> context)
         {
             var message = context.Message;
-            var word = new Domain.Entity.Word
-            {
-                Id = message.Id,
-                Text = message.Text,
-                FlashCardId = message.FlashCardId,
-            };
-            word.UpdateMeaning(message.Meaning);
+            var word = new WordReadModel(message.Id,message.Text,message.Meaning,message.CreatedAt, message.CreatedAt, false,message.FlashCardId);
             await _wordReadRepository.UpsertAsync(word);
         }
         public async Task Consume(ConsumeContext<UpdateWordEvent> context)
         {
             var message = context.Message;
-            var word = new Domain.Entity.Word
-            {
-                Id = message.Id,
-                Text = message.Text,
-                FlashCardId = message.FlashCardId,
-            };
-            word.UpdateMeaning(message.Meaning);
+            var word = new WordReadModel(message.Id, message.Text, message.Meaning, message.CreatedAt, message.UpdateAt,false, message.FlashCardId);
             await _wordReadRepository.UpsertAsync(word);
         }
         public async Task Consume(ConsumeContext<DeleteWordEvent> context)
         {
-            await _wordReadRepository.DeleteAsync(context.Message.Id);
+            await _wordReadRepository.DeleteAsync(context.Message.Id, context.Message.ActionAt);
         }
 
         public async Task Consume(ConsumeContext<WordMemorizationToggledEvent> context)
         {
-            var existingWord = await _wordReadRepository.GetByIdAsync(context.Message.WordId);
-            if (existingWord == null)
-            {
-                await _wordReadRepository.DeleteAsync(existingWord.Id);
-                return;
-            }
-            existingWord.IsMemorized = context.Message.IsMemorized;
-            await _wordReadRepository.UpsertAsync(existingWord);
+            await _wordReadRepository.ToggleWordMemorization(context.Message.WordId, context.Message.IsMemorized, context.Message.ActionAt);
         }
     }
 }

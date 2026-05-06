@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace Application.Features.Word.Commands
 {
-    public sealed record ToggleWordMemorizationCommand(Guid Id) : ICommand<bool>;
+    public sealed record ToggleWordMemorizationCommand(Guid Id, bool IsMemorized, Guid FlashCardId) : ICommand<bool>;
 }

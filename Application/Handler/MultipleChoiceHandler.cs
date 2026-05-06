@@ -16,6 +16,7 @@ namespace Application.Handler
             bool isCorrect = answer?.IsCorrect ?? false;
             return new AnswerHistory
             {
+                Id = Guid.NewGuid(),
                 ExamResultId = examResultId,
                 QuestionId = examDetail.QuestionId,
                 UserAnswer = answer?.Content ?? "",

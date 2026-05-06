@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 
 namespace Application.Features.Word.Events
 {
-    public sealed record CreateWordEvent(Guid Id, string Text, string Meaning, Guid FlashCardId);
+    public sealed record CreateWordEvent(Guid Id, string Text, string Meaning, DateTime CreatedAt, Guid FlashCardId,DateTime? UpdateAt = null);
 }

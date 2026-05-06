@@ -23,16 +23,17 @@ namespace Application.Features.Word.Commands
         }
         public async Task<WordResponse> Handle(CreateWordCommand request, CancellationToken cancellationToken)
         {
+            var now = DateTime.UtcNow;
             var word = new Domain.Entity.Word
             {
                 Id = Guid.NewGuid(),
                 Text = request.Text,
                 FlashCardId = request.FlashCardId,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = now,
             };
             word.UpdateMeaning(request.Meaning);
             await _unitOfWork.WordRepository.AddAsync(word);
-            await _eventBus.PublishAsync(new CreateWordEvent(word.Id, word.Text, word.Meaning, word.FlashCardId));
+            await _eventBus.PublishAsync(new CreateWordEvent(word.Id, word.Text, word.Meaning, word.CreatedAt, word.FlashCardId, word.CreatedAt));
             return new WordResponse(word.Id, word.Text, word.Meaning, word.CreatedAt, word.IsMemorized);
         }
     }

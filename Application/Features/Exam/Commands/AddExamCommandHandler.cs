@@ -1,7 +1,9 @@
 ﻿using Application.Abstractions;
 using Application.Abstractions.Events;
 using Application.Abstractions.Messaging;
+using Application.Features.Answer.Events;
 using Application.Features.Exam.Events;
+using Application.Features.Question.Events;
 using Application.Models.Answer;
 using Application.Models.Exam;
 using Application.Models.Question;
@@ -33,12 +35,14 @@ namespace Application.Features.Exam.Commands
                 Title = request.Title,
                 DurationInMinutes = request.DurationInMinutes,
                 ExamCategoryId = request.ExamCategoryId,
+                CreatedAt = now,
+                UpdatedAt = now,
             };
 
             foreach (var q in request.Questions)
             {
                 var questionId = Guid.NewGuid();
-                exam.AddExamDetail(new Question
+                exam.AddExamDetail(new Domain.Entity.Question
                 {
                     Id = questionId,
                     IsActive = true,
@@ -46,20 +50,62 @@ namespace Application.Features.Exam.Commands
                     Explanation = q.Explanation,
                     QuestionTypes = q.QuestionTypes,
                     TopicId = q.TopicId,
-                    Answers = q.Answers.Select(a => new Answer
+                    CreatedAt = now,
+                    UpdatedAt = now,
+                    Answers = q.Answers.Select(a => new Domain.Entity.Answer
                     {
                         Id = Guid.NewGuid(),
                         IsActive = true,
                         Content = a.Content,
                         IsCorrect = a.IsCorrect,
                         QuestionId = questionId,
+                        CreatedAt = now,
+                        UpdatedAt = now,
                     }).ToList(),
                 },
                 q.Score);
             }
             await _unitOfWork.ExamRepository.AddAsync(exam);
-            await _eventBus.PublishAsync(new CreateExamEvent(
-                exam.Id
+            await _eventBus.PublishAsync(new CreateExamEvent(   
+                exam.Id,
+                exam.CreatedAt,
+                exam.UpdatedAt,
+                exam.Title,
+                exam.Description,
+                exam.DurationInMinutes,
+                exam.ExamCategoryId
+            ), cancellationToken);
+            await _eventBus.PublishAsync(new CreateQuestionEvent(
+                exam.ExamDetail.Select(ed => new QuestionReadModel
+                (
+                    Id: ed.Question.Id,
+                    Content: ed.Question.Content,
+                    QuestionTypes: ed.Question.QuestionTypes,
+                    Explanation: ed.Question.Explanation ?? "",
+                    ImageUrl: ed.Question.ImageUrl,
+                    TopicId: ed.Question.TopicId,
+                    CreatedAt: ed.Question.CreatedAt,
+                    UpdatedAt: ed.Question.UpdatedAt
+                )).ToList()
+            ), cancellationToken);
+            await _eventBus.PublishAsync(new CreateAnswerEvent(
+                exam.ExamDetail.SelectMany(ed => ed.Question.Answers.Select(a => new AnswerReadModel
+                (
+                    Id: a.Id,
+                    Content: a.Content,
+                    IsCorrect: a.IsCorrect,
+                    QuestionId: a.QuestionId,
+                    CreatedAt: a.CreatedAt,
+                    UpdatedAt: a.UpdatedAt
+                ))).ToList()
+            ),cancellationToken);
+            await _eventBus.PublishAsync(new CreateExamDetailEvent(
+                exam.ExamDetail.Select(ed => new ExamDetailReadModel
+                (
+                    ExamId: exam.Id,
+                    QuestionId: ed.Question.Id,
+                    Score: ed.Score
+                )).ToList()
             ), cancellationToken);
             return new ExamDetailResponse
             (

@@ -9,9 +9,11 @@ using System.Threading.Tasks;
 
 namespace Application.Abstractions.Repositories.Read
 {
-    public interface IPracticeReadRepository : IGenericReadRepository<Practice>
+    public interface IPracticeReadRepository
     {
         Task<Practice> GetPracticeToTake(Guid id);
         Task<PaginationResponse<PracticeResponse>> GetPracticePaginatedByTopicIdAsync(Guid topicId, int pageIndex, int pageSize, CancellationToken cancellationToken);
+        Task UpsertAsync(PracticeReadModel practice);
+        Task DeleteAsync(Guid practiceId, DateTime deletedAt);
     }
 }

@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Application.Features.FlashCard.Events
 {
-    public sealed record DeleteFlashCardEvent(Guid Id, Guid UserId);
+    public sealed record DeleteFlashCardEvent(Guid Id, Guid UserId, DateTime DeletedAt);
 }

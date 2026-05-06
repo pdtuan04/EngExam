@@ -47,12 +47,10 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("QuestionId");
 
                     b.ToTable("Answers");
 
@@ -65,7 +63,8 @@ namespace Infrastructure.Migrations
                             IsActive = true,
                             IsCorrect = false,
                             IsDeleted = false,
-                            QuestionId = new Guid("33333333-3333-3333-3333-333333333333")
+                            QuestionId = new Guid("33333333-3333-3333-3333-333333333333"),
+                            UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -75,7 +74,8 @@ namespace Infrastructure.Migrations
                             IsActive = true,
                             IsCorrect = true,
                             IsDeleted = false,
-                            QuestionId = new Guid("33333333-3333-3333-3333-333333333333")
+                            QuestionId = new Guid("33333333-3333-3333-3333-333333333333"),
+                            UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -85,23 +85,42 @@ namespace Infrastructure.Migrations
                             IsActive = true,
                             IsCorrect = false,
                             IsDeleted = false,
-                            QuestionId = new Guid("33333333-3333-3333-3333-333333333333")
+                            QuestionId = new Guid("33333333-3333-3333-3333-333333333333"),
+                            UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
             modelBuilder.Entity("Infrastructure.Repositories.SQLServer_Read.DataContext.AnswersHistory", b =>
                 {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("ExamResultId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Explanation")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsCorrect")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("OptionsJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("QuestionText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsCorrect")
-                        .HasColumnType("bit");
+                    b.Property<int>("QuestionTypes")
+                        .HasColumnType("int");
 
                     b.Property<double>("Score")
                         .HasColumnType("float");
@@ -110,9 +129,7 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ExamResultId", "QuestionId");
-
-                    b.HasIndex("QuestionId");
+                    b.HasKey("Id");
 
                     b.ToTable("DetailResults");
                 });
@@ -150,12 +167,10 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("TopicId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TopicId");
 
                     b.ToTable("Courses");
                 });
@@ -188,12 +203,10 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ExamCategoryId");
 
                     b.ToTable("Exams");
 
@@ -207,7 +220,8 @@ namespace Infrastructure.Migrations
                             ExamCategoryId = new Guid("11111111-1111-1111-1111-111111111111"),
                             IsActive = true,
                             IsDeleted = false,
-                            Title = "Basic Grammar Test"
+                            Title = "Basic Grammar Test",
+                            UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -237,7 +251,7 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -253,7 +267,8 @@ namespace Infrastructure.Migrations
                             ImageUrl = "/uploads/images/category_img.jpg",
                             IsActive = true,
                             IsDeleted = false,
-                            Name = "Grammar"
+                            Name = "Grammar",
+                            UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -263,7 +278,8 @@ namespace Infrastructure.Migrations
                             ImageUrl = "/uploads/images/category_img.jpg",
                             IsActive = true,
                             IsDeleted = false,
-                            Name = "Reading"
+                            Name = "Reading",
+                            UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -273,7 +289,8 @@ namespace Infrastructure.Migrations
                             ImageUrl = "/uploads/images/category_img.jpg",
                             IsActive = true,
                             IsDeleted = false,
-                            Name = "Vocabulary"
+                            Name = "Vocabulary",
+                            UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -283,7 +300,8 @@ namespace Infrastructure.Migrations
                             ImageUrl = "/uploads/images/category_img.jpg",
                             IsActive = true,
                             IsDeleted = false,
-                            Name = "Listening"
+                            Name = "Listening",
+                            UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -299,8 +317,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("ExamId", "QuestionId");
-
-                    b.HasIndex("QuestionId");
 
                     b.ToTable("ExamDetails");
 
@@ -322,20 +338,26 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("CompleteAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DurationInMinutes")
+                        .HasColumnType("int");
+
                     b.Property<Guid>("ExamId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<double>("Score")
                         .HasColumnType("float");
 
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ExamId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("ExamResults");
                 });
@@ -352,9 +374,18 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -389,12 +420,10 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("TopicId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TopicId");
 
                     b.ToTable("Practices");
                 });
@@ -408,8 +437,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("PracticeId", "QuestionId");
-
-                    b.HasIndex("QuestionId");
 
                     b.ToTable("PracticeDetails");
                 });
@@ -445,12 +472,10 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("TopicId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TopicId");
 
                     b.ToTable("Questions");
 
@@ -464,7 +489,8 @@ namespace Infrastructure.Migrations
                             IsActive = true,
                             IsDeleted = false,
                             QuestionTypes = 0,
-                            TopicId = new Guid("22222222-2222-2222-2222-222222222222")
+                            TopicId = new Guid("22222222-2222-2222-2222-222222222222"),
+                            UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -491,7 +517,7 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -506,7 +532,8 @@ namespace Infrastructure.Migrations
                             Description = "Basic grammar rules",
                             IsActive = true,
                             IsDeleted = false,
-                            Name = "Basic Grammar"
+                            Name = "Basic Grammar",
+                            UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -625,6 +652,9 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("FlashCardId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsMemorized")
                         .HasColumnType("bit");
 
@@ -636,9 +666,10 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
-                    b.HasIndex("FlashCardId");
+                    b.HasKey("Id");
 
                     b.ToTable("Words");
                 });
@@ -800,148 +831,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Infrastructure.Repositories.SQLServer_Read.DataContext.Answer", b =>
-                {
-                    b.HasOne("Infrastructure.Repositories.SQLServer_Read.DataContext.Question", "Question")
-                        .WithMany("Answers")
-                        .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Question");
-                });
-
-            modelBuilder.Entity("Infrastructure.Repositories.SQLServer_Read.DataContext.AnswersHistory", b =>
-                {
-                    b.HasOne("Infrastructure.Repositories.SQLServer_Read.DataContext.ExamResult", "ExamResult")
-                        .WithMany("AnswerHistory")
-                        .HasForeignKey("ExamResultId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Infrastructure.Repositories.SQLServer_Read.DataContext.Question", "Question")
-                        .WithMany("AnswerHistory")
-                        .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("ExamResult");
-
-                    b.Navigation("Question");
-                });
-
-            modelBuilder.Entity("Infrastructure.Repositories.SQLServer_Read.DataContext.Course", b =>
-                {
-                    b.HasOne("Infrastructure.Repositories.SQLServer_Read.DataContext.Topic", "Topic")
-                        .WithMany()
-                        .HasForeignKey("TopicId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Topic");
-                });
-
-            modelBuilder.Entity("Infrastructure.Repositories.SQLServer_Read.DataContext.Exam", b =>
-                {
-                    b.HasOne("Infrastructure.Repositories.SQLServer_Read.DataContext.ExamCategory", "ExamCategory")
-                        .WithMany("Exams")
-                        .HasForeignKey("ExamCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ExamCategory");
-                });
-
-            modelBuilder.Entity("Infrastructure.Repositories.SQLServer_Read.DataContext.ExamDetail", b =>
-                {
-                    b.HasOne("Infrastructure.Repositories.SQLServer_Read.DataContext.Exam", "Exam")
-                        .WithMany("ExamDetail")
-                        .HasForeignKey("ExamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Infrastructure.Repositories.SQLServer_Read.DataContext.Question", "Question")
-                        .WithMany("ExamDetail")
-                        .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Exam");
-
-                    b.Navigation("Question");
-                });
-
-            modelBuilder.Entity("Infrastructure.Repositories.SQLServer_Read.DataContext.ExamResult", b =>
-                {
-                    b.HasOne("Infrastructure.Repositories.SQLServer_Read.DataContext.Exam", "Exam")
-                        .WithMany()
-                        .HasForeignKey("ExamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Infrastructure.Repositories.SQLServer_Read.DataContext.User", "User")
-                        .WithMany("ExamResults")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Exam");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Infrastructure.Repositories.SQLServer_Read.DataContext.Practice", b =>
-                {
-                    b.HasOne("Infrastructure.Repositories.SQLServer_Read.DataContext.Topic", "Topic")
-                        .WithMany()
-                        .HasForeignKey("TopicId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Topic");
-                });
-
-            modelBuilder.Entity("Infrastructure.Repositories.SQLServer_Read.DataContext.PracticeDetail", b =>
-                {
-                    b.HasOne("Infrastructure.Repositories.SQLServer_Read.DataContext.Practice", "Practice")
-                        .WithMany("PracticeDetails")
-                        .HasForeignKey("PracticeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Infrastructure.Repositories.SQLServer_Read.DataContext.Question", "Question")
-                        .WithMany("PracticeDetails")
-                        .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Practice");
-
-                    b.Navigation("Question");
-                });
-
-            modelBuilder.Entity("Infrastructure.Repositories.SQLServer_Read.DataContext.Question", b =>
-                {
-                    b.HasOne("Infrastructure.Repositories.SQLServer_Read.DataContext.Topic", "Topic")
-                        .WithMany("Questions")
-                        .HasForeignKey("TopicId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Topic");
-                });
-
-            modelBuilder.Entity("Infrastructure.Repositories.SQLServer_Read.DataContext.Word", b =>
-                {
-                    b.HasOne("Infrastructure.Repositories.SQLServer_Read.DataContext.FlashCard", "FlashCard")
-                        .WithMany("Words")
-                        .HasForeignKey("FlashCardId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FlashCard");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
@@ -991,52 +880,6 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Infrastructure.Repositories.SQLServer_Read.DataContext.Exam", b =>
-                {
-                    b.Navigation("ExamDetail");
-                });
-
-            modelBuilder.Entity("Infrastructure.Repositories.SQLServer_Read.DataContext.ExamCategory", b =>
-                {
-                    b.Navigation("Exams");
-                });
-
-            modelBuilder.Entity("Infrastructure.Repositories.SQLServer_Read.DataContext.ExamResult", b =>
-                {
-                    b.Navigation("AnswerHistory");
-                });
-
-            modelBuilder.Entity("Infrastructure.Repositories.SQLServer_Read.DataContext.FlashCard", b =>
-                {
-                    b.Navigation("Words");
-                });
-
-            modelBuilder.Entity("Infrastructure.Repositories.SQLServer_Read.DataContext.Practice", b =>
-                {
-                    b.Navigation("PracticeDetails");
-                });
-
-            modelBuilder.Entity("Infrastructure.Repositories.SQLServer_Read.DataContext.Question", b =>
-                {
-                    b.Navigation("AnswerHistory");
-
-                    b.Navigation("Answers");
-
-                    b.Navigation("ExamDetail");
-
-                    b.Navigation("PracticeDetails");
-                });
-
-            modelBuilder.Entity("Infrastructure.Repositories.SQLServer_Read.DataContext.Topic", b =>
-                {
-                    b.Navigation("Questions");
-                });
-
-            modelBuilder.Entity("Infrastructure.Repositories.SQLServer_Read.DataContext.User", b =>
-                {
-                    b.Navigation("ExamResults");
                 });
 #pragma warning restore 612, 618
         }

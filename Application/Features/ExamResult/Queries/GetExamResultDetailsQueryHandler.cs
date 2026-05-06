@@ -19,23 +19,7 @@ namespace Application.Features.ExamResult.Queries
         }
         public async Task<ExamResultDetailResponse> Handle(GetExamResultDetailsQuery request, CancellationToken cancellationToken)
         {
-            var examResult = await _examResultReadRepository.GetDetailByIdAsync(request.Id);
-            return new ExamResultDetailResponse(
-                examResult.Id,
-                examResult.CompleteAt, 
-                examResult.Score, 
-                UserAnswers: examResult.AnswerHistory
-                                       .Select(a => new UserAnswerResponse(
-                                           a.Question.Content,
-                                           a.Question.QuestionTypes,
-                                           a.UserAnswer,
-                                           a.IsCorrect,
-                                           a.Score,
-                                           a.Question.Explanation ?? "",
-                                           a.Question.Answers.Select(answer => new Option(
-                                               answer.Content,
-                                               answer.IsCorrect
-                                           )).ToList())).ToList());
+            return await _examResultReadRepository.GetDetailByIdAsync(request.Id);
         }
     }
 }

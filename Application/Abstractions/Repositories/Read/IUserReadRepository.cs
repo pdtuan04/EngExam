@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Application.Abstractions.Repositories.Read
 {
-    public interface IUserReadRepository : IGenericReadRepository<User>
+    public interface IUserReadRepository
     {
         Task<User> GetUserById(Guid id);
         Task<bool> IsEmailUniqueAsync(string email);

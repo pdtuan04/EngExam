@@ -20,7 +20,7 @@ namespace Application.Features.Topic.Queries
         }
         public async Task<PaginationResponse<TopicResponse>> Handle(GetTopicPaginatedQuery request, CancellationToken cancellationToken)
         {
-            return await _topicReadRepository.ToPagination<TopicResponse>(request.pageIndex, request.pageSize, cancellationToken: cancellationToken);
+            return await _topicReadRepository.GetPaginatedAsync(request.pageIndex, request.pageSize, cancellationToken: cancellationToken);
         }
     }
 }

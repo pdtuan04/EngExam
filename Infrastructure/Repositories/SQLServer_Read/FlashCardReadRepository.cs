@@ -11,17 +11,38 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories.SQLServer_Read
 {
-    public sealed class FlashCardReadRepository : GenericReadRepository<Domain.Entity.FlashCard, FlashCard>, IFlashCardReadRepository
+    public sealed class FlashCardReadRepository : IFlashCardReadRepository
     {
-        public FlashCardReadRepository(ApplicationDbReadContext dbContext, IMapper mapper) : base(dbContext, mapper)
+        private readonly ApplicationDbReadContext _dbContext;
+        private readonly IMapper _mapper;
+
+        public FlashCardReadRepository(ApplicationDbReadContext dbContext, IMapper mapper)
         {
+            _dbContext = dbContext;
+            _mapper = mapper;
+        }
+
+        public async Task DeleteAsync(Guid flashCardId, DateTime deletedAt)
+        {
+            var flashCard = await _dbContext.FlashCards
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(f => f.Id == flashCardId);
+            if (flashCard != null)
+            {
+                if (flashCard.UpdatedAt >= deletedAt)
+                {
+                    return;
+                }
+                flashCard.IsDeleted = true;
+                flashCard.UpdatedAt = deletedAt;
+                await _dbContext.SaveChangesAsync();
+            }
         }
 
         public async Task<FlashCardDetailResponse> GetFlashCardDetailByIdAsync(Guid flashCardId, CancellationToken cancellationToken)
         {
             var flashCard = 
                 await _dbContext.FlashCards
-                .Include(f => f.Words)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(f => f.Id == flashCardId, cancellationToken);
             return _mapper.Map<FlashCardDetailResponse>(flashCard);
@@ -33,6 +54,27 @@ namespace Infrastructure.Repositories.SQLServer_Read
                 .Where(f => f.UserId == userId)
                 .ToListAsync(cancellationToken);
             return _mapper.Map<IEnumerable<FlashCardResponse>>(flashCards);
+        }
+
+        public async Task UpsertAsync(FlashCardReadModel flashCard)
+        {
+            var existingFlashCard = await _dbContext.FlashCards
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync(f => f.Id == flashCard.Id);
+            if (existingFlashCard == null)
+            {
+                if(existingFlashCard.UpdatedAt >= flashCard.UpdatedAt)
+                {
+                    return;
+                }
+                _mapper.Map(flashCard, existingFlashCard);
+            }
+            else
+            {
+                var newFlashCard = _mapper.Map<FlashCard>(flashCard);
+                await _dbContext.FlashCards.AddAsync(newFlashCard);
+            }
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

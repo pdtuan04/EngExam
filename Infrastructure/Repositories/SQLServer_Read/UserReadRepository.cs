@@ -7,13 +7,14 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Infrastructure.Repositories.SQLServer_Read
 {
-    public class UserReadRepository : GenericReadRepository<Domain.Entity.User, User>, IUserReadRepository
+    public class UserReadRepository : IUserReadRepository
     {
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
-        public UserReadRepository(UserManager<User> userManager, IMapper mapper) : base(null,mapper)
+        public UserReadRepository(UserManager<User> userManager, IMapper mapper)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         public async Task<bool> IsEmailUniqueAsync(string email)

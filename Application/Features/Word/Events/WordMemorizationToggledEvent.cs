@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Application.Features.Word.Events
 {
-    public sealed record WordMemorizationToggledEvent(Guid WordId, bool IsMemorized, Guid FlashCardId);
+    public sealed record WordMemorizationToggledEvent(Guid WordId, bool IsMemorized, DateTime ActionAt,Guid FlashCardId);
 }

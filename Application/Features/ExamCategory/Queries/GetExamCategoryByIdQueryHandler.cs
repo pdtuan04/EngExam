@@ -20,8 +20,7 @@ namespace Application.Features.ExamCategory.Queries
         }
         public async Task<ExamCategoryResponse> Handle(GetExamCategoryByIdQuery request, CancellationToken cancellationToken)
         {
-            var examCategory = await _examCategoryReadRepository.GetByIdAsync(request.Id) ?? throw new NotFoundException("Category", request.Id);
-            return new ExamCategoryResponse(examCategory.Id, examCategory.Name, examCategory.Description, examCategory.ImageUrl);
+            return await _examCategoryReadRepository.GetByIdAsync(request.Id) ?? throw new NotFoundException("Category", request.Id);
         }
     }
 }

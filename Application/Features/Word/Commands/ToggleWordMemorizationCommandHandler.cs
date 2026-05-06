@@ -22,11 +22,9 @@ namespace Application.Features.Word.Commands
         }
         public async Task<bool> Handle(ToggleWordMemorizationCommand request, CancellationToken cancellationToken)
         {
-            var word = await _unitOfWork.WordRepository.GetByIdAsync(request.Id) ?? throw new NotFoundException("Word",request.Id);
-            word.IsMemorized = !word.IsMemorized;
-            await _unitOfWork.WordRepository.Update(word);
-            await _eventBus.PublishAsync(new WordMemorizationToggledEvent(word.Id, word.IsMemorized, word.FlashCardId));
-            return word.IsMemorized;
+            var now = DateTime.UtcNow;
+            await _eventBus.PublishAsync(new WordMemorizationToggledEvent(request.Id, request.IsMemorized, now, request.FlashCardId));
+            return request.IsMemorized;
         }
     }
 }

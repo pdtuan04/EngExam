@@ -20,7 +20,7 @@ namespace Application.Features.Exam.Queries
         }
         public async Task<PaginationResponse<ExamResponse>> Handle(GetExamPaginatedQuery request, CancellationToken cancellationToken)
         {
-            return await _examReadRepository.ToPagination<ExamResponse>(request.PageNumber, request.PageSize, cancellationToken: cancellationToken);
+            return await _examReadRepository.GetPaginatedAsync(request.PageNumber, request.PageSize, cancellationToken);
         }
     }
 }

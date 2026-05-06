@@ -7,7 +7,7 @@ using Domain.Entity;
 
 namespace Application.Abstractions.Repositories.Read
 {
-    public interface IAnswerReadRepository : IGenericReadRepository<Answer>
+    public interface IAnswerReadRepository
     {
     }
 }

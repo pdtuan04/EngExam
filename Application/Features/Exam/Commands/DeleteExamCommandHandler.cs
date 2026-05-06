@@ -22,7 +22,8 @@ namespace Application.Features.Exam.Commands
         public async Task<bool> Handle(DeleteExamCommand request, CancellationToken cancellationToken)
         {
             var result = await _unitOfWork.ExamRepository.SoftDelete(request.Id);
-            await _eventBus.PublishAsync(new DeletedExamEvent(request.Id));
+            var now = DateTime.UtcNow;
+            await _eventBus.PublishAsync(new DeletedExamEvent(request.Id, now), cancellationToken);
             return result;
         }
     }

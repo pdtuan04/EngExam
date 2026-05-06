@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Application.Features.Practice.Events
 {
-    public sealed record DeletePracticeEvent(Guid PracticeId);
+    public sealed record DeletePracticeEvent(Guid PracticeId, DateTime DeletedAt);
 }

@@ -24,16 +24,19 @@ namespace Application.Features.ExamCategory.Commands
 
         public async Task<ExamCategoryResponse> Handle(CreateExamCategoryCommand request, CancellationToken cancellationToken)
         {
+            var now = DateTime.UtcNow;
             var examCategory = new Domain.Entity.ExamCategory
             {
                 Id = Guid.NewGuid(),
                 Name = request.Name,
                 Description = request.Description,
                 ImageUrl = request.ImageUrl,
-                IsActive = true
+                IsActive = true,
+                CreatedAt = now,
+                UpdatedAt = now
             };
             await _unitOfWork.ExamCategoryRepository.AddAsync(examCategory);
-            var examCategoryCreatedEvent = new CreateExamCategoryEvent(examCategory.Id, examCategory.Name, examCategory.Description, examCategory.ImageUrl, examCategory.IsActive);
+            var examCategoryCreatedEvent = new CreateExamCategoryEvent(examCategory.Id, examCategory.Name, examCategory.Description, examCategory.CreatedAt, examCategory.UpdatedAt, examCategory.ImageUrl, examCategory.IsActive);
             await _eventBus.PublishAsync(examCategoryCreatedEvent,cancellationToken);
             return new ExamCategoryResponse(examCategory.Id, examCategory.Name, examCategory.Description, examCategory.ImageUrl);
         }

@@ -21,25 +21,7 @@ namespace Application.Features.Exam.Queries
         }
         public async Task<TakeExamResponse> Handle(GetExamToTakeQuery request, CancellationToken cancellationToken)
         {
-            var result = await _examReadRepository.GetExamToTake(request.Id);
-            return new TakeExamResponse
-            (
-                Id: result.Id,
-                Title: result.Title,
-                Description: result.Description,
-                DurationInMinutes: result.DurationInMinutes,
-                Questions: result.ExamDetail.Select(q => new QuestionToTakeResponse
-                (
-                    Id: q.QuestionId,
-                    Content: q.Question.Content,
-                    QuestionTypes: q.Question.QuestionTypes,
-                    Answers: q.Question.Answers.Select(o => new AnswerToTakeResponse
-                    (
-                        Id: o.Id,
-                        Content: o.Content
-                    )).ToList()
-                )).ToList()
-            );
+            return await _examReadRepository.GetExamToTake(request.Id);
         }
     }
 }

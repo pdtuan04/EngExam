@@ -24,7 +24,8 @@ namespace Application.Features.FlashCard.Commands
         {
             var flashCard = await _unitOfWork.FlashCardRepository.GetByIdAsync(request.Id) ?? throw new NotFoundException("FlashCard",request.Id);
             await _unitOfWork.FlashCardRepository.Delete(request.Id);
-            await _eventBus.PublishAsync(new DeleteFlashCardEvent(flashCard.Id, flashCard.Id));
+            var now = DateTime.UtcNow;
+            await _eventBus.PublishAsync(new DeleteFlashCardEvent(flashCard.Id, flashCard.UserId, now), cancellationToken);
             return true;
         }
     }

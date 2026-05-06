@@ -9,7 +9,8 @@ namespace Application.Features.ExamCategory.Events
     public sealed record UpdateExamCategoryEvent(Guid CategoryId,
         string Name,
         string Description,
+        DateTime UpdatedAt,
+        DateTime CreatedAt,
         string? ImageUrl = null,
-        DateTime UpdatedAt = default,
         bool IsActive = default);
 }

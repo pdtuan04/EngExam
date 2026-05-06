@@ -1,6 +1,7 @@
 using Application.Abstractions.Repositories;
 using Application.Abstractions.Repositories.Read;
 using Application.Features.Exam.Events;
+using Application.Models.Exam;
 using Domain.Entity;
 using MassTransit;
 using System.Threading.Tasks;
@@ -14,29 +15,18 @@ namespace Application.Features.Exam.Consumers
         public async Task Consume(ConsumeContext<CreateExamEvent> context)
         {
             var message = context.Message;
-            var examExists = await examRepository.GetExamDetail(message.ExamId);
-            if (examExists == null)
-            {
-                return;
-            }
-            await examReadRepository.UpsertAsync(examExists);
+            await examReadRepository.UpsertAsync(new ExamReadModel(message.ExamId, message.Title, message.Description, message.DurationInMinutes,message.ExamCategoryId,message.CreatedAt, message.UpdatedAt));
         }
 
         public async Task Consume(ConsumeContext<UpdateExamEvent> context)
         {
             var message = context.Message;
-            var examExists = await examRepository.GetExamDetail(message.ExamId);
-            if (examExists == null)
-            {
-                await examReadRepository.DeleteAsync(message.ExamId);
-                return;
-            };
-            await examReadRepository.UpsertAsync(examExists);
+            await examReadRepository.UpsertAsync(new ExamReadModel(message.ExamId, message.Title, message.Description, message.DurationInMinutes, message.ExamCategoryId, message.CreatedAt, message.UpdatedAt));
         }
 
         public async Task Consume(ConsumeContext<DeletedExamEvent> context)
         {
-            await examReadRepository.DeleteAsync(context.Message.Id);
+            await examReadRepository.DeleteAsync(context.Message.Id, context.Message.DeletedAt);
         }
     }
 }

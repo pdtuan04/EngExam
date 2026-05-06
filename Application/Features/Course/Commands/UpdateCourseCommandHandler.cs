@@ -35,7 +35,8 @@ namespace Application.Features.Course.Commands
                                             course.ImageUrl, 
                                             course.TopicId, 
                                             course.IsActive, 
-                                            course.CreatedAt), cancellationToken);
+                                            course.CreatedAt,
+                                            course.UpdatedAt), cancellationToken);
             return new CourseDetailResponse(course.Id, course.Name, course.Description, course.Content, course.ImageUrl, course.TopicId);
         }
     }

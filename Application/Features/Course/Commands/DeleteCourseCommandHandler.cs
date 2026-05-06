@@ -22,7 +22,8 @@ namespace Application.Features.Course.Commands
         public async Task<bool> Handle(DeleteCourseCommand request, CancellationToken cancellationToken)
         {
             var result = await _unitOfWork.CourseRepository.Delete(request.Id);
-            await _eventBus.PublishAsync(new DeletedCourseEvent(request.Id), cancellationToken);
+            var now = DateTime.UtcNow;
+            await _eventBus.PublishAsync(new DeletedCourseEvent(request.Id, now), cancellationToken);
             return result;  
         }
     }

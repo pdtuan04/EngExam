@@ -27,9 +27,10 @@ namespace EngExam.Controllers
             return Ok(meaning);
         }
         [HttpPatch("{id}/memorized")]
-        public async Task<IActionResult> MarkWordAsMemorized([FromRoute] Guid id)
+        public async Task<IActionResult> MarkWordAsMemorized(Guid id, [FromBody] SetWordMemorizationStatusRequest request)
         {
-            var command = new ToggleWordMemorizationCommand(id);
+
+            var command = new ToggleWordMemorizationCommand(id, request.IsMemorized, request.FlashCardId);
             var status = await Sender.Send(command);
             return Ok(new
             {

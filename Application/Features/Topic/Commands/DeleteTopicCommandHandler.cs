@@ -21,8 +21,9 @@ namespace Application.Features.Topic.Commands
         }
         public async Task<bool> Handle(DeleteTopicCommand request, CancellationToken cancellationToken)
         {
+            var now = DateTime.UtcNow;
             var result = await _unitOfWork.TopicRepository.Delete(request.Id);
-            await _eventBus.PublishAsync(new DeleteTopicEvent(request.Id), cancellationToken);
+            await _eventBus.PublishAsync(new DeleteTopicEvent(request.Id, now), cancellationToken);
             return result;
         }
     }

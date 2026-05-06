@@ -17,6 +17,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Features\AnswerHistory\Commands\" />
+    <Folder Include="Features\AnswerHistory\Consumers\" />
+    <Folder Include="Features\AnswerHistory\Queries\" />
+    <Folder Include="Features\Answer\Consumers\" />
+    <Folder Include="Features\Answer\Commands\" />
+    <Folder Include="Features\Answer\Queries\" />
+    <Folder Include="Features\Question\Consumers\" />
+    <Folder Include="Features\Question\Commands\" />
+    <Folder Include="Features\Question\Queries\" />
     <Folder Include="Features\User\Queries\" />
   </ItemGroup>
 

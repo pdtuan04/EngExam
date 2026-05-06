@@ -1,15 +1,13 @@
-﻿using Application.Models.Topic;
-using Domain.Entity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Application.Models.Pagination;
+using Application.Models.Topic;
 
 namespace Application.Abstractions.Repositories.Read
 {
-    public interface ITopicReadRepository : IGenericReadRepository<Topic>
+    public interface ITopicReadRepository
     {
         Task<IEnumerable<TopicResponse>> GetAllAsync(CancellationToken cancellationToken);
+        Task UpsertAsync(TopicReadModel topic);
+        Task DeleteAsync(Guid topicId, DateTime actionAt);
+        Task<PaginationResponse<TopicResponse>> GetPaginatedAsync(int pageIndex, int pageSize, CancellationToken cancellationToken);
     }
 }

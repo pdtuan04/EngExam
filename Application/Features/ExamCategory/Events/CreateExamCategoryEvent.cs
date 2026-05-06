@@ -11,6 +11,8 @@ namespace Application.Features.ExamCategory.Events
         Guid CategoryId,
         string Name,
         string Description,
+        DateTime CreatedAt,
+        DateTime UpdatedAt,
         string? ImageUrl = null,
         bool IsActive = default
         );

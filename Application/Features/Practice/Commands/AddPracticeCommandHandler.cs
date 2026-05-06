@@ -39,7 +39,7 @@ namespace Application.Features.Practice.Commands
             foreach(var q in request.Questions)
             {
                 var questionId = Guid.NewGuid();
-                practice.AddPracticeDetail(new Question
+                practice.AddPracticeDetail(new Domain.Entity.Question
                 {
                     Id = questionId,
                     IsActive = true,
@@ -47,7 +47,7 @@ namespace Application.Features.Practice.Commands
                     Explanation = q.Explanation,
                     QuestionTypes = q.QuestionTypes,
                     TopicId = q.TopicId,
-                    Answers = q.Answers.Select(a => new Answer
+                    Answers = q.Answers.Select(a => new Domain.Entity.Answer
                     {
                         Id = Guid.NewGuid(),
                         IsActive = true,
@@ -59,7 +59,12 @@ namespace Application.Features.Practice.Commands
             }
             await _unitOfWork.PracticeRepository.AddAsync(practice);
             await _eventBus.PublishAsync(new CreatePracticeEvent(
-                practice.Id
+                practice.Id,
+                practice.Title,
+                practice.Description,
+                practice.CreatedAt,
+                practice.UpdatedAt,
+                practice.TopicId
             ), cancellationToken);
             return new PracticeDetailResponse
             (
