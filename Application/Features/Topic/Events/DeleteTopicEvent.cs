@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Application.Features.Topic.Events
 {
-    public sealed record DeleteTopicEvent(Guid Id);
+    public sealed record DeleteTopicEvent(Guid Id, DateTime DeletedAt);
 }

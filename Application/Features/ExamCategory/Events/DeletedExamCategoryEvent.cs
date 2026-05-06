@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Application.Features.ExamCategory.Events
 {
-    public sealed record DeletedExamCategoryEvent(Guid Id);
+    public sealed record DeletedExamCategoryEvent(Guid Id, DateTime DeletedAt);
 }

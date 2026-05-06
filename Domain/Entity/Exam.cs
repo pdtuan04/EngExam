@@ -27,7 +27,14 @@ namespace Domain.Entity
             }
         }
         public required Guid ExamCategoryId { get; set; }
-        public ICollection<ExamDetail> ExamDetail { get; } = [];
+        private readonly ICollection<ExamDetail> _examDetails = [];
+        public ICollection<ExamDetail> ExamDetail
+        {
+            get
+            {
+                return _examDetails;
+            }
+        }
         public void AddExamDetail(Question question, double score)
         {
             if(ExamDetail.Any(q => q.QuestionId == question.Id)) 

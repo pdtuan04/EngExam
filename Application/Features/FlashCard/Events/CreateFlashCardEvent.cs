@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Application.Features.FlashCard.Events
 {
-    public sealed record CreateFlashCardEvent(Guid Id, string Title, string Description,DateTime CreatedAt, Guid UserId);
+    public sealed record CreateFlashCardEvent(Guid Id, string Title, string Description,DateTime CreatedAt, DateTime UpdatedAt, Guid UserId);
 }

@@ -1,11 +1,13 @@
 ﻿using Application.Abstractions.Repositories;
 using Application.Abstractions.Repositories.Read;
 using Application.Features.ExamResult.Events;
+using Application.Models.ExamResult;
 using MassTransit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Application.Features.ExamResult.Consumers
@@ -22,12 +24,22 @@ namespace Application.Features.ExamResult.Consumers
         public async Task Consume(ConsumeContext<CreateExamResultEvent> context)
         {
             var message = context.Message;
-            var examResult = await _examResultRepository.GetByIdAsync(message.Id);
+            var examResult = await _examResultRepository.GetDetailByIdAsync(message.Id);
             if (examResult == null)
             {
                 return;
             }
-            await _examResultReadRepository.UpsertAsync(examResult);
+            var examResultReadModel = new ExamResultReadModel(
+                examResult.Id,
+                examResult.Exam.Title,
+                examResult.Exam.Description,
+                examResult.Exam.DurationInMinutes,
+                examResult.CompleteAt,
+                examResult.Score,
+                examResult.ExamId,
+                examResult.UserId
+            );
+            await _examResultReadRepository.UpsertAsync(examResultReadModel);
         }
     }
 }

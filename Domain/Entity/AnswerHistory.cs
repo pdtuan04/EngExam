@@ -8,6 +8,7 @@ namespace Domain.Entity
 {
     public class AnswerHistory
     {
+        public required Guid Id { get; set; }
         public required Guid ExamResultId { get; set; }
         public required Guid QuestionId { get; set; }
         public ExamResult ExamResult { get; set; }

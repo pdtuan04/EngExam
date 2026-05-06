@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Repositories;
 using Application.Abstractions.Repositories.Read;
 using Application.Features.FlashCard.Events;
+using Application.Models.FlashCard;
 using MassTransit;
 using System;
 using System.Collections.Generic;
@@ -24,28 +25,20 @@ namespace Application.Features.FlashCard.Consumers
         }
         public async Task Consume(ConsumeContext<CreateFlashCardEvent> context)
         {
-            var flashCard = await _flashCardRepository.GetByIdAsync(context.Message.Id);
-            if (flashCard == null)
-            {
-                return;
-            }
-            await _flashCardReadRepository.UpsertAsync(flashCard);
+            var message = context.Message;
+
+            await _flashCardReadRepository.UpsertAsync(new FlashCardReadModel(message.Id, message.Title, message.Description, message.CreatedAt, message.UpdatedAt, message.UserId));
         }
 
         public async Task Consume(ConsumeContext<UpdateFlashCardEvent> context)
         {
-            var flashCard = await _flashCardRepository.GetByIdAsync(context.Message.Id);
-            if (flashCard == null) 
-            { 
-                await _flashCardReadRepository.DeleteAsync(context.Message.Id);
-                return; 
-            }
-            await _flashCardReadRepository.UpsertAsync(flashCard);
+            var message = context.Message;
+            await _flashCardReadRepository.UpsertAsync(new FlashCardReadModel(message.Id, message.Title, message.Description, message.CreatedAt, message.UpdatedAt, message.UserId));
         }
 
         public async Task Consume(ConsumeContext<DeleteFlashCardEvent> context)
         {
-            await _flashCardReadRepository.DeleteAsync(context.Message.Id);
+            await _flashCardReadRepository.DeleteAsync(context.Message.Id, context.Message.DeletedAt);
         }
 
     }

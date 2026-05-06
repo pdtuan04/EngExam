@@ -11,7 +11,7 @@ namespace Domain.Common
     {
         public required TKey Id { get; set; } 
         public DateTime CreatedAt { get; init; }
-        public DateTime? UpdatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
         public bool IsActive { get; set; }
     }
 }

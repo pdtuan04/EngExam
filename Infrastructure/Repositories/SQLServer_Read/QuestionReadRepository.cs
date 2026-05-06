@@ -1,66 +1,112 @@
-﻿using System;
+﻿using Application.Abstractions.Repositories;
+using Application.Abstractions.Repositories.Read;
+using Application.Models.Question;
+using AutoMapper;
+using Infrastructure.Repositories.SQLServer_Read.DataContext;
+using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Crypto;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Application.Abstractions.Repositories;
-using Application.Abstractions.Repositories.Read;
-using AutoMapper;
-using Infrastructure.Repositories.SQLServer_Read.DataContext;
-using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories.SQLServer_Read
 {
-    public class QuestionReadRepository : GenericReadRepository<Domain.Entity.Question, Question>, IQuestionReadRepository
+    public class QuestionReadRepository : IQuestionReadRepository
     {
-        public QuestionReadRepository(ApplicationDbReadContext context, IMapper mapper) : base(context, mapper)
+        private readonly ApplicationDbReadContext _dbContext;
+        private readonly IMapper _mapper;
+
+        public QuestionReadRepository(ApplicationDbReadContext context, IMapper mapper)
         {
+            _dbContext = context;
+            _mapper = mapper;
         }
 
-        public async Task AddAsync(Domain.Entity.Question question)
+        public async Task DeleteAsync(Guid id, DateTime deletedAt)
         {
-            var dbquestion = _mapper.Map<Question>(question);
-            _dbContext.Questions.Add(dbquestion);
-            await _dbContext.SaveChangesAsync();
-        }
-
-        public async Task<bool> DeleteAsync(Guid id)
-        {
-            var dbQuestion = await _dbContext.Questions.FindAsync(id);
-            if (dbQuestion == null)
+            var question = await _dbContext.Questions
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(t => t.Id == id);
+            if (question != null)
             {
-                return false;
+                if (question.UpdatedAt >= deletedAt)
+                {
+                    return;
+                }
+                question.IsDeleted = true;
+                question.UpdatedAt = deletedAt;
             }
-            _dbContext.Questions.Remove(dbQuestion);
-            await _dbContext.SaveChangesAsync();
-            return true;
-        }
-
-        public async Task<IEnumerable<Domain.Entity.Question>> GetAllAsync()
-        {
-            var questions = await _dbContext.Questions.ToListAsync();
-            return _mapper.Map<IEnumerable<Domain.Entity.Question>>(questions);
-        }
-
-        public async Task<Domain.Entity.Question> GetByIdAsync(Guid id)
-        {
-            var question = await _dbContext.Questions.FindAsync(id);
-            return _mapper.Map<Domain.Entity.Question>(question);
-        }
-
-        public async Task UpdateAsync(Domain.Entity.Question question)
-        {
-            var dbQuestion = await _dbContext.Questions.FindAsync(question.Id);
-            _mapper.Map(question, dbQuestion);
             await _dbContext.SaveChangesAsync();
         }
-        public async Task<IEnumerable<Domain.Entity.Question>> GetByIdExamAsync(Guid id)
+
+        public async Task DeleteBulkAsync(IEnumerable<Guid> ids, DateTime deletedAt)
         {
-            var dbQuestions = await _dbContext.Questions
-                .Include(q => q.Answers)
-                .Where(q => q.ExamDetail.Any(ed => ed.ExamId == id))
-                .ToListAsync();
-            return _mapper.Map<IEnumerable<Domain.Entity.Question>>(dbQuestions);
+            var questions = await _dbContext.Questions
+                .IgnoreQueryFilters()
+                .Where(t => ids.Contains(t.Id) && t.UpdatedAt < deletedAt)
+                .ExecuteUpdateAsync(t => t
+                    .SetProperty(q => q.IsDeleted, true)
+                    .SetProperty(q => q.UpdatedAt, deletedAt));
+        }
+
+        public async Task UpsertAsync(QuestionReadModel question)
+        {
+            var existingQuestion = await _dbContext.Questions.IgnoreQueryFilters().FirstOrDefaultAsync(t => t.Id == question.Id);
+            if (existingQuestion != null)
+            {
+                if (existingQuestion.UpdatedAt >= question.UpdatedAt)
+                {
+                    return;
+                }
+                _mapper.Map(question, existingQuestion);
+            }
+            else
+            {
+                var newQuestion = _mapper.Map<Question>(question);
+                newQuestion.IsDeleted = false;
+                _dbContext.Questions.Add(newQuestion);
+            }
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task UpsertBulkAsync(IEnumerable<QuestionReadModel> questions)
+        {
+            var questionIds = questions.Select(q => q.Id).ToList();
+            var existingQuestions = await _dbContext.Questions
+                                                    .IgnoreQueryFilters()
+                                                    .Where(t => questionIds.Contains(t.Id))
+                                                    .ToDictionaryAsync(q => q.Id, q => q);
+            var insert = new List<Question>();
+            var update = new List<Question>();
+            foreach (var question in questions)
+            {
+                if (existingQuestions.TryGetValue(question.Id, out var existingQuestion))
+                {
+                    if (existingQuestion.UpdatedAt >= question.UpdatedAt)
+                    {
+                        continue;
+                    }
+                    _mapper.Map(question, existingQuestion);
+                    update.Add(existingQuestion);
+                }
+                else
+                {
+                    var newQuestion = _mapper.Map<Question>(question);
+                    newQuestion.IsDeleted = false;
+                    insert.Add(newQuestion);
+                }
+            }
+            if (insert.Any())
+            {
+                _dbContext.Questions.AddRange(insert);
+            }
+            if (update.Any())
+            {
+                _dbContext.Questions.UpdateRange(update);
+            }
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

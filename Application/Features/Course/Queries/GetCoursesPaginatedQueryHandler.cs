@@ -19,7 +19,7 @@ namespace Application.Features.Course.Queries
         }
         public async Task<PaginationResponse<CourseResponse>> Handle(GetCoursesPaginatedQuery request, CancellationToken cancellationToken)
         {
-            return await _courseReadRepository.ToPagination<CourseResponse>(request.pageIndex, request.pageSize, cancellationToken:cancellationToken);
+            return await _courseReadRepository.GetPaginatedAsync(request.pageIndex, request.pageSize, cancellationToken);
         }
     }
 }

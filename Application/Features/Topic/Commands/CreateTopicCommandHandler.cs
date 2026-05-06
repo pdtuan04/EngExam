@@ -23,14 +23,17 @@ namespace Application.Features.Topic.Commands
         }
         public async Task<TopicResponse> Handle(CreateTopicCommand request, CancellationToken cancellationToken)
         {
+            var now = DateTime.UtcNow;
             var topic = new Domain.Entity.Topic
             {
                 Id = Guid.NewGuid(),
                 Name = request.Name,
-                Description = request.Description
+                Description = request.Description,
+                CreatedAt = now,
+                UpdatedAt = now,
             };
             await _unitOfWork.TopicRepository.AddAsync(topic);
-            await _eventBus.PublishAsync(new CreateTopicEvent(topic.Id, topic.Name, topic.Description),cancellationToken);
+            await _eventBus.PublishAsync(new CreateTopicEvent(topic.Id, topic.Name, topic.Description, topic.CreatedAt, topic.UpdatedAt),cancellationToken);
             return new TopicResponse(topic.Id,topic.Name,topic.Description);
         }
     }

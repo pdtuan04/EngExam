@@ -40,7 +40,7 @@ namespace Application.Features.Exam.Commands
                 var existQues = exam.ExamDetail.FirstOrDefault(ed => ed.QuestionId == q.Id);
                 if (existQues == null)
                 {
-                    exam.AddExamDetail(new Question
+                    exam.AddExamDetail(new Domain.Entity.Question
                     {
                         Id = q.Id,
                         Content = q.Content,
@@ -65,7 +65,7 @@ namespace Application.Features.Exam.Commands
                         var existAns = existQues.Question.Answers.FirstOrDefault(ans => ans.Id == a.Id);
                         if (existAns == null)
                         {
-                            existQues.Question.Answers.Add(new Answer
+                            existQues.Question.Answers.Add(new Domain.Entity.Answer
                             {
                                 Id = a.Id,
                                 Content = a.Content,
@@ -85,7 +85,14 @@ namespace Application.Features.Exam.Commands
 
             }
             await _unitOfWork.ExamRepository.Update(exam);
-            await _eventBus.PublishAsync(new UpdateExamEvent(exam.Id, exam.ExamCategoryId), cancellationToken);
+            await _eventBus.PublishAsync(new UpdateExamEvent(
+                exam.Id, 
+                exam.CreatedAt, 
+                exam.UpdatedAt, 
+                exam.Title,
+                exam.Description,
+                exam.DurationInMinutes,
+                exam.ExamCategoryId), cancellationToken);
             return new ExamDetailResponse
             (
                 Id: exam.Id,

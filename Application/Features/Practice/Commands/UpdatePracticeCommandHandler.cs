@@ -41,7 +41,7 @@ namespace Application.Features.Practice.Commands
                 var existQues = practice.PracticeDetails.FirstOrDefault(pd => pd.QuestionId == q.Id);
                 if (existQues == null)
                 {
-                    practice.AddPracticeDetail(new Question
+                    practice.AddPracticeDetail(new Domain.Entity.Question
                     {
                         Id = q.Id,
                         Content = q.Content,
@@ -65,7 +65,7 @@ namespace Application.Features.Practice.Commands
                         var existAns = existQues.Question.Answers.FirstOrDefault(ans => ans.Id == a.Id);
                         if (existAns == null)
                         {
-                            existQues.Question.Answers.Add(new Answer
+                            existQues.Question.Answers.Add(new Domain.Entity.Answer
                             {
                                 Id = a.Id,
                                 Content = a.Content,
@@ -85,7 +85,7 @@ namespace Application.Features.Practice.Commands
 
             }
             await _unitOfWork.PracticeRepository.Update(practice);
-            await _eventBus.PublishAsync(new UpdatePracticeEvent(practice.Id), cancellationToken);
+            await _eventBus.PublishAsync(new UpdatePracticeEvent(practice.Id, practice.Title, practice.Description, practice.CreatedAt, practice.UpdatedAt, practice.TopicId), cancellationToken);
             return new PracticeDetailResponse
             (
                 Id: practice.Id,

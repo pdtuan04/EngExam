@@ -12,10 +12,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories.SQLServer_Read
 {
-    public class AnswerReadRepository: GenericReadRepository<Domain.Entity.Answer, Answer>, IAnswerReadRepository
+    public class AnswerReadRepository: IAnswerReadRepository
     {
-        public AnswerReadRepository(ApplicationDbReadContext context, IMapper mapper) : base(context, mapper)
+        private readonly ApplicationDbReadContext _dbContext;
+        private readonly IMapper _mapper;
+
+        public AnswerReadRepository(ApplicationDbReadContext context, IMapper mapper)
         {
+            _dbContext = context;
+            _mapper = mapper;
         }
     }
 }

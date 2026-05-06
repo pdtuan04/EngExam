@@ -14,7 +14,6 @@ namespace Infrastructure.Repositories.SQLServer_Read.DataContext
         public required string Content { get; set; }
         public string? ImageUrl { get; set; }
         public required Guid TopicId { get; set; }
-        public Topic? Topic { get; set; }
         public bool IsDeleted { get; set; } = false;
     }
 }

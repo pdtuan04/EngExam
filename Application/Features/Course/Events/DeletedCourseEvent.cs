@@ -2,5 +2,5 @@ using System;
 
 namespace Application.Features.Course.Events
 {
-    public sealed record DeletedCourseEvent(Guid Id);
+    public sealed record DeletedCourseEvent(Guid Id, DateTime DeletedAt);
 }

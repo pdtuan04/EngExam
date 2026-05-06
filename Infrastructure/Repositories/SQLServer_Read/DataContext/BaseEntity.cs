@@ -9,8 +9,8 @@ namespace Infrastructure.Repositories.SQLServer_Read.DataContext
     public abstract class BaseEntity
     {
         public required Guid Id { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
+        public required DateTime CreatedAt { get; set; }
+        public required DateTime UpdatedAt { get; set; }
         public bool IsActive { get; set; } = true;
     }
 }

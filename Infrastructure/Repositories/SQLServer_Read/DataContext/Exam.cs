@@ -12,9 +12,7 @@ namespace Infrastructure.Repositories.SQLServer_Read.DataContext
         public required string Title { get; set; }
         public string? Description { get; set; }
         public required int DurationInMinutes { get; set; }
-        public ICollection<ExamDetail> ExamDetail { get; set; } = null!;
         public required Guid ExamCategoryId { get; set; }
-        public ExamCategory? ExamCategory { get; set; }
         public bool IsDeleted { get; set; }
     }
 }

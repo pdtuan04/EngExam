@@ -10,6 +10,7 @@ namespace Application.Features.Course.Events
         string? ImageUrl,
         Guid TopicId,
         bool IsActive,
-        DateTime? UpdatedAt
+        DateTime CreatedAt,
+        DateTime UpdatedAt
     );
 }

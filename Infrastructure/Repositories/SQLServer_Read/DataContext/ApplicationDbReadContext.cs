@@ -47,6 +47,7 @@ namespace Infrastructure.Repositories.SQLServer_Read.DataContext
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<Exam>().HasQueryFilter(x => !x.IsDeleted);
             modelBuilder.Entity<ExamCategory>().HasQueryFilter(x => !x.IsDeleted);
             modelBuilder.Entity<Answer>().HasQueryFilter(x => !x.IsDeleted);
@@ -54,50 +55,8 @@ namespace Infrastructure.Repositories.SQLServer_Read.DataContext
             modelBuilder.Entity<Practice>().HasQueryFilter(x => !x.IsDeleted);
             modelBuilder.Entity<Question>().HasQueryFilter(x => !x.IsDeleted);
             modelBuilder.Entity<Topic>().HasQueryFilter(x => !x.IsDeleted);
-
-            modelBuilder.Entity<FlashCard>()
-                .HasMany(fc => fc.Words)
-                .WithOne(w => w.FlashCard)
-                .HasForeignKey(w => w.FlashCardId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-
-
-            modelBuilder.Entity<ExamDetail>()
-                .HasKey(ed => new { ed.ExamId, ed.QuestionId });
-            modelBuilder.Entity<ExamDetail>()
-                .HasOne(ed => ed.Exam)
-                .WithMany(e => e.ExamDetail)
-                .HasForeignKey(ed => ed.ExamId);
-            modelBuilder.Entity<ExamDetail>()
-                .HasOne(ed => ed.Question)
-                .WithMany(q => q.ExamDetail)
-                .HasForeignKey(ed => ed.QuestionId);
-
-            modelBuilder.Entity<AnswersHistory>()
-                .HasKey(ed => new { ed.ExamResultId, ed.QuestionId });
-            modelBuilder.Entity<AnswersHistory>()
-                .HasOne(ed => ed.ExamResult)
-                .WithMany(e => e.AnswerHistory)
-                .HasForeignKey(ed => ed.ExamResultId);
-            modelBuilder.Entity<AnswersHistory>()
-                .HasOne(ed => ed.Question)
-                .WithMany(q => q.AnswerHistory)
-                .HasForeignKey(ed => ed.QuestionId)
-                .OnDelete(DeleteBehavior.NoAction);
-
-            modelBuilder.Entity<PracticeDetail>()
-                .HasKey(pd => new { pd.PracticeId, pd.QuestionId });
-            modelBuilder.Entity<PracticeDetail>()
-                .HasOne(pd => pd.Practice)
-                .WithMany(p => p.PracticeDetails)
-                .HasForeignKey(pd => pd.PracticeId)
-                .OnDelete(DeleteBehavior.Cascade);
-            modelBuilder.Entity<PracticeDetail>()
-                .HasOne(pd => pd.Question)
-                .WithMany(p => p.PracticeDetails)
-                .HasForeignKey(pd => pd.QuestionId)
-                .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<ExamDetail>().HasKey(ed => new { ed.ExamId, ed.QuestionId });
+            modelBuilder.Entity<PracticeDetail>().HasKey(pd => new { pd.PracticeId, pd.QuestionId });
             // Seed data when migration
             modelBuilder.SeedingData();
         }

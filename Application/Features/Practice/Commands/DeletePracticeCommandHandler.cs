@@ -22,8 +22,9 @@ namespace Application.Features.Practice.Commands
         }
         public async Task<bool> Handle(DeletePracticeCommand request, CancellationToken cancellationToken)
         {
+            var now = DateTime.UtcNow;
             var result = await _unitOfWork.PracticeRepository.Delete(request.Id);
-            await _eventBus.PublishAsync(new DeletePracticeEvent(request.Id));
+            await _eventBus.PublishAsync(new DeletePracticeEvent(request.Id, now), cancellationToken);
             return result;
         }
     }

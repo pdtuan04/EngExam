@@ -2,6 +2,7 @@
 using Application.Abstractions.Events;
 using Application.Abstractions.Messaging;
 using Application.Common.Exceptions;
+using Application.Features.AnswerHistory.Events;
 using Application.Features.ExamResult.Events;
 using Application.Handler.InterfaceHandler;
 using Application.Models.Exam;
@@ -12,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Application.Features.ExamResult.Commands
@@ -44,8 +46,30 @@ namespace Application.Features.ExamResult.Commands
                 AnswerHistory = histories
             };
             await _unitOfWork.ExamResultRepository.AddAsync(examResult);
-            var examResultEvent = new CreateExamResultEvent(examResultId);
-            await _eventBus.PublishAsync(examResultEvent);
+            var examResultEvent = new CreateExamResultEvent(
+                examResult.Id,
+                exam.Title,
+                exam.Description,
+                exam.DurationInMinutes, 
+                examResult.CompleteAt, 
+                examResult.Score, 
+                examResult.ExamId, 
+                examResult.UserId);
+            await _eventBus.PublishAsync(examResultEvent,cancellationToken);
+            var answerHistories = examResult.AnswerHistory.Select(ah => new AnswerHistoryReadModel(
+                ah.Id,
+                ah.QuestionId,
+                QuestionText: ah.Question.Content,
+                ah.Question.QuestionTypes,
+                ah.Question.Explanation,
+                ah.Question.ImageUrl,
+                OptionsJson: JsonSerializer.Serialize(ah.Question.Answers),
+                UserAnswer: ah.UserAnswer,
+                IsCorrect: ah.IsCorrect,
+                Score: ah.Score,
+                examResult.Id
+            )).ToList();
+            await _eventBus.PublishAsync(new CreateAnswerHistoryEvent(answerHistories),cancellationToken);
             var examResultDto = new ExamResultDetailResponse
             (
                 Id: examResult.Id,
@@ -85,9 +109,9 @@ namespace Application.Features.ExamResult.Commands
             }
             return score;
         }
-        private async Task<ICollection<AnswerHistory>> HistorySave(IReadOnlyCollection<UserAnswerRequest> userAnswers, ICollection<ExamDetail> examDetails, Guid examResultId)
+        private async Task<ICollection<Domain.Entity.AnswerHistory>> HistorySave(IReadOnlyCollection<UserAnswerRequest> userAnswers, ICollection<ExamDetail> examDetails, Guid examResultId)
         {
-            var answerHistories = new List<AnswerHistory>();
+            var answerHistories = new List<Domain.Entity.AnswerHistory>();
             foreach (var ed in examDetails)
             {
                 var userAnswer = userAnswers.FirstOrDefault(ua => ua.QuestionId == ed.QuestionId);

@@ -28,7 +28,7 @@ namespace Application.Features.FlashCard.Commands
             flashCard.Title = command.Title;
             flashCard.Description = command.Description;
             await _unitOfWork.FlashCardRepository.Update(flashCard);
-            await _eventBus.PublishAsync(new UpdateFlashCardEvent(flashCard.Id, flashCard.Title, flashCard.Description,flashCard.UserId));
+            await _eventBus.PublishAsync(new UpdateFlashCardEvent(flashCard.Id, flashCard.Title, flashCard.Description,flashCard.CreatedAt, flashCard.UpdatedAt,flashCard.UserId));
             return new FlashCardResponse(flashCard.Id,flashCard.Title,flashCard.Description,flashCard.UserId);
         }
     }

@@ -22,16 +22,18 @@ namespace Application.Features.FlashCard.Commands
         }
         public async Task<FlashCardResponse> Handle(CreateFlashCardCommand request, CancellationToken cancellationToken)
         {
+            var now = DateTime.UtcNow;
             var flashCard = new Domain.Entity.FlashCard
             {
                 Id = Guid.NewGuid(),
                 Title = request.Title,
                 Description = request.Description,
                 UserId = request.UserId,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = now,
+                UpdatedAt = now
             };
             await _unitOfWork.FlashCardRepository.AddAsync(flashCard);
-            await _eventBus.PublishAsync(new CreateFlashCardEvent(flashCard.Id, flashCard.Title, flashCard.Description, flashCard.CreatedAt, flashCard.UserId));
+            await _eventBus.PublishAsync(new CreateFlashCardEvent(flashCard.Id, flashCard.Title, flashCard.Description, flashCard.CreatedAt, flashCard.UpdatedAt,flashCard.UserId));
             return new FlashCardResponse(flashCard.Id,flashCard.Title,flashCard.Description,flashCard.UserId);
         }
     }

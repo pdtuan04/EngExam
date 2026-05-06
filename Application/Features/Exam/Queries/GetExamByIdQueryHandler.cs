@@ -2,7 +2,10 @@
 using Application.Abstractions.Messaging;
 using Application.Abstractions.Repositories.Read;
 using Application.Behaviors;
+using Application.Common.Exceptions;
+using Application.Models.Answer;
 using Application.Models.Exam;
+using Application.Models.Question;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,17 +14,16 @@ using System.Threading.Tasks;
 
 namespace Application.Features.Exam.Queries
 {
-    public sealed class GetExamByIdQueryHandler : IQueryHandler<GetExamByIdQuery, ExamResponse>
+    public sealed class GetExamByIdQueryHandler : IQueryHandler<GetExamByIdQuery, ExamDetailResponse>
     {
         private readonly IExamReadRepository _examReadRepository;
         public GetExamByIdQueryHandler(IExamReadRepository examReadRepository)
         {
             _examReadRepository = examReadRepository;
         }
-        public async Task<ExamResponse> Handle(GetExamByIdQuery request, CancellationToken cancellationToken)
+        public async Task<ExamDetailResponse> Handle(GetExamByIdQuery request, CancellationToken cancellationToken)
         {
-            var result = await _examReadRepository.GetByIdAsync(request.Id);
-            return new ExamResponse(result.Id, result.Title, result.Description, result.DurationInMinutes, result.ExamCategoryId, result.CreatedAt);
+            return await _examReadRepository.GetExamDetail(request.Id) ?? throw new NotFoundException("Exam",request.Id);
         }
     }
 }

@@ -15,6 +15,7 @@ namespace Application.Handler
             {
                 return new AnswerHistory
                 {
+                    Id = Guid.NewGuid(),
                     ExamResultId = examResultId,
                     QuestionId = examDetail.QuestionId,
                     UserAnswer = userAnswer?.AnswerFillInBlank ?? "",
@@ -24,6 +25,7 @@ namespace Application.Handler
             }
             return new AnswerHistory
             {
+                Id = Guid.NewGuid(),
                 ExamResultId = examResultId,
                 QuestionId = examDetail.QuestionId,
                 UserAnswer = userAnswer?.AnswerFillInBlank ?? "",

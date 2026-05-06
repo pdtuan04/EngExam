@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Application.Features.Topic.Events
 {
-    public sealed record UpdateTopicEvent(Guid Id, string Name, string Description);
+    public sealed record UpdateTopicEvent(Guid Id, string Name, string Description, DateTime CreatedAt, DateTime UpdatedAt);
 }

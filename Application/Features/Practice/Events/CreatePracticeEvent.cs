@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Application.Features.Practice.Events
 {
-    public sealed record CreatePracticeEvent(Guid PracticeId);
+    public sealed record CreatePracticeEvent(Guid PracticeId, string Title, string Description, DateTime CreatedAt, DateTime UpdatedAt, Guid TopicId);
 }

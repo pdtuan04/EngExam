@@ -6,5 +6,10 @@ using System.Threading.Tasks;
 
 namespace Application.Features.FlashCard.Events
 {
-    public sealed record UpdateFlashCardEvent(Guid Id, string Title, string Description, Guid UserId);
+    public sealed record UpdateFlashCardEvent(Guid Id,
+        string Title,
+        string? Description,
+        DateTime CreatedAt,
+        DateTime UpdatedAt,
+        Guid UserId);
 }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.Features.Exam.Queries
 {
-    public sealed record GetExamByIdQuery(Guid Id) : ICacheQuery<ExamResponse>
+    public sealed record GetExamByIdQuery(Guid Id) : ICacheQuery<ExamDetailResponse>
     {
         public string CacheKey => CacheKeys.ExamDetail(Id);
 

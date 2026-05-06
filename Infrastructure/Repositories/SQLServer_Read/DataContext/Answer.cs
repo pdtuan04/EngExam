@@ -12,7 +12,6 @@ namespace Infrastructure.Repositories.SQLServer_Read.DataContext
         public required string Content { get; set; }
         public required bool IsCorrect { get; set; } = false;
         public required Guid QuestionId { get; set; }
-        public Question Question { get; set; } = null!;
         public bool IsDeleted { get; set; } = false;
     }
 }
