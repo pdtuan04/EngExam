@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace Application.Features.User.Commands
 {
-    public sealed record ChangePasswordCommand(Guid UserId, string CurrentPassword, string NewPassword) : ICommand<bool>;
+    public sealed record ChangePasswordCommand(Guid UserId, string CurrentPassword, string NewPassword, string ConfirmNewPassword) : ICommand<bool>;
 }

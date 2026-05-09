@@ -38,7 +38,7 @@ namespace Infrastructure.Repositories.SQLServer.DataContext
         public DbSet<ExamDetail> ExamDetails { get; set; }
         public DbSet<Exam> Exams { get; set; }
         public DbSet<ExamResult> ExamResults { get; set; }
-        public DbSet<AnswersHistory> DetailResults { get; set; }
+        public DbSet<AnswerHistory> AnswersHistories { get; set; }
         public DbSet<Topic> Topics { get; set; }
         public DbSet<ExamCategory> ExamCategories { get; set; }
         public DbSet<Practice> Practices { get; set; }
@@ -71,13 +71,13 @@ namespace Infrastructure.Repositories.SQLServer.DataContext
                 .WithMany(q => q.ExamDetail)
                 .HasForeignKey(ed => ed.QuestionId);
 
-            modelBuilder.Entity<AnswersHistory>()
+            modelBuilder.Entity<AnswerHistory>()
                 .HasKey(ed => new { ed.ExamResultId, ed.QuestionId });
-            modelBuilder.Entity<AnswersHistory>()
+            modelBuilder.Entity<AnswerHistory>()
                 .HasOne(ed => ed.ExamResult)
                 .WithMany(e => e.AnswerHistory)
                 .HasForeignKey(ed => ed.ExamResultId);
-            modelBuilder.Entity<AnswersHistory>()
+            modelBuilder.Entity<AnswerHistory>()
                 .HasOne(ed => ed.Question)
                 .WithMany(q => q.AnswerHistory)
                 .HasForeignKey(ed => ed.QuestionId)

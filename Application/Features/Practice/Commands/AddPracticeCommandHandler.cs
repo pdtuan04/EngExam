@@ -59,12 +59,32 @@ namespace Application.Features.Practice.Commands
             }
             await _unitOfWork.PracticeRepository.AddAsync(practice);
             await _eventBus.PublishAsync(new CreatePracticeEvent(
-                practice.Id,
-                practice.Title,
-                practice.Description,
-                practice.CreatedAt,
-                practice.UpdatedAt,
-                practice.TopicId
+                Practice: new PracticeReadModel(practice.Id, practice.Title, practice.Description, practice.TopicId, practice.CreatedAt, practice.UpdatedAt),
+                Questions: practice.PracticeDetails.Select(pd => new QuestionReadModel
+                (
+                    Id: pd.Question.Id,
+                    Content: pd.Question.Content,
+                    QuestionTypes: pd.Question.QuestionTypes,
+                    Explanation: pd.Question.Explanation ?? "",
+                    ImageUrl: pd.Question.ImageUrl,
+                    TopicId: pd.Question.TopicId,
+                    CreatedAt: pd.Question.CreatedAt,
+                    UpdatedAt: pd.Question.UpdatedAt
+                )).ToList(),
+                Answers: practice.PracticeDetails.SelectMany(pd => pd.Question.Answers.Select(a => new AnswerReadModel
+                (
+                    Id: a.Id,
+                    Content: a.Content,
+                    IsCorrect: a.IsCorrect,
+                    QuestionId: a.QuestionId,
+                    CreatedAt: a.CreatedAt,
+                    UpdatedAt: a.UpdatedAt
+                ))).ToList(),
+                Details: practice.PracticeDetails.Select(pd => new PracticeDetailReadModel
+                (
+                    PracticeId: practice.Id,
+                    QuestionId: pd.Question.Id
+                )).ToList()
             ), cancellationToken);
             return new PracticeDetailResponse
             (

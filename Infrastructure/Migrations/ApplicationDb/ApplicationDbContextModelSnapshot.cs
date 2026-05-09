@@ -47,7 +47,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -65,7 +65,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                             IsActive = true,
                             IsCorrect = false,
                             IsDeleted = false,
-                            QuestionId = new Guid("33333333-3333-3333-3333-333333333333")
+                            QuestionId = new Guid("33333333-3333-3333-3333-333333333333"),
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -75,7 +76,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                             IsActive = true,
                             IsCorrect = true,
                             IsDeleted = false,
-                            QuestionId = new Guid("33333333-3333-3333-3333-333333333333")
+                            QuestionId = new Guid("33333333-3333-3333-3333-333333333333"),
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -85,11 +87,12 @@ namespace Infrastructure.Migrations.ApplicationDb
                             IsActive = true,
                             IsCorrect = false,
                             IsDeleted = false,
-                            QuestionId = new Guid("33333333-3333-3333-3333-333333333333")
+                            QuestionId = new Guid("33333333-3333-3333-3333-333333333333"),
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
-            modelBuilder.Entity("Infrastructure.Repositories.SQLServer.DataContext.AnswersHistory", b =>
+            modelBuilder.Entity("Infrastructure.Repositories.SQLServer.DataContext.AnswerHistory", b =>
                 {
                     b.Property<Guid>("ExamResultId")
                         .HasColumnType("uniqueidentifier");
@@ -114,7 +117,7 @@ namespace Infrastructure.Migrations.ApplicationDb
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("DetailResults");
+                    b.ToTable("AnswersHistories");
                 });
 
             modelBuilder.Entity("Infrastructure.Repositories.SQLServer.DataContext.Course", b =>
@@ -150,7 +153,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<Guid>("TopicId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -188,7 +191,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -207,7 +210,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                             ExamCategoryId = new Guid("11111111-1111-1111-1111-111111111111"),
                             IsActive = true,
                             IsDeleted = false,
-                            Title = "Basic Grammar Test"
+                            Title = "Basic Grammar Test",
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -237,7 +241,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -253,7 +257,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                             ImageUrl = "/uploads/images/category_img.jpg",
                             IsActive = true,
                             IsDeleted = false,
-                            Name = "Grammar"
+                            Name = "Grammar",
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -263,7 +268,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                             ImageUrl = "/uploads/images/category_img.jpg",
                             IsActive = true,
                             IsDeleted = false,
-                            Name = "Reading"
+                            Name = "Reading",
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -273,7 +279,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                             ImageUrl = "/uploads/images/category_img.jpg",
                             IsActive = true,
                             IsDeleted = false,
-                            Name = "Vocabulary"
+                            Name = "Vocabulary",
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -283,7 +290,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                             ImageUrl = "/uploads/images/category_img.jpg",
                             IsActive = true,
                             IsDeleted = false,
-                            Name = "Listening"
+                            Name = "Listening",
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -295,8 +303,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Score")
-                        .HasColumnType("int");
+                    b.Property<double>("Score")
+                        .HasColumnType("float");
 
                     b.HasKey("ExamId", "QuestionId");
 
@@ -309,7 +317,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                         {
                             ExamId = new Guid("77777777-7777-7777-7777-777777777777"),
                             QuestionId = new Guid("33333333-3333-3333-3333-333333333333"),
-                            Score = 1
+                            Score = 1.0
                         });
                 });
 
@@ -392,7 +400,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<Guid>("TopicId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -448,7 +456,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<Guid>("TopicId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -467,7 +475,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                             IsActive = true,
                             IsDeleted = false,
                             QuestionTypes = 0,
-                            TopicId = new Guid("22222222-2222-2222-2222-222222222222")
+                            TopicId = new Guid("22222222-2222-2222-2222-222222222222"),
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -494,7 +503,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -509,7 +518,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                             Description = "Basic grammar rules",
                             IsActive = true,
                             IsDeleted = false,
-                            Name = "Basic Grammar"
+                            Name = "Basic Grammar",
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -529,11 +539,20 @@ namespace Infrastructure.Migrations.ApplicationDb
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<bool>("LockoutEnabled")
@@ -565,6 +584,9 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -587,8 +609,10 @@ namespace Infrastructure.Migrations.ApplicationDb
                             Id = new Guid("9ae1058d-b602-4025-ab1d-74e7bced8f3b"),
                             AccessFailedCount = 0,
                             ConcurrencyStamp = "6e66d8c1-89da-46df-bc24-ec54c7e7e7cf",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
+                            IsActive = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN",
@@ -596,6 +620,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "3XVVZIW5RPRWT7MKN3Y6VRNTHXY2JGK5",
                             TwoFactorEnabled = false,
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UserName = "admin"
                         },
                         new
@@ -603,8 +628,10 @@ namespace Infrastructure.Migrations.ApplicationDb
                             Id = new Guid("8d581a98-361e-4333-a651-74e88ef572a4"),
                             AccessFailedCount = 0,
                             ConcurrencyStamp = "f67e2437-61a2-4458-ac14-de7ab48158b6",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "user@gmail.com",
                             EmailConfirmed = true,
+                            IsActive = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "USER@GMAIL.COM",
                             NormalizedUserName = "USER",
@@ -612,6 +639,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "DF7GIIY7UNBVCVLZD73QO6PGSVQXBSTW",
                             TwoFactorEnabled = false,
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UserName = "user"
                         });
                 });
@@ -638,6 +666,9 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -990,7 +1021,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Navigation("Question");
                 });
 
-            modelBuilder.Entity("Infrastructure.Repositories.SQLServer.DataContext.AnswersHistory", b =>
+            modelBuilder.Entity("Infrastructure.Repositories.SQLServer.DataContext.AnswerHistory", b =>
                 {
                     b.HasOne("Infrastructure.Repositories.SQLServer.DataContext.ExamResult", "ExamResult")
                         .WithMany("AnswerHistory")

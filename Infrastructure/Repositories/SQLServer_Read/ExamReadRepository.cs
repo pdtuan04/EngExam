@@ -107,27 +107,27 @@ namespace Infrastructure.Repositories.SQLServer_Read
                     q.TopicId,
                     ed.Score
                 }).ToListAsync();
-                    var questionIds = questions.Select(q => q.Id).ToList();
-                    var answers = await _dbContext.Answers
-                        .Where(a => questionIds.Contains(a.QuestionId))
-                        .ToListAsync();
-                    return new TakeExamResponse(
-                        Id: dbExam.Id,
-                        Title: dbExam.Title,
-                        Description: dbExam.Description,
-                        DurationInMinutes: dbExam.DurationInMinutes,
-                        Questions: questions.Select(q => new QuestionToTakeResponse(
-                            Id: q.Id,
-                            Content: q.Content,
-                            QuestionTypes: q.QuestionTypes,
-                            Answers: answers
-                                .Where(a => a.QuestionId == q.Id)
-                                .Select(a => new AnswerToTakeResponse(
-                                    Id: a.Id,
-                                    Content: a.Content
-                                )).ToList()
+            var questionIds = questions.Select(q => q.Id).ToHashSet();
+            var answers = await _dbContext.Answers
+                .Where(a => questionIds.Contains(a.QuestionId))
+                .ToListAsync();
+            return new TakeExamResponse(
+                Id: dbExam.Id,
+                Title: dbExam.Title,
+                Description: dbExam.Description,
+                DurationInMinutes: dbExam.DurationInMinutes,
+                Questions: questions.Select(q => new QuestionToTakeResponse(
+                    Id: q.Id,
+                    Content: q.Content,
+                    QuestionTypes: q.QuestionTypes,
+                    Answers: answers
+                        .Where(a => a.QuestionId == q.Id)
+                        .Select(a => new AnswerToTakeResponse(
+                            Id: a.Id,
+                            Content: a.Content
                         )).ToList()
-                    );
+                )).ToList()
+            );
         }
         public async Task<ExamDetailResponse> GetExamDetail(Guid id)
         {
@@ -147,7 +147,7 @@ namespace Infrastructure.Repositories.SQLServer_Read
                     q.TopicId,
                     ed.Score
                 }).ToListAsync();
-            var questionIds = questions.Select(q => q.Id).ToList();
+            var questionIds = questions.Select(q => q.Id).ToHashSet();
             var answers = await _dbContext.Answers
                 .Where(a => questionIds.Contains(a.QuestionId))
                 .ToListAsync();
@@ -180,15 +180,27 @@ namespace Infrastructure.Repositories.SQLServer_Read
         }
         public async Task UpsertAsync(ExamReadModel exam)
         {
-            var examDb = _mapper.Map<Exam>(exam);
-            var existingExam = await _dbContext.Exams.Where(e => e.Id == examDb.Id).ExecuteDeleteAsync();
-            await _dbContext.BulkInsertOrUpdateAsync(new List<Exam> { examDb });
+            var existingExam = await _dbContext.Exams
+                                            .AsTracking()
+                                            .FirstOrDefaultAsync(x => x.Id == exam.Id);
+            if (existingExam != null)
+            {
+                if(existingExam.UpdatedAt >= exam.UpdatedAt) return;
+                _mapper.Map(exam, existingExam);
+            }
+            else
+            {
+                var newExam = _mapper.Map<Exam>(exam);
+                await _dbContext.Exams.AddAsync(newExam);
+            }
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(Guid id, DateTime deletedAt)
         {
             var exam = await _dbContext.Exams
             .IgnoreQueryFilters()
+            .AsTracking()
             .FirstOrDefaultAsync(e => e.Id == id);
             if (exam != null)
             {
@@ -208,6 +220,19 @@ namespace Infrastructure.Repositories.SQLServer_Read
             var projectedQuery = query.ProjectTo<ExamResponse>(_mapper.ConfigurationProvider);
             var queryExecute = await PaginationDb<ExamResponse>.ToPagedList(projectedQuery, page, pageSize);
             return new PaginationResponse<ExamResponse>(queryExecute.Items, queryExecute.TotalCount, page, pageSize);
+        }
+
+        public async Task UpsertExamDetailsAsync(IEnumerable<ExamDetailReadModel> details, Guid examId)
+        {
+            if (details == null || !details.Any()) return;
+            var entities = _mapper.Map<List<ExamDetail>>(details);
+            var incomingQuestionIds = details.Select(d => d.QuestionId).ToHashSet();
+            var existingDetails = await _dbContext.ExamDetails.Where(ed => ed.ExamId == examId && !incomingQuestionIds.Contains(ed.QuestionId))
+                .ToListAsync();
+            _dbContext.ExamDetails.RemoveRange(existingDetails);
+            await _dbContext.SaveChangesAsync();
+            await _dbContext.BulkInsertOrUpdateAsync(entities);
+            
         }
     }
 }

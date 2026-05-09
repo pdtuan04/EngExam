@@ -18,12 +18,6 @@ namespace Infrastructure.Repositories.SQLServer
         public ExamResultRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper)
         {
         }
-        public async Task AddAsync(Domain.Entity.ExamResult examResult)
-        {
-            var dbexamresult = _mapper.Map<ExamResult>(examResult);
-            await _dbContext.ExamResults.AddAsync(dbexamresult);
-            await _dbContext.SaveChangesAsync();
-        }
         public async Task<Domain.Entity.ExamResult?> GetByIdAsync(Guid id)
         {
             var dbexamresult = await _dbContext.ExamResults.FindAsync(id);

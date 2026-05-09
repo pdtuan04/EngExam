@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Application.Models.Authen
 {
     public sealed record ChangePasswordRequest(
-    Guid UserId,
     string CurrentPassword,
-    string NewPassword);
+    string NewPassword,
+    string ConfirmNewPassword);
 }

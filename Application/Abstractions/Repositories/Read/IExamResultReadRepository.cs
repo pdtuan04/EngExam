@@ -11,8 +11,8 @@ namespace Application.Abstractions.Repositories.Read
 {
     public interface IExamResultReadRepository
     {
-        Task<ExamResult?> GetByIdAsync(Guid id);
-        Task<IEnumerable<ExamResult>> GetResultsByUserId(Guid id);
+        Task<ExamResultDetailResponse?> GetByIdAsync(Guid id);
+        Task<IEnumerable<ExamResultResponse>> GetResultsByUserId(Guid id);
         Task<PaginationResponse<ExamResultResponse>> GetExamResultPaginatedByUserId(Guid userId, int pageIndex, int pageSize, CancellationToken cancellationToken);
         Task<ExamResultDetailResponse> GetDetailByIdAsync(Guid id);
         Task UpsertAsync(ExamResultReadModel examResultReadModel);

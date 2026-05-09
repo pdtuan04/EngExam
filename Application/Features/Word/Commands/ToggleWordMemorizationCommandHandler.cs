@@ -23,6 +23,7 @@ namespace Application.Features.Word.Commands
         public async Task<bool> Handle(ToggleWordMemorizationCommand request, CancellationToken cancellationToken)
         {
             var now = DateTime.UtcNow;
+            await _unitOfWork.WordRepository.ToggleMemorizedStatusAsync(request.Id, request.IsMemorized, now);
             await _eventBus.PublishAsync(new WordMemorizationToggledEvent(request.Id, request.IsMemorized, now, request.FlashCardId));
             return request.IsMemorized;
         }

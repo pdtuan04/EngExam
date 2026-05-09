@@ -22,29 +22,7 @@ namespace Application.Features.Practice.Queries
         }
         public async Task<PracticeDetailResponse> Handle(GetPracticeToTakeQuery request, CancellationToken cancellationToken)
         {
-            var result = await _practiceReadRepository.GetPracticeToTake(request.Id) ?? throw new NotFoundException("Practice",request.Id);
-            return new PracticeDetailResponse
-            (
-                Id: result.Id,
-                Title: result.Title,
-                Description: result.Description,
-                TopicId: result.TopicId,
-                CreatedAt: result.CreatedAt,
-                Questions: result.PracticeDetails.Select(x => new QuestionToPracticeResponse
-                (
-                    Id: x.QuestionId,
-                    Content: x.Question.Content,
-                    Explanation: x.Question.Explanation,
-                    ImageUrl: x.Question.ImageUrl,
-                    QuestionTypes: x.Question.QuestionTypes,
-                    Answers: x.Question.Answers.Select(a => new AnswerToPracticeResponse
-                    (
-                        Id: a.Id,
-                        Content: a.Content,
-                        IsCorrect: a.IsCorrect
-                    )).ToList()
-                )).ToList()
-            );
+            return await _practiceReadRepository.GetPracticeToTake(request.Id) ?? throw new NotFoundException("Practice",request.Id);
         }
     }
 }

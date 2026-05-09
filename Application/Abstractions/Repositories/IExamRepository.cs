@@ -14,7 +14,6 @@ namespace Application.Abstractions.Repositories
         Task<IEnumerable<Exam>> GetAllAsync();
         Task<Exam> GetRandomExam();
         Task<IEnumerable<Exam>> GetExamsByCategoryIdAsync(Guid id);
-        Task<Guid> AddAsync(Exam exam);
         Task<Exam> GetExamToTake(Guid id);
         Task<Exam> GetExamDetail(Guid id);
         Task<bool> SoftDelete(Guid id);

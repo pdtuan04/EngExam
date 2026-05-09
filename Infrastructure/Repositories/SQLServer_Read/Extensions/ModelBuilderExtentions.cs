@@ -13,31 +13,13 @@ namespace Infrastructure.Repositories.SQLServer_Read.Extensions
     {
         public static void SeedingData(this ModelBuilder modelBuilder)
         {
-            var userRole = new IdentityRole<Guid>
-            {
-                Id = Guid.Parse("05f2400b-5471-466a-8b7e-27752367e4d6"),
-                Name = "User",
-                NormalizedName = "USER"
-            };
-
-            var adminRole = new IdentityRole<Guid>
-            {
-                Id = Guid.Parse("10f2400b-5471-466a-8b7e-27752367e4d6"),
-                Name = "Admin",
-                NormalizedName = "ADMIN"
-            };
-            modelBuilder.Entity<IdentityRole<Guid>>().HasData(userRole, adminRole);
             var admin = new User()
             {
                 Id = Guid.Parse("9ae1058d-b602-4025-ab1d-74e7bced8f3b"),
                 UserName = "admin",
                 NormalizedUserName = "ADMIN",
                 Email = "admin@gmail.com",
-                NormalizedEmail = "ADMIN@GMAIL.COM",
-                EmailConfirmed = true,
-                PasswordHash = "AQAAAAIAAYagAAAAEFY87mzNg88TIJtuXRcRIeT0MXYto4NkcukxwFGpl+p5IHBJVqlPbyFx9UJIOmu7eA==",
-                SecurityStamp = "3XVVZIW5RPRWT7MKN3Y6VRNTHXY2JGK5",
-                ConcurrencyStamp = "6e66d8c1-89da-46df-bc24-ec54c7e7e7cf"
+                NormalizedEmail = "ADMIN@GMAIL.COM"
             };
 
             var user = new User()
@@ -46,32 +28,8 @@ namespace Infrastructure.Repositories.SQLServer_Read.Extensions
                 UserName = "user",
                 NormalizedUserName = "USER",
                 Email = "user@gmail.com",
-                NormalizedEmail = "USER@GMAIL.COM",
-                EmailConfirmed = true,
-                PasswordHash = "AQAAAAIAAYagAAAAEN8TWXW9pNZ+VVyeftOLixsSfyDOtPTZpv84QtbFESyzd6kZ0i70eIPvnvNBKX0Q9Q==",
-                SecurityStamp = "DF7GIIY7UNBVCVLZD73QO6PGSVQXBSTW",
-                ConcurrencyStamp = "f67e2437-61a2-4458-ac14-de7ab48158b6"
+                NormalizedEmail = "USER@GMAIL.COM"
             };
-            var userList = new List<User>()
-            {
-                admin,
-                user,
-            };
-            modelBuilder.Entity<User>().HasData(userList);
-            List<IdentityUserRole<Guid>> userRoles = new List<IdentityUserRole<Guid>>()
-            {
-                new IdentityUserRole<Guid>()
-                {
-                    RoleId = adminRole.Id,
-                    UserId = admin.Id
-                },
-                new IdentityUserRole<Guid>()
-                {
-                    RoleId = userRole.Id,
-                    UserId = user.Id
-                }
-            };
-            modelBuilder.Entity<IdentityUserRole<Guid>>().HasData(userRoles);
 
             modelBuilder.Entity<ExamCategory>().HasData(
                 new ExamCategory

@@ -1,6 +1,8 @@
 ﻿using Application.Abstractions;
+using Application.Abstractions.Events;
 using Application.Abstractions.Messaging;
 using Application.Common.Exceptions;
+using Application.Features.ExamCategory.Events;
 using Application.Models.ExamCategory;
 using System;
 using System.Collections.Generic;
@@ -13,9 +15,11 @@ namespace Application.Features.ExamCategory.Commands
     public sealed class UpdateExamCategoryCommandHandler : ICommandHandler<UpdateExamCategoryCommand, ExamCategoryResponse>
     {
         private readonly IUnitOfWork _unitOfWork;
-        public UpdateExamCategoryCommandHandler(IUnitOfWork unitOfWork)
+        private readonly IEventBus _eventBus;
+        public UpdateExamCategoryCommandHandler(IUnitOfWork unitOfWork, IEventBus eventBus)
         {
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+            _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
         }
         public async Task<ExamCategoryResponse> Handle(UpdateExamCategoryCommand request, CancellationToken cancellationToken)
         {
@@ -26,6 +30,13 @@ namespace Application.Features.ExamCategory.Commands
             examCategory.ImageUrl = request.ImageUrl;
             examCategory.UpdatedAt = now;
             await _unitOfWork.ExamCategoryRepository.Update(examCategory);
+            await _eventBus.PublishAsync(new UpdateExamCategoryEvent(
+                                                                    examCategory.Id, 
+                                                                    examCategory.Name, 
+                                                                    examCategory.Description, 
+                                                                    examCategory.UpdatedAt, 
+                                                                    examCategory.CreatedAt, 
+                                                                    examCategory.ImageUrl));
             return new ExamCategoryResponse(examCategory.Id, examCategory.Name, examCategory.Description, examCategory.ImageUrl);
         }
     }

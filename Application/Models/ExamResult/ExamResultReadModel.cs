@@ -15,7 +15,8 @@ namespace Application.Models.ExamResult
         DateTime CompleteAt,
         double Score,
         Guid ExamId,
-        Guid UserId
+        Guid UserId,
+        IReadOnlyCollection<AnswerHistoryReadModel> AnswerHistories
     );
 
     public record AnswerHistoryReadModel(

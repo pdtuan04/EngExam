@@ -11,6 +11,6 @@ namespace Application.Abstractions.Repositories
     public interface IExamCategoryRepository : IGenericRepository<ExamCategory>
     {
         Task<ICollection<ExamCategory>> GetAllAsync();
-        Task SoftDelete(Guid id);
+        Task SoftDelete(Guid id, DateTime deletedAt);
     }
 }

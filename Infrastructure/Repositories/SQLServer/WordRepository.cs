@@ -21,10 +21,11 @@ namespace Infrastructure.Repositories.SQLServer
             return _mapper.Map<Domain.Entity.Word>(word);
         }
 
-        public async Task<bool> ToggleMemorizedStatusAsync(Guid wordId)
+        public async Task<bool> ToggleMemorizedStatusAsync(Guid wordId, bool isMemorized, DateTime updatedAt)
         {
             var word = await _dbContext.Words.FirstOrDefaultAsync(w => w.Id == wordId);
-            word.IsMemorized = !word.IsMemorized;
+            word.IsMemorized = isMemorized;
+            word.UpdatedAt = updatedAt;
             return word.IsMemorized;
         }
     }

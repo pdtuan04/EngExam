@@ -75,36 +75,29 @@ namespace Infrastructure.Repositories.SQLServer_Read
         {
             var questionIds = questions.Select(q => q.Id).ToList();
             var existingQuestions = await _dbContext.Questions
-                                                    .IgnoreQueryFilters()
-                                                    .Where(t => questionIds.Contains(t.Id))
-                                                    .ToDictionaryAsync(q => q.Id, q => q);
-            var insert = new List<Question>();
-            var update = new List<Question>();
+                .IgnoreQueryFilters()
+                .Where(t => questionIds.Contains(t.Id))
+                .ToDictionaryAsync(q => q.Id, q => q);
+            var newQuestion = new List<Question>();
             foreach (var question in questions)
             {
-                if (existingQuestions.TryGetValue(question.Id, out var existingQuestion))
+                if(existingQuestions.TryGetValue(question.Id, out var existingQuestion))
                 {
-                    if (existingQuestion.UpdatedAt >= question.UpdatedAt)
+                    if(existingQuestion.UpdatedAt < question.UpdatedAt)
                     {
-                        continue;
+                        _mapper.Map(question, existingQuestion);
                     }
-                    _mapper.Map(question, existingQuestion);
-                    update.Add(existingQuestion);
                 }
                 else
                 {
-                    var newQuestion = _mapper.Map<Question>(question);
-                    newQuestion.IsDeleted = false;
-                    insert.Add(newQuestion);
+                    var newQuestionEntity = _mapper.Map<Question>(question);
+                    newQuestionEntity.IsDeleted = false;
+                    newQuestion.Add(newQuestionEntity);
                 }
             }
-            if (insert.Any())
+            if (newQuestion.Any())
             {
-                _dbContext.Questions.AddRange(insert);
-            }
-            if (update.Any())
-            {
-                _dbContext.Questions.UpdateRange(update);
+                await _dbContext.Questions.AddRangeAsync(newQuestion);
             }
             await _dbContext.SaveChangesAsync();
         }

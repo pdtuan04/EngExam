@@ -1,5 +1,6 @@
 ﻿
 
+using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 using Application.Models.Authen;
 using AutoMapper;
@@ -17,8 +18,8 @@ namespace Infrastructure.Authentication
 {
     public class AuthIdentityService : IAuthIdentityService
     {
-        private readonly UserManager<Repositories.SQLServer.DataContext.User> _userManager;
-        private readonly SignInManager<Repositories.SQLServer.DataContext.User> _signInManager;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
         private readonly RoleManager<IdentityRole<Guid>> _roleManager;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
@@ -52,7 +53,7 @@ namespace Infrastructure.Authentication
 
         public async Task<bool> SignUp(Domain.Entity.User request)
         {
-            var newUser = new Repositories.SQLServer.DataContext.User
+            var newUser = new User
             {
                 UserName = request.UserName,
                 Age = request.Age ?? 0,
@@ -79,7 +80,7 @@ namespace Infrastructure.Authentication
         }
         public async Task<string> JwtTokenGen(Domain.Entity.User user)
         {
-            var userRoles = await _userManager.GetRolesAsync(_mapper.Map<Repositories.SQLServer.DataContext.User>(user));
+            var userRoles = await _userManager.GetRolesAsync(_mapper.Map<User>(user));
             var authClaims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
@@ -109,8 +110,9 @@ namespace Infrastructure.Authentication
             return tokenHandler.WriteToken(token);
         }
 
-        public async Task<bool> ChangePassword(Guid userId, string currentPassword, string newPassword)
+        public async Task<bool> ChangePassword(Guid userId, string currentPassword, string newPassword, string confirmNewPassword)
         {
+            if (newPassword != confirmNewPassword) throw new BadRequestException("New password and confirm password do not match");
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user == null) throw new Exception("User not found");
             var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
@@ -124,7 +126,7 @@ namespace Infrastructure.Authentication
 
             if (userByName == null)
             {
-                var newUser = new Repositories.SQLServer.DataContext.User
+                var newUser = new User
                 {
                     UserName = payload.Email,
                     Email = payload.Email,
@@ -162,6 +164,17 @@ namespace Infrastructure.Authentication
             var user = await _userManager.FindByNameAsync(request.UserName) ?? throw new Exception("User not found");// tu tu tinh :))
             var result = await _userManager.AddToRoleAsync(user, roleName);
             return result.Succeeded;
+        }
+
+        public async Task<bool> ResetPassword(string email, string newPassword, string confirmNewPassword)
+        {
+            if (newPassword != confirmNewPassword) throw new BadRequestException("New password and confirm password do not match");
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null) throw new Exception("User not found");
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+            if (result.Succeeded) return true;
+            return false;
         }
     }
 }

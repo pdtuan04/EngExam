@@ -29,23 +29,23 @@ namespace Infrastructure.Repositories.SQLServer_Read
             _dbContext = context;
             _mapper = mapper;
         }
-        public async Task<Domain.Entity.ExamResult?> GetByIdAsync(Guid id)
+        public async Task<ExamResultDetailResponse?> GetByIdAsync(Guid id)
         {
             var dbexamresult = await _dbContext.ExamResults.FindAsync(id);
-            return dbexamresult is null ? null : _mapper.Map<Domain.Entity.ExamResult>(dbexamresult);
+            return dbexamresult is null ? null : _mapper.Map<ExamResultDetailResponse>(dbexamresult);
         }
-        public async Task<IEnumerable<Domain.Entity.ExamResult>> GetAllAsync()
+        public async Task<IEnumerable<ExamResultResponse>> GetAllAsync()
         {
             var dbexamresults = await _dbContext.ExamResults.AsNoTracking().ToListAsync();
-            return _mapper.Map<List<Domain.Entity.ExamResult>>(dbexamresults);
+            return _mapper.Map<List<ExamResultResponse>>(dbexamresults);
         }
-        public async Task<IEnumerable<Domain.Entity.ExamResult>> GetResultsByUserId(Guid id)
+        public async Task<IEnumerable<ExamResultResponse>> GetResultsByUserId(Guid id)
         {
             var dbexamresults = await _dbContext.ExamResults
                 .AsNoTracking()
                 .Where(er => er.UserId == id)
                 .ToListAsync();
-            return _mapper.Map<IEnumerable<Domain.Entity.ExamResult>>(dbexamresults);
+            return _mapper.Map<IEnumerable<ExamResultResponse>>(dbexamresults);
         }
         public async Task<PaginationResponse<ExamResultResponse>> GetExamResultPaginatedByUserId(Guid userId, int pageIndex, int pageSize,CancellationToken cancellationToken)
         {
@@ -67,7 +67,7 @@ namespace Infrastructure.Repositories.SQLServer_Read
                                     er.Id,
                                     er.CompleteAt,
                                     er.Score,
-                                    _dbContext.DetailResults
+                                    _dbContext.AnswerHistories
                                         .Where(ua => ua.ExamResultId == er.Id)
                                         .Select(ua => new UserAnswerResponse(
                                             ua.QuestionText,
@@ -85,9 +85,11 @@ namespace Infrastructure.Repositories.SQLServer_Read
         public async Task UpsertAsync(ExamResultReadModel examResultReadModel)
         {
             var examResult = _mapper.Map<ExamResult>(examResultReadModel);
-                var existingExamResult = await _dbContext.ExamResults.Where(er => er.Id == examResult.Id).ExecuteDeleteAsync();
-                _dbContext.ExamResults.Add(examResult);
-                await _dbContext.SaveChangesAsync();
+            var answerHistories = _mapper.Map<ICollection<AnswerHistory>>(examResultReadModel.AnswerHistories);
+            await _dbContext.ExamResults.Where(er => er.Id == examResult.Id).ExecuteDeleteAsync();
+            _dbContext.ExamResults.Add(examResult);
+            _dbContext.AnswerHistories.AddRange(answerHistories);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

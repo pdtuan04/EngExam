@@ -15,11 +15,12 @@ namespace Application.Common.Interfaces
         Task<bool> SignUp(User request);
         Task<SignInResponse> SignIn(string username, string password, bool rememberme);
         Task<string> JwtTokenGen(User user);
-        Task<bool> ChangePassword(Guid userId, string currentPassword, string newPassword);
+        Task<bool> ChangePassword(Guid userId, string currentPassword, string newPassword, string confirmNewPassword);
         Task<SignInResponse> LoginByGoogle(string idToken);
         Task<string> GetRole(string roleName);
         Task<string> CreateRole(string roleName);
         Task<bool> AddUserToRole(User user, string roleName);
+        Task<bool> ResetPassword(string email, string newPassword, string confirmNewPassword);
         Task Logout();
     }
 }

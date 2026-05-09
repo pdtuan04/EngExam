@@ -24,7 +24,7 @@ namespace Infrastructure.Repositories.SQLServer.Mappers
             CreateMap<Exam, Domain.Entity.Exam>().ReverseMap();
             CreateMap<ExamDetail, Domain.Entity.ExamDetail>().ReverseMap();
             CreateMap<ExamResult, Domain.Entity.ExamResult>().ReverseMap();
-            CreateMap<AnswersHistory, Domain.Entity.AnswerHistory>().ReverseMap();
+            CreateMap<AnswerHistory, Domain.Entity.AnswerHistory>().ReverseMap();
             CreateMap<User, Domain.Entity.User>().ReverseMap();
             CreateMap<ExamCategory, Domain.Entity.ExamCategory>().ReverseMap();
             CreateMap<Practice, Domain.Entity.Practice>().ReverseMap();

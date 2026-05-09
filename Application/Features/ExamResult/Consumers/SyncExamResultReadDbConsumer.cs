@@ -15,31 +15,14 @@ namespace Application.Features.ExamResult.Consumers
     public sealed class SyncExamResultReadDbConsumer : IConsumer<CreateExamResultEvent>
     {
         private readonly IExamResultReadRepository _examResultReadRepository;
-        private readonly IExamResultRepository _examResultRepository;
-        public SyncExamResultReadDbConsumer(IExamResultReadRepository examResultReadRepository, IExamResultRepository examResultRepository)
+        public SyncExamResultReadDbConsumer(IExamResultReadRepository examResultReadRepository)
         {
             _examResultReadRepository = examResultReadRepository;
-            _examResultRepository = examResultRepository;   
         }
         public async Task Consume(ConsumeContext<CreateExamResultEvent> context)
         {
             var message = context.Message;
-            var examResult = await _examResultRepository.GetDetailByIdAsync(message.Id);
-            if (examResult == null)
-            {
-                return;
-            }
-            var examResultReadModel = new ExamResultReadModel(
-                examResult.Id,
-                examResult.Exam.Title,
-                examResult.Exam.Description,
-                examResult.Exam.DurationInMinutes,
-                examResult.CompleteAt,
-                examResult.Score,
-                examResult.ExamId,
-                examResult.UserId
-            );
-            await _examResultReadRepository.UpsertAsync(examResultReadModel);
+            await _examResultReadRepository.UpsertAsync(message.ExamResult);
         }
     }
 }

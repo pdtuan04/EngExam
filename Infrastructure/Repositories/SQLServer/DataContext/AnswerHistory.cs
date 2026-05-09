@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories.SQLServer.DataContext
 {
-    public class AnswersHistory : IEntity<Guid>
+    public class AnswerHistory : IEntity<Guid>
     {
         public required Guid Id { get; set; }
         public required Guid ExamResultId { get; set; }

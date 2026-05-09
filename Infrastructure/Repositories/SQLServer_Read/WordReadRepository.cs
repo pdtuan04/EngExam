@@ -48,7 +48,7 @@ namespace Infrastructure.Repositories.SQLServer_Read
 
         public async Task ToggleWordMemorization(Guid Id, bool isMemorized, DateTime ActionAt)
         {
-            var existingWord = await _dbContext.Words.FindAsync(Id);
+            var existingWord = await _dbContext.Words.IgnoreQueryFilters().AsTracking().FirstOrDefaultAsync(w => w.Id == Id);
             if (existingWord != null)
             {
                 if (existingWord.UpdatedAt >= ActionAt)
@@ -63,7 +63,7 @@ namespace Infrastructure.Repositories.SQLServer_Read
 
         public async Task UpsertAsync(WordReadModel word)
         {
-                var existingWord = await _dbContext.Words.IgnoreQueryFilters().FirstOrDefaultAsync(w => w.Id == word.Id);
+                var existingWord = await _dbContext.Words.IgnoreQueryFilters().AsTracking().FirstOrDefaultAsync(w => w.Id == word.Id);
                 if (existingWord != null)
                 {
                     if (existingWord.UpdatedAt >= word.UpdatedAt)
