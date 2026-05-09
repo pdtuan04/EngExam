@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Application.Features.User.Events
 {
-    public sealed record CreateUserEvent(string UserName, string Email, int? Age);
+    public sealed record CreateUserEvent(Guid Id, string UserName, string Email, int? Age, DateTime CreatedAt, DateTime UpdatedAt);
 }

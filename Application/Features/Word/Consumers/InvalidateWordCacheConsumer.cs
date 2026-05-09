@@ -24,15 +24,18 @@ namespace Application.Features.Word.Consumers
         public async Task Consume(ConsumeContext<DeleteWordEvent> context)
         {
             await _cacheService.RemoveCacheAsync(CacheKeys.WordMeaning(context.Message.Text));
+            await _cacheService.RemoveCacheAsync(CacheKeys.FlashCardDetail(context.Message.FlashCardId));
         }
         public async Task Consume(ConsumeContext<UpdateWordEvent> context)
         {
             await _cacheService.RemoveCacheAsync(CacheKeys.WordMeaning(context.Message.Text));
+            await _cacheService.RemoveCacheAsync(CacheKeys.FlashCardDetail(context.Message.FlashCardId));
         }
 
         public async Task Consume(ConsumeContext<CreateWordEvent> context)
         {
             await _cacheService.RemoveCacheAsync(CacheKeys.WordMeaning(context.Message.Text));
+            await _cacheService.RemoveCacheAsync(CacheKeys.FlashCardDetail(context.Message.FlashCardId));
         }
 
         public async Task Consume(ConsumeContext<WordMemorizationToggledEvent> context)

@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions;
 using Application.Abstractions.Events;
 using Application.Abstractions.Messaging;
+using Application.Common.Exceptions;
 using Application.Features.Exam.Events;
 using System;
 using System.Collections.Generic;
@@ -21,9 +22,10 @@ namespace Application.Features.Exam.Commands
         }
         public async Task<bool> Handle(DeleteExamCommand request, CancellationToken cancellationToken)
         {
+            var exam = await _unitOfWork.ExamRepository.GetByIdAsync(request.Id) ?? throw new NotFoundException("Exam", request.Id);
             var result = await _unitOfWork.ExamRepository.SoftDelete(request.Id);
             var now = DateTime.UtcNow;
-            await _eventBus.PublishAsync(new DeletedExamEvent(request.Id, now), cancellationToken);
+            await _eventBus.PublishAsync(new DeletedExamEvent(request.Id, now, exam.ExamCategoryId), cancellationToken);
             return result;
         }
     }

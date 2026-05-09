@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions;
 using Application.Abstractions.Events;
 using Application.Abstractions.Messaging;
+using Application.Common.Exceptions;
 using Application.Features.Topic.Events;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,7 @@ namespace Application.Features.Topic.Commands
         public async Task<bool> Handle(DeleteTopicCommand request, CancellationToken cancellationToken)
         {
             var now = DateTime.UtcNow;
+            var topic = await _unitOfWork.TopicRepository.GetByIdAsync(request.Id) ?? throw new NotFoundException($"Topic",request.Id);
             var result = await _unitOfWork.TopicRepository.Delete(request.Id);
             await _eventBus.PublishAsync(new DeleteTopicEvent(request.Id, now), cancellationToken);
             return result;

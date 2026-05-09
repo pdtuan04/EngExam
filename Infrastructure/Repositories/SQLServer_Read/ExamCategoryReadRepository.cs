@@ -32,6 +32,7 @@ namespace Infrastructure.Repositories.SQLServer_Read
         {
             var examCategory = await _dbContext.ExamCategories
             .IgnoreQueryFilters()
+            .AsTracking()
             .FirstOrDefaultAsync(t => t.Id == categoryId);
             if (examCategory != null)
             {
@@ -67,10 +68,10 @@ namespace Infrastructure.Repositories.SQLServer_Read
 
         public async Task UpsertAsync(ExamCategoryReadModel examCategory)
         {
-            var existingExamCategory = await _dbContext.ExamCategories.IgnoreQueryFilters().FirstOrDefaultAsync(t => t.Id == examCategory.Id);
+            var existingExamCategory = await _dbContext.ExamCategories.IgnoreQueryFilters().AsTracking().FirstOrDefaultAsync(t => t.Id == examCategory.Id);
             if (existingExamCategory != null)
             {
-                if (existingExamCategory.UpdatedAt >= existingExamCategory.UpdatedAt)
+                if (existingExamCategory.UpdatedAt >= examCategory.UpdatedAt)
                 {
                     return;
                 }

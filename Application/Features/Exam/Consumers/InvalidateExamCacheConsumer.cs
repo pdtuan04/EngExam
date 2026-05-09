@@ -23,14 +23,17 @@ namespace Application.Features.Exam.Consumers
         public async Task Consume(ConsumeContext<UpdateExamEvent> context)
         {
             var message = context.Message;
-            await _cacheService.RemoveCacheAsync(CacheKeys.ExamByCategory(message.ExamCategoryId), context.CancellationToken);
-            await _cacheService.RemoveCacheAsync(CacheKeys.ExamDetail(message.ExamId), context.CancellationToken);
+            await _cacheService.RemoveCacheAsync(CacheKeys.ExamByCategory(message.Exam.ExamCategoryId), context.CancellationToken);
+            await _cacheService.RemoveCacheAsync(CacheKeys.ExamDetail(message.Exam.Id), context.CancellationToken);
+            await _cacheService.RemoveCacheAsync(CacheKeys.ExamToTake(message.Exam.Id), context.CancellationToken);
         }
 
         public async Task Consume(ConsumeContext<DeletedExamEvent> context)
         {
             var message = context.Message;
+            await _cacheService.RemoveCacheAsync(CacheKeys.ExamByCategory(message.ExamCategoryId), context.CancellationToken);
             await _cacheService.RemoveCacheAsync(CacheKeys.ExamDetail(message.Id), context.CancellationToken);
+            await _cacheService.RemoveCacheAsync(CacheKeys.ExamToTake(message.Id), context.CancellationToken);
             _logger.LogInformation($"Exam cache cleared after deleting Exam: {message.Id}.");
         }
     }

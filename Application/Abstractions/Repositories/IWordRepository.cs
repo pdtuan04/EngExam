@@ -10,6 +10,6 @@ namespace Application.Abstractions.Repositories
     public interface IWordRepository : IGenericRepository<Word>
     {
         Task<Word> GetByTextAsync(string text);
-        Task<bool> ToggleMemorizedStatusAsync(Guid wordId);
+        Task<bool> ToggleMemorizedStatusAsync(Guid wordId, bool isMemorized, DateTime updatedAt);
     }
 }

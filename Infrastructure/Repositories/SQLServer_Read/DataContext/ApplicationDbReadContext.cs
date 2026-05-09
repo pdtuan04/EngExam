@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories.SQLServer_Read.DataContext
 {
-    public class ApplicationDbReadContext : IdentityDbContext<User,IdentityRole<Guid>,Guid>
+    public class ApplicationDbReadContext : DbContext
     {
         //private readonly string _connectionString;
         //public ApplicationDbContext()
@@ -36,7 +36,7 @@ namespace Infrastructure.Repositories.SQLServer_Read.DataContext
         public DbSet<ExamDetail> ExamDetails { get; set; }
         public DbSet<Exam> Exams { get; set; }
         public DbSet<ExamResult> ExamResults { get; set; }
-        public DbSet<AnswersHistory> DetailResults { get; set; }
+        public DbSet<AnswerHistory> AnswerHistories { get; set; }
         public DbSet<Topic> Topics { get; set; }
         public DbSet<ExamCategory> ExamCategories { get; set; }
         public DbSet<Practice> Practices { get; set; }

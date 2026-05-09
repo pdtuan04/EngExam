@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Application.Features.Word.Events
 {
-    public sealed record DeleteWordEvent(Guid Id, string Text, DateTime ActionAt);
+    public sealed record DeleteWordEvent(Guid Id, string Text, DateTime ActionAt, Guid FlashCardId);
 }

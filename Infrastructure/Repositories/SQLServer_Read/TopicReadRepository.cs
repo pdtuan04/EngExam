@@ -31,6 +31,7 @@ namespace Infrastructure.Repositories.SQLServer_Read
         {
             var topic = await _dbContext.Topics
             .IgnoreQueryFilters()
+            .AsTracking()
             .FirstOrDefaultAsync(t => t.Id == topicId);
             if (topic != null)
             {
@@ -60,7 +61,7 @@ namespace Infrastructure.Repositories.SQLServer_Read
 
         public async Task UpsertAsync(TopicReadModel topic)
         {
-            var existingTopic = await _dbContext.Topics.IgnoreQueryFilters().FirstOrDefaultAsync(t => t.Id == topic.Id);
+            var existingTopic = await _dbContext.Topics.IgnoreQueryFilters().AsTracking().FirstOrDefaultAsync(t => t.Id == topic.Id);
             if (existingTopic != null)
             {
                 if(existingTopic.UpdatedAt >= topic.UpdatedAt)
@@ -75,7 +76,7 @@ namespace Infrastructure.Repositories.SQLServer_Read
                 newTopic.IsDeleted = false;
                 _dbContext.Topics.Add(newTopic);
             }
-            await _dbContext.SaveChangesAsync();
+            var result = await _dbContext.SaveChangesAsync();
         }
 
     }

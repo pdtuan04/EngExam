@@ -19,7 +19,7 @@ namespace Application.Features.User.Commands
 
         public async Task<bool> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
         {
-            return await _authIdentityService.ChangePassword(request.UserId, request.CurrentPassword, request.NewPassword);
+            return await _authIdentityService.ChangePassword(request.UserId, request.CurrentPassword, request.NewPassword, request.ConfirmNewPassword);
         }
     }
 }

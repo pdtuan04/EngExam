@@ -22,10 +22,12 @@ namespace Infrastructure.Repositories.SQLServer
             return _mapper.Map<ICollection<Domain.Entity.ExamCategory>>(result);
         }
 
-        public async Task SoftDelete(Guid id)
+        public async Task SoftDelete(Guid id, DateTime deletedAt)
         {
             var examCategory = await _dbContext.ExamCategories.FirstOrDefaultAsync(e => e.Id == id) ?? throw new NullReferenceException();
             examCategory.IsActive = false;
+            examCategory.UpdatedAt = deletedAt;
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

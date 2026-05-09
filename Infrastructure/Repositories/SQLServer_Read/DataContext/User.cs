@@ -10,8 +10,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories.SQLServer_Read.DataContext
 {
-    public class User : IdentityUser<Guid>
+    public class User : BaseEntity<Guid>
     {
         public int? Age { get; set; }
+        public required string UserName { get; set; }
+        public required string NormalizedUserName { get; set; }
+        public required string Email { get; set; }
+        public required string NormalizedEmail { get; set; }
+        public string? ImageUrl { get; set; }
     }
 }

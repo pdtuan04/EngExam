@@ -21,5 +21,6 @@ namespace Application.Abstractions.Repositories.Read
         Task<PaginationResponse<ExamResponse>> GetPaginatedAsync(int page, int pageSize, CancellationToken cancellationToken);
         Task UpsertAsync(ExamReadModel exam);
         Task DeleteAsync(Guid id, DateTime deletedAt);
+        Task UpsertExamDetailsAsync(IEnumerable<ExamDetailReadModel> details, Guid examId);
     }
 }

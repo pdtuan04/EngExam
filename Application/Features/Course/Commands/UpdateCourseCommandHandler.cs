@@ -22,12 +22,14 @@ namespace Application.Features.Course.Commands
         }
         public async Task<CourseDetailResponse> Handle(UpdateCourseCommand request, CancellationToken cancellationToken)
         {
+            var now = DateTime.UtcNow;
             var course = await _unitOfWork.CourseRepository.GetByIdAsync(request.Id);
             course.Name = request.Name;
             course.Description = request.Description;
             course.Content = request.Content;
             course.ImageUrl = request.ImageUrl;
             course.TopicId = request.TopicId;
+            course.UpdatedAt = now;
             await _unitOfWork.CourseRepository.Update(course);
             await _eventBus.PublishAsync(new UpdateCourseEvent(
                                             course.Id, course.Name, 

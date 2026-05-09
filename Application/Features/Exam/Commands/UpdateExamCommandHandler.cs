@@ -28,71 +28,80 @@ namespace Application.Features.Exam.Commands
         public async Task<ExamDetailResponse> Handle(UpdateExamCommand request, CancellationToken cancellationToken)
         {
             var now = DateTime.UtcNow;
-            var exam = await _unitOfWork.ExamRepository.GetExamDetail(request.Id) ?? throw new NotFoundException("Exam", request.Id);
-            exam.IsActive = request.IsActive ?? exam.IsActive;
-            exam.Title = request.Title;
-            exam.Description = request.Description;
-            exam.DurationInMinutes = request.DurationInMinutes;
-            exam.ExamCategoryId = request.ExamCategoryId;
-            exam.UpdatedAt = now;
+            var isExist = await _unitOfWork.ExamRepository.GetExamDetail(request.Id) ?? throw new NotFoundException("Exam", request.Id);
+            var exam = new Domain.Entity.Exam
+            {
+                Id = request.Id,
+                Title = request.Title,
+                Description = request.Description,
+                DurationInMinutes = request.DurationInMinutes,
+                ExamCategoryId = request.ExamCategoryId,
+                IsActive = request.IsActive ?? true,
+                UpdatedAt = now
+            };
             foreach (var q in request.Questions)
             {
-                var existQues = exam.ExamDetail.FirstOrDefault(ed => ed.QuestionId == q.Id);
-                if (existQues == null)
+                var questionId = q.Id == Guid.Empty ? Guid.NewGuid() : q.Id;
+                var newQuestion = new Domain.Entity.Question
                 {
-                    exam.AddExamDetail(new Domain.Entity.Question
+                    Id = questionId,
+                    Content = q.Content,
+                    Explanation = q.Explanation,
+                    TopicId = q.TopicId,
+                    QuestionTypes = q.QuestionTypes,
+                    ImageUrl = q.ImageUrl,
+                    IsActive = q.IsActive,
+                    UpdatedAt = now,
+                    Answers = q.Answers.Select(a => new Domain.Entity.Answer
                     {
-                        Id = q.Id,
-                        Content = q.Content,
-                        Explanation = q.Explanation,
-                        TopicId = q.TopicId,
-                        QuestionTypes = q.QuestionTypes,
-                        ImageUrl = q.ImageUrl,
-                        IsActive = q.IsActive,
-                    }, q.Score);
-                }
-                else
-                {
-                    existQues.Question.Content = q.Content;
-                    existQues.Question.Explanation = q.Explanation;
-                    existQues.Question.TopicId = q.TopicId;
-                    existQues.Question.QuestionTypes = q.QuestionTypes;
-                    existQues.Question.ImageUrl = q.ImageUrl;
-                    existQues.Question.IsActive = q.IsActive;
-                    existQues.Score = q.Score;
-                    foreach (var a in q.Answers)
-                    {
-                        var existAns = existQues.Question.Answers.FirstOrDefault(ans => ans.Id == a.Id);
-                        if (existAns == null)
-                        {
-                            existQues.Question.Answers.Add(new Domain.Entity.Answer
-                            {
-                                Id = a.Id,
-                                Content = a.Content,
-                                IsCorrect = a.IsCorrect,
-                                QuestionId = q.Id,
-                                IsActive = true,
-                            });
-                        }
-                        else
-                        {
-                            existAns.Content = a.Content;
-                            existAns.IsCorrect = a.IsCorrect;
-                            existAns.IsActive = true;
-                        }
-                    }
-                }
-
+                        Id = a.Id == Guid.Empty ? Guid.NewGuid() : a.Id,
+                        Content = a.Content,
+                        IsCorrect = a.IsCorrect,
+                        QuestionId = questionId,
+                        UpdatedAt = now
+                    }).ToList()
+                };
+                exam.AddExamDetail(newQuestion, q.Score);
             }
             await _unitOfWork.ExamRepository.Update(exam);
             await _eventBus.PublishAsync(new UpdateExamEvent(
-                exam.Id, 
-                exam.CreatedAt, 
-                exam.UpdatedAt, 
-                exam.Title,
-                exam.Description,
-                exam.DurationInMinutes,
-                exam.ExamCategoryId), cancellationToken);
+                Exam: new ExamReadModel
+                (
+                    Id: exam.Id,
+                    Title: exam.Title,
+                    Description: exam.Description,
+                    DurationInMinutes: exam.DurationInMinutes,
+                    ExamCategoryId: exam.ExamCategoryId,
+                    CreatedAt: exam.CreatedAt,
+                    UpdatedAt: exam.UpdatedAt
+                ),
+                Questions: exam.ExamDetail.Select(ed => new QuestionReadModel
+                (
+                    Id: ed.Question.Id,
+                    Content: ed.Question.Content,
+                    QuestionTypes: ed.Question.QuestionTypes,
+                    Explanation: ed.Question.Explanation ?? "",
+                    ImageUrl: ed.Question.ImageUrl,
+                    TopicId: ed.Question.TopicId,
+                    CreatedAt: ed.Question.CreatedAt,
+                    UpdatedAt: ed.Question.UpdatedAt
+                )).ToList(),
+                Answers: exam.ExamDetail.SelectMany(ed => ed.Question.Answers.Select(a => new AnswerReadModel
+                (
+                    Id: a.Id,
+                    Content: a.Content,
+                    IsCorrect: a.IsCorrect,
+                    QuestionId: a.QuestionId,
+                    CreatedAt: a.CreatedAt,
+                    UpdatedAt: a.UpdatedAt
+                ))).ToList(),
+                ExamDetails: exam.ExamDetail.Select(ed => new ExamDetailReadModel
+                (
+                    ExamId: exam.Id,
+                    QuestionId: ed.QuestionId,
+                    Score: ed.Score
+                )).ToList()
+            ));
             return new ExamDetailResponse
             (
                 Id: exam.Id,

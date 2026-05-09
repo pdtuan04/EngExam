@@ -1,14 +1,14 @@
+using Application.Models.Answer;
+using Application.Models.Exam;
+using Application.Models.Question;
 using System;
 
 namespace Application.Features.Exam.Events
 {
     public sealed record UpdateExamEvent(
-        Guid ExamId,
-        DateTime CreatedAt,
-        DateTime UpdatedAt,
-        string Title,
-        string Description,
-        int DurationInMinutes,
-        Guid ExamCategoryId
+        ExamReadModel Exam,
+        List<QuestionReadModel> Questions,
+        List<AnswerReadModel> Answers,
+        List<ExamDetailReadModel> ExamDetails
     );
 }

@@ -20,8 +20,8 @@ namespace Application.Features.Practice.Consumer
         public async Task Consume(ConsumeContext<UpdatePracticeEvent> context)
         {
             var message = context.Message;
-            await _cacheService.RemoveCacheAsync(CacheKeys.PracticeToTake(message.PracticeId),context.CancellationToken);
-            await _cacheService.RemoveCacheAsync(CacheKeys.PracticeDetails(message.PracticeId), context.CancellationToken);
+            await _cacheService.RemoveCacheAsync(CacheKeys.PracticeToTake(message.Practice.Id),context.CancellationToken);
+            await _cacheService.RemoveCacheAsync(CacheKeys.PracticeDetails(message.Practice.Id), context.CancellationToken);
         }
     }
 }

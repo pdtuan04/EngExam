@@ -33,6 +33,7 @@ namespace Application.Features.ExamResult.Commands
         {
             var now = DateTime.UtcNow;
             var exam = await _unitOfWork.ExamRepository.GetExamToTake(request.ExamId) ?? throw new NotFoundException("Exam", request.ExamId);
+            var dicQuestion = exam.ExamDetail.ToDictionary(ed => ed.QuestionId, ed => ed.Question);
             var score = await ScoreCalculation(request.UserAnswers, exam.ExamDetail);
             var histories = await HistorySave(request.UserAnswers, exam.ExamDetail, exam.Id);
             var examResultId = Guid.NewGuid();
@@ -46,30 +47,32 @@ namespace Application.Features.ExamResult.Commands
                 AnswerHistory = histories
             };
             await _unitOfWork.ExamResultRepository.AddAsync(examResult);
-            var examResultEvent = new CreateExamResultEvent(
-                examResult.Id,
-                exam.Title,
-                exam.Description,
-                exam.DurationInMinutes, 
-                examResult.CompleteAt, 
-                examResult.Score, 
-                examResult.ExamId, 
-                examResult.UserId);
-            await _eventBus.PublishAsync(examResultEvent,cancellationToken);
             var answerHistories = examResult.AnswerHistory.Select(ah => new AnswerHistoryReadModel(
                 ah.Id,
                 ah.QuestionId,
-                QuestionText: ah.Question.Content,
-                ah.Question.QuestionTypes,
-                ah.Question.Explanation,
-                ah.Question.ImageUrl,
-                OptionsJson: JsonSerializer.Serialize(ah.Question.Answers),
+                QuestionText: dicQuestion[ah.QuestionId].Content,
+                dicQuestion[ah.QuestionId].QuestionTypes,
+                dicQuestion[ah.QuestionId].Explanation,
+                dicQuestion[ah.QuestionId].ImageUrl,
+                OptionsJson: JsonSerializer.Serialize(dicQuestion[ah.QuestionId].Answers),
                 UserAnswer: ah.UserAnswer,
                 IsCorrect: ah.IsCorrect,
                 Score: ah.Score,
                 examResult.Id
             )).ToList();
-            await _eventBus.PublishAsync(new CreateAnswerHistoryEvent(answerHistories),cancellationToken);
+            await _eventBus.PublishAsync(
+                new CreateExamResultEvent(
+                    ExamResult: new ExamResultReadModel(
+                        examResult.Id, 
+                        exam.Title,
+                        exam.Description,
+                        exam.DurationInMinutes,
+                        examResult.CompleteAt,
+                        examResult.Score,
+                        examResult.ExamId,
+                        examResult.UserId,
+                        answerHistories
+                        )), cancellationToken);
             var examResultDto = new ExamResultDetailResponse
             (
                 Id: examResult.Id,

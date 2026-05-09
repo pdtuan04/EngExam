@@ -31,6 +31,7 @@ namespace Infrastructure.Repositories.SQLServer_Read
         {
             var course = await _dbContext.Courses
             .IgnoreQueryFilters()
+            .AsTracking()
             .FirstOrDefaultAsync(t => t.Id == id);
             if (course != null)
             {
@@ -60,7 +61,7 @@ namespace Infrastructure.Repositories.SQLServer_Read
 
         public async Task UpsertAsync(CourseReadModel course)
         {
-            var existingCourse = await _dbContext.Courses.IgnoreQueryFilters().FirstOrDefaultAsync(t => t.Id == course.Id);
+            var existingCourse = await _dbContext.Courses.IgnoreQueryFilters().AsTracking().FirstOrDefaultAsync(t => t.Id == course.Id);
             if (existingCourse != null)
             {
                 if (existingCourse.UpdatedAt >= course.UpdatedAt)

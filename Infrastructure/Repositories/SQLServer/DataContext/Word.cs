@@ -13,6 +13,7 @@ namespace Infrastructure.Repositories.SQLServer.DataContext
         public required string Text { get; set; }
         public required string Meaning { get; set; }
         public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
         public bool IsMemorized { get; set; } = false;
         public required Guid FlashCardId { get; set; }
         public FlashCard FlashCard { get; set; } = null!;

@@ -6,6 +6,7 @@ using MassTransit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,23 +14,30 @@ namespace Application.Features.Practice.Consumer
 {
     public sealed class SyncPracticeReadDbConsumer : IConsumer<CreatePracticeEvent>, IConsumer<UpdatePracticeEvent>, IConsumer<DeletePracticeEvent>
     {
-        private readonly IPracticeRepository _practiceRepository;
         private readonly IPracticeReadRepository _practiceReadRepository;
-        public SyncPracticeReadDbConsumer(IPracticeRepository practiceRepository, IPracticeReadRepository practiceReadRepository)
+        private readonly IQuestionReadRepository _questionReadRepository;
+        private readonly IAnswerReadRepository _answerReadRepository;
+        public SyncPracticeReadDbConsumer(IPracticeReadRepository practiceReadRepository, IQuestionReadRepository questionReadRepository, IAnswerReadRepository answerReadRepository)
         {
-            _practiceRepository = practiceRepository;
             _practiceReadRepository = practiceReadRepository;
+            _questionReadRepository = questionReadRepository;
+            _answerReadRepository = answerReadRepository;
         }
         public async Task Consume(ConsumeContext<CreatePracticeEvent> context)
         {
             var message = context.Message;
-            await _practiceReadRepository.UpsertAsync(new PracticeReadModel(message.PracticeId, message.Title, message.Description, message.TopicId, message.CreatedAt, message.UpdatedAt));
+            await _practiceReadRepository.UpsertAsync(message.Practice);
+            await _questionReadRepository.UpsertBulkAsync(message.Questions);
+            await _answerReadRepository.UpsertBulkAsync(message.Answers);
+            await _practiceReadRepository.UpsertPracticeDetailsAsync(message.Details);
         }
 
         public async Task Consume(ConsumeContext<UpdatePracticeEvent> context)
         {
             var message = context.Message;
-            await _practiceReadRepository.UpsertAsync(new PracticeReadModel(message.PracticeId, message.Title, message.Description, message.TopicId, message.CreatedAt, message.UpdatedAt));
+            await _practiceReadRepository.UpsertAsync(message.Practice);
+            await _practiceReadRepository.UpsertPracticeDetailsAsync(message.Details);
+
         }
 
         public async Task Consume(ConsumeContext<DeletePracticeEvent> context)

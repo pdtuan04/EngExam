@@ -13,6 +13,26 @@ namespace EngExam.Controllers
     [ApiController]
     public class ExamCategoryController : ApiController
     {
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var query = new GetAllCategoryQuery();
+            var result = await Sender.Send(query);
+            if (result == null)
+            {
+                return NotFound(new
+                {
+                    success = false,
+                    message = "No exam categories found"
+                });
+            }
+            return Ok(new
+            {
+                success = true,
+                data = result,
+                message = "Exam categories retrieved successfully"
+            });
+        }
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateExamCategoryRequest request)
         {
@@ -33,24 +53,43 @@ namespace EngExam.Controllers
                 message = "Exam category created successfully"
             });
         }
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateExamCategoryRequest request)
         {
-            var query = new GetAllCategoryQuery();
-            var result = await Sender.Send(query);
+            var command = new UpdateExamCategoryCommand(id, request.Name, request.Description, request.ImageUrl);
+            var result = await Sender.Send(command);
             if (result == null)
             {
                 return NotFound(new
                 {
                     success = false,
-                    message = "No exam categories found"
+                    message = "Exam category not found"
                 });
             }
             return Ok(new
             {
                 success = true,
                 data = result,
-                message = "Exam categories retrieved successfully"
+                message = "Exam category updated successfully"
+            });
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var command = new DeleteExamCategoryCommand(id);
+            var result = await Sender.Send(command);
+            if (!result)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Exam category failed to delete"
+                });
+            }
+            return Ok(new
+            {
+                success = true,
+                message = "Exam category deleted successfully"
             });
         }
         [AllowAnonymous]

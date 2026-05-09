@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories.SQLServer_Read.DataContext
 {
-    public class AnswersHistory
+    public class AnswerHistory
     {
         public required Guid Id { get; set; }
         public required Guid QuestionId { get; set; }

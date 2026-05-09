@@ -1,8 +1,11 @@
-﻿using Application.Models.Course;
+﻿using Application.Models.Answer;
+using Application.Models.Course;
 using Application.Models.Exam;
+using Application.Models.ExamCategory;
 using Application.Models.ExamResult;
 using Application.Models.FlashCard;
 using Application.Models.Practice;
+using Application.Models.Question;
 using Application.Models.Topic;
 using Application.Models.Word;
 using AutoMapper;
@@ -26,7 +29,7 @@ namespace Infrastructure.Repositories.SQLServer_Read.Mappers
             CreateMap<Exam, Domain.Entity.Exam>().ReverseMap();
             CreateMap<ExamDetail, Domain.Entity.ExamDetail>().ReverseMap();
             CreateMap<ExamResult, Domain.Entity.ExamResult>().ReverseMap();
-            CreateMap<AnswersHistory, Domain.Entity.AnswerHistory>().ReverseMap();
+            CreateMap<AnswerHistory, Domain.Entity.AnswerHistory>().ReverseMap();
             CreateMap<User, Domain.Entity.User>().ReverseMap();
             CreateMap<ExamCategory, Domain.Entity.ExamCategory>().ReverseMap();
             CreateMap<Practice, Domain.Entity.Practice>().ReverseMap();
@@ -36,12 +39,25 @@ namespace Infrastructure.Repositories.SQLServer_Read.Mappers
             CreateMap<Word, Domain.Entity.Word>().ReverseMap();
             CreateMap<FlashCard, Domain.Entity.FlashCard>().ReverseMap();
             CreateMap<TopicReadModel, Topic>().ReverseMap();
+            CreateMap<ExamReadModel, Exam>().ReverseMap();
+            CreateMap<PracticeReadModel, Practice>().ReverseMap();
+            CreateMap<ExamResultReadModel, ExamResult>().ReverseMap();
+            CreateMap<AnswerHistoryReadModel, AnswerHistory>().ReverseMap();
+            CreateMap<CourseReadModel, Course>().ReverseMap();
+            CreateMap<TopicReadModel, Topic>().ReverseMap();
+            CreateMap<WordReadModel, Word>().ReverseMap();
+            CreateMap<FlashCardReadModel, FlashCard>().ReverseMap();
+            CreateMap<TopicReadModel, Topic>().ReverseMap();
+            CreateMap<QuestionReadModel, Question>().ReverseMap();
+            CreateMap<AnswerReadModel, Answer>().ReverseMap();
+            CreateMap<ExamDetailReadModel, ExamDetail>().ReverseMap();
+            CreateMap<PracticeDetailReadModel, PracticeDetail>().ReverseMap();
             //Map between Infrastructure and Application Models for reading
 
             //Exam result 
             CreateMap<ExamResult, ExamResultDetailResponse>()
                 .ForMember(dest => dest.TotalScore, otp => otp.MapFrom(src => src.Score));
-            CreateMap<AnswersHistory, UserAnswerResponse>()
+            CreateMap<AnswerHistory, UserAnswerResponse>()
                 .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.QuestionText))
                 .ForMember(dest => dest.EarnedPoint, opt => opt.MapFrom(src => src.Score))
                 .ForMember(dest => dest.Options, opt => opt.MapFrom(src =>
@@ -50,17 +66,19 @@ namespace Infrastructure.Repositories.SQLServer_Read.Mappers
                         : JsonSerializer.Deserialize<List<Option>>(src.OptionsJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
                 ));
             CreateMap<ExamResultReadModel, ExamResult>();
-            CreateMap<AnswerHistoryReadModel, AnswersHistory>();
+            CreateMap<AnswerHistoryReadModel, AnswerHistory>();
+            CreateMap<ExamCategoryReadModel, ExamCategory>();
 
-            CreateMap<Topic, TopicResponse>().ReverseMap();
-            CreateMap<Exam, ExamResponse>().ReverseMap();
-            CreateMap<Practice, PracticeResponse>().ReverseMap();
-            CreateMap<ExamResult, ExamResultResponse>().ReverseMap();
-            CreateMap<Word, WordResponse>().ReverseMap();
-            CreateMap<FlashCard, FlashCardResponse>().ReverseMap();
-            CreateMap<FlashCard, FlashCardDetailResponse>().ReverseMap();
-            CreateMap<Course, CourseDetailResponse>().ReverseMap();
-            CreateMap<Course, CourseResponse>().ReverseMap();
+            CreateMap<Topic, TopicResponse>();
+            CreateMap<Exam, ExamResponse>();
+            CreateMap<Practice, PracticeResponse>();
+            CreateMap<ExamResult, ExamResultResponse>();
+            CreateMap<Word, WordResponse>();
+            CreateMap<FlashCard, FlashCardResponse>();
+            CreateMap<FlashCard, FlashCardDetailResponse>();
+            CreateMap<Course, CourseDetailResponse>();
+            CreateMap<Course, CourseResponse>();
+            CreateMap<ExamCategory, ExamCategoryResponse>();
         }
     }
 }

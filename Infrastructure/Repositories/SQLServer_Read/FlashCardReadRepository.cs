@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Repositories.Read;
 using Application.Models.FlashCard;
+using Application.Models.Word;
 using AutoMapper;
 using Infrastructure.Repositories.SQLServer_Read.DataContext;
 using Microsoft.EntityFrameworkCore;
@@ -41,11 +42,15 @@ namespace Infrastructure.Repositories.SQLServer_Read
 
         public async Task<FlashCardDetailResponse> GetFlashCardDetailByIdAsync(Guid flashCardId, CancellationToken cancellationToken)
         {
-            var flashCard = 
-                await _dbContext.FlashCards
+            var flashCard = await _dbContext.FlashCards
                 .AsNoTracking()
                 .FirstOrDefaultAsync(f => f.Id == flashCardId, cancellationToken);
-            return _mapper.Map<FlashCardDetailResponse>(flashCard);
+            var word = await _dbContext.Words
+                .AsNoTracking()
+                .Where(w => w.FlashCardId == flashCardId)
+                .Select(w => new WordResponse(w.Id, w.Text, w.Meaning, w.CreatedAt,w.IsMemorized)).ToListAsync();
+
+            return new FlashCardDetailResponse(flashCard.Id, flashCard.Title, flashCard.UserId,flashCard.Description, word);
         }
 
         public async Task<IEnumerable<FlashCardResponse>> GetFlashCardsByUserIdAsync(Guid userId, CancellationToken cancellationToken)
@@ -61,7 +66,7 @@ namespace Infrastructure.Repositories.SQLServer_Read
             var existingFlashCard = await _dbContext.FlashCards
                 .IgnoreQueryFilters()
                 .FirstOrDefaultAsync(f => f.Id == flashCard.Id);
-            if (existingFlashCard == null)
+            if (existingFlashCard != null)
             {
                 if(existingFlashCard.UpdatedAt >= flashCard.UpdatedAt)
                 {

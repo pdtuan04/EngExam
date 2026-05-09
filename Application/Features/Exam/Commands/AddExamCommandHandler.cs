@@ -35,6 +35,7 @@ namespace Application.Features.Exam.Commands
                 Title = request.Title,
                 DurationInMinutes = request.DurationInMinutes,
                 ExamCategoryId = request.ExamCategoryId,
+                Description = request.Description,
                 CreatedAt = now,
                 UpdatedAt = now,
             };
@@ -66,17 +67,18 @@ namespace Application.Features.Exam.Commands
                 q.Score);
             }
             await _unitOfWork.ExamRepository.AddAsync(exam);
-            await _eventBus.PublishAsync(new CreateExamEvent(   
-                exam.Id,
-                exam.CreatedAt,
-                exam.UpdatedAt,
-                exam.Title,
-                exam.Description,
-                exam.DurationInMinutes,
-                exam.ExamCategoryId
-            ), cancellationToken);
-            await _eventBus.PublishAsync(new CreateQuestionEvent(
-                exam.ExamDetail.Select(ed => new QuestionReadModel
+            await _eventBus.PublishAsync(new CreateExamEvent(
+                Exam: new ExamReadModel
+                (
+                    Id: exam.Id,
+                    Title: exam.Title,
+                    Description: exam.Description,
+                    DurationInMinutes: exam.DurationInMinutes,
+                    ExamCategoryId: exam.ExamCategoryId,
+                    CreatedAt: exam.CreatedAt,
+                    UpdatedAt: exam.UpdatedAt
+                ),
+                Questions: exam.ExamDetail.Select(ed => new QuestionReadModel
                 (
                     Id: ed.Question.Id,
                     Content: ed.Question.Content,
@@ -86,10 +88,8 @@ namespace Application.Features.Exam.Commands
                     TopicId: ed.Question.TopicId,
                     CreatedAt: ed.Question.CreatedAt,
                     UpdatedAt: ed.Question.UpdatedAt
-                )).ToList()
-            ), cancellationToken);
-            await _eventBus.PublishAsync(new CreateAnswerEvent(
-                exam.ExamDetail.SelectMany(ed => ed.Question.Answers.Select(a => new AnswerReadModel
+                )).ToList(),
+                Answers: exam.ExamDetail.SelectMany(ed => ed.Question.Answers.Select(a => new AnswerReadModel
                 (
                     Id: a.Id,
                     Content: a.Content,
@@ -97,16 +97,14 @@ namespace Application.Features.Exam.Commands
                     QuestionId: a.QuestionId,
                     CreatedAt: a.CreatedAt,
                     UpdatedAt: a.UpdatedAt
-                ))).ToList()
-            ),cancellationToken);
-            await _eventBus.PublishAsync(new CreateExamDetailEvent(
-                exam.ExamDetail.Select(ed => new ExamDetailReadModel
+                ))).ToList(),
+                ExamDetails: exam.ExamDetail.Select(ed => new ExamDetailReadModel
                 (
                     ExamId: exam.Id,
-                    QuestionId: ed.Question.Id,
+                    QuestionId: ed.QuestionId,
                     Score: ed.Score
                 )).ToList()
-            ), cancellationToken);
+            ));
             return new ExamDetailResponse
             (
                 Id: exam.Id,
