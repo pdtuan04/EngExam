@@ -64,7 +64,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy =>
                       {
-                          policy.WithOrigins("https://localhost:56759");
+                          policy.WithOrigins("https://localhost:5175");
                           //policy.AllowAnyOrigin();
                           policy.AllowAnyHeader();
                           policy.AllowCredentials();
@@ -100,6 +100,7 @@ var app = builder.Build();
 app.UseStaticFiles();
 // Configure the HTTP request pipeline.
 app.UseCors(MyAllowSpecificOrigins);
+app.UseApplyMigrations();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -108,7 +109,6 @@ if (app.Environment.IsDevelopment())
     {
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "api");
     });
-    app.UseApplyMigrations();
 }
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 app.UseHttpsRedirection();
@@ -338,7 +338,7 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
             {
                 options.MessageDeliveryLimit = 100;
                 options.MessageDeliveryTimeout = TimeSpan.FromSeconds(45);
-                options.ConcurrentDeliveryLimit = 10;
+                //options.ConcurrentDeliveryLimit = 10;
             });
         });
         busConfig.AddConfigureEndpointsCallback((context, name, cfg) =>
@@ -352,7 +352,7 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
             {
                 options.MessageDeliveryLimit = 100;
                 options.MessageDeliveryTimeout = TimeSpan.FromSeconds(45);
-                options.ConcurrentDeliveryLimit = 10;
+                //options.ConcurrentDeliveryLimit = 10;
             });
         });
         busConfig.SetKebabCaseEndpointNameFormatter();
@@ -395,6 +395,7 @@ void InitializeCache(ConfigurationManager configuration, IServiceCollection serv
             {
                 throw new Exception("RedisOptions is not configured.");
             }
+            Console.WriteLine(configuration.GetConnectionString(cacheOptions.RedisOptions.ConnectionStringName));
             services.AddStackExchangeRedisCache(options => {
                 options.Configuration = configuration.GetConnectionString(cacheOptions.RedisOptions.ConnectionStringName);
             });

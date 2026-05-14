@@ -14,19 +14,6 @@ namespace Infrastructure.Repositories.SQLServer_Read.DataContext
 {
     public class ApplicationDbReadContext : DbContext
     {
-        //private readonly string _connectionString;
-        //public ApplicationDbContext()
-        //{
-        //    _connectionString = @"Server=TUAN;Database=ENG;Trusted_Connection=True;TrustServerCertificate=True";
-        //}
-        //public ApplicationDbContext(string connectionString)
-        //{
-        //    _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
-        //}
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    optionsBuilder.UseSqlServer(_connectionString);
-        //}
         public ApplicationDbReadContext(DbContextOptions<ApplicationDbReadContext> options)
         : base(options)
         {

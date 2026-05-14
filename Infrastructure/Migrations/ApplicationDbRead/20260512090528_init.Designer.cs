@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Infrastructure.Migrations
+namespace Infrastructure.Migrations.ApplicationDbRead
 {
     [DbContext(typeof(ApplicationDbReadContext))]
-    [Migration("20260509203652_imageurl_user")]
-    partial class imageurl_user
+    [Migration("20260512090528_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

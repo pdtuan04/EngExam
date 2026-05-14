@@ -1,6 +1,6 @@
 services:
   engexam:
-    image: ${DOCKER_REGISTRY-}engexam
+    image: pdtuan04/engexam
     container_name: engexam
     build:
       context: .
@@ -14,10 +14,14 @@ services:
       redis:
         condition: service_healthy
     environment:
-        - ASPNETCORE_ENVIRONMENT=Development
+        - ASPNETCORE_ENVIRONMENT=Production
         - ASPNETCORE_URLS=http://+:8080
-        - ConnectionStrings__EngExamConnection=Server=sqlserver;Database=EngExam;User Id=SA;Password=111AAAa@;Encrypt=False;TrustServerCertificate=True;
-        - ConnectionStrings__RedisCache=redis:6379
+        - ConnectionStrings__EngExamConnection=Server=sqlserver;Database=ENG_WRITE;User Id=SA;Password=111AAAa@;Encrypt=False;TrustServerCertificate=True;
+        - ConnectionStrings__EngExamReadDBConnection=Server=sqlserver;Database=ENG_READ;User Id=SA;Password=111AAAa@;Encrypt=False;TrustServerCertificate=True;
+        - ConnectionStrings__RedisCache=redis:6379,abortConnect=false,connectRetry=5,connectTimeout=5000
+        - MessageBrokerSetting__Host=amqp://engexam-mq
+        - MessageBrokerSetting__UserName=guest
+        - MessageBrokerSetting__Password=guest
     volumes:
         - images_data:/app/wwwroot/uploads/images
     networks:
@@ -75,7 +79,7 @@ services:
       - engexam-network
 volumes:
   sql_data:
-  redis_data:
+  redis_data: 
   images_data:
   rabbitmq_data:
 networks:
