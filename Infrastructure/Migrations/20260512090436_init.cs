@@ -33,6 +33,10 @@ namespace Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Age = table.Column<int>(type: "int", nullable: true),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -63,7 +67,7 @@ namespace Infrastructure.Migrations
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -76,12 +80,54 @@ namespace Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_FlashCards", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InboxState",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MessageId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ConsumerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LockId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true),
+                    Received = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ReceiveCount = table.Column<int>(type: "int", nullable: false),
+                    ExpirationTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Consumed = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Delivered = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastSequenceNumber = table.Column<long>(type: "bigint", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InboxState", x => x.Id);
+                    table.UniqueConstraint("AK_InboxState_MessageId_ConsumerId", x => new { x.MessageId, x.ConsumerId });
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OutboxState",
+                columns: table => new
+                {
+                    OutboxId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LockId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true),
+                    Created = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Delivered = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastSequenceNumber = table.Column<long>(type: "bigint", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OutboxState", x => x.OutboxId);
                 });
 
             migrationBuilder.CreateTable(
@@ -93,7 +139,7 @@ namespace Infrastructure.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -218,7 +264,7 @@ namespace Infrastructure.Migrations
                     ExamCategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -238,8 +284,11 @@ namespace Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Text = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Meanings = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FlashCardId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    Meaning = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsMemorized = table.Column<bool>(type: "bit", nullable: false),
+                    FlashCardId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -248,7 +297,50 @@ namespace Infrastructure.Migrations
                         name: "FK_Words_FlashCards_FlashCardId",
                         column: x => x.FlashCardId,
                         principalTable: "FlashCards",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OutboxMessage",
+                columns: table => new
+                {
+                    SequenceNumber = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EnqueueTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    SentTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Headers = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Properties = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    InboxMessageId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    InboxConsumerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    OutboxId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    MessageId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ContentType = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    MessageType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Body = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ConversationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CorrelationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    InitiatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    RequestId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    SourceAddress = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    DestinationAddress = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    ResponseAddress = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    FaultAddress = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    ExpirationTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OutboxMessage", x => x.SequenceNumber);
+                    table.ForeignKey(
+                        name: "FK_OutboxMessage_InboxState_InboxMessageId_InboxConsumerId",
+                        columns: x => new { x.InboxMessageId, x.InboxConsumerId },
+                        principalTable: "InboxState",
+                        principalColumns: new[] { "MessageId", "ConsumerId" });
+                    table.ForeignKey(
+                        name: "FK_OutboxMessage_OutboxState_OutboxId",
+                        column: x => x.OutboxId,
+                        principalTable: "OutboxState",
+                        principalColumn: "OutboxId");
                 });
 
             migrationBuilder.CreateTable(
@@ -263,7 +355,7 @@ namespace Infrastructure.Migrations
                     TopicId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -287,7 +379,7 @@ namespace Infrastructure.Migrations
                     TopicId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -313,7 +405,7 @@ namespace Infrastructure.Migrations
                     TopicId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -364,7 +456,7 @@ namespace Infrastructure.Migrations
                     QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -384,7 +476,7 @@ namespace Infrastructure.Migrations
                 {
                     ExamId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Score = table.Column<int>(type: "int", nullable: false)
+                    Score = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -427,7 +519,7 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DetailResults",
+                name: "AnswersHistories",
                 columns: table => new
                 {
                     ExamResultId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -439,15 +531,15 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DetailResults", x => new { x.ExamResultId, x.QuestionId });
+                    table.PrimaryKey("PK_AnswersHistories", x => new { x.ExamResultId, x.QuestionId });
                     table.ForeignKey(
-                        name: "FK_DetailResults_ExamResults_ExamResultId",
+                        name: "FK_AnswersHistories_ExamResults_ExamResultId",
                         column: x => x.ExamResultId,
                         principalTable: "ExamResults",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_DetailResults_Questions_QuestionId",
+                        name: "FK_AnswersHistories_Questions_QuestionId",
                         column: x => x.QuestionId,
                         principalTable: "Questions",
                         principalColumn: "Id");
@@ -464,11 +556,11 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "Age", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                columns: new[] { "Id", "AccessFailedCount", "Age", "ConcurrencyStamp", "CreatedAt", "Email", "EmailConfirmed", "ImageUrl", "IsActive", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UpdatedAt", "UserName" },
                 values: new object[,]
                 {
-                    { new Guid("8d581a98-361e-4333-a651-74e88ef572a4"), 0, null, "f67e2437-61a2-4458-ac14-de7ab48158b6", "user@gmail.com", true, false, null, "USER@GMAIL.COM", "USER", "AQAAAAIAAYagAAAAEN8TWXW9pNZ+VVyeftOLixsSfyDOtPTZpv84QtbFESyzd6kZ0i70eIPvnvNBKX0Q9Q==", null, false, "DF7GIIY7UNBVCVLZD73QO6PGSVQXBSTW", false, "user" },
-                    { new Guid("9ae1058d-b602-4025-ab1d-74e7bced8f3b"), 0, null, "6e66d8c1-89da-46df-bc24-ec54c7e7e7cf", "admin@gmail.com", true, false, null, "ADMIN@GMAIL.COM", "ADMIN", "AQAAAAIAAYagAAAAEFY87mzNg88TIJtuXRcRIeT0MXYto4NkcukxwFGpl+p5IHBJVqlPbyFx9UJIOmu7eA==", null, false, "3XVVZIW5RPRWT7MKN3Y6VRNTHXY2JGK5", false, "admin" }
+                    { new Guid("8d581a98-361e-4333-a651-74e88ef572a4"), 0, null, "f67e2437-61a2-4458-ac14-de7ab48158b6", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user@gmail.com", true, null, true, false, null, "USER@GMAIL.COM", "USER", "AQAAAAIAAYagAAAAEN8TWXW9pNZ+VVyeftOLixsSfyDOtPTZpv84QtbFESyzd6kZ0i70eIPvnvNBKX0Q9Q==", null, false, "DF7GIIY7UNBVCVLZD73QO6PGSVQXBSTW", false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "user" },
+                    { new Guid("9ae1058d-b602-4025-ab1d-74e7bced8f3b"), 0, null, "6e66d8c1-89da-46df-bc24-ec54c7e7e7cf", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin@gmail.com", true, null, true, false, null, "ADMIN@GMAIL.COM", "ADMIN", "AQAAAAIAAYagAAAAEFY87mzNg88TIJtuXRcRIeT0MXYto4NkcukxwFGpl+p5IHBJVqlPbyFx9UJIOmu7eA==", null, false, "3XVVZIW5RPRWT7MKN3Y6VRNTHXY2JGK5", false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin" }
                 });
 
             migrationBuilder.InsertData(
@@ -476,16 +568,16 @@ namespace Infrastructure.Migrations
                 columns: new[] { "Id", "CreatedAt", "Description", "ImageUrl", "IsActive", "IsDeleted", "Name", "UpdatedAt" },
                 values: new object[,]
                 {
-                    { new Guid("11111111-1111-1111-1111-111111111111"), new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Grammar examination category", "/uploads/images/category_img.jpg", true, false, "Grammar", null },
-                    { new Guid("2af67565-75f7-4511-9b67-3762e917c173"), new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Vocabulary exam", "/uploads/images/category_img.jpg", true, false, "Vocabulary", null },
-                    { new Guid("48b31fd9-e2a2-4b6a-9884-e2b6c664715b"), new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Listening exam", "/uploads/images/category_img.jpg", true, false, "Listening", null },
-                    { new Guid("c5f9dd20-276f-4a4a-bbb1-26b795a8514c"), new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Reading", "/uploads/images/category_img.jpg", true, false, "Reading", null }
+                    { new Guid("11111111-1111-1111-1111-111111111111"), new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Grammar examination category", "/uploads/images/category_img.jpg", true, false, "Grammar", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { new Guid("2af67565-75f7-4511-9b67-3762e917c173"), new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Vocabulary exam", "/uploads/images/category_img.jpg", true, false, "Vocabulary", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { new Guid("48b31fd9-e2a2-4b6a-9884-e2b6c664715b"), new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Listening exam", "/uploads/images/category_img.jpg", true, false, "Listening", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { new Guid("c5f9dd20-276f-4a4a-bbb1-26b795a8514c"), new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Reading", "/uploads/images/category_img.jpg", true, false, "Reading", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.InsertData(
                 table: "Topics",
                 columns: new[] { "Id", "CreatedAt", "Description", "IsActive", "IsDeleted", "Name", "UpdatedAt" },
-                values: new object[] { new Guid("22222222-2222-2222-2222-222222222222"), new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Basic grammar rules", true, false, "Basic Grammar", null });
+                values: new object[] { new Guid("22222222-2222-2222-2222-222222222222"), new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Basic grammar rules", true, false, "Basic Grammar", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
@@ -499,31 +591,36 @@ namespace Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "Exams",
                 columns: new[] { "Id", "CreatedAt", "Description", "DurationInMinutes", "ExamCategoryId", "IsActive", "IsDeleted", "Title", "UpdatedAt" },
-                values: new object[] { new Guid("77777777-7777-7777-7777-777777777777"), new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Basic Grammar Test", 10, new Guid("11111111-1111-1111-1111-111111111111"), true, false, "Basic Grammar Test", null });
+                values: new object[] { new Guid("77777777-7777-7777-7777-777777777777"), new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Basic Grammar Test", 10, new Guid("11111111-1111-1111-1111-111111111111"), true, false, "Basic Grammar Test", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
 
             migrationBuilder.InsertData(
                 table: "Questions",
                 columns: new[] { "Id", "Content", "CreatedAt", "Explanation", "ImageUrl", "IsActive", "IsDeleted", "QuestionTypes", "TopicId", "UpdatedAt" },
-                values: new object[] { new Guid("33333333-3333-3333-3333-333333333333"), "She ___ to school every day.", new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "With third person singular, use 'goes'.", null, true, false, 0, new Guid("22222222-2222-2222-2222-222222222222"), null });
+                values: new object[] { new Guid("33333333-3333-3333-3333-333333333333"), "She ___ to school every day.", new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "With third person singular, use 'goes'.", null, true, false, 0, new Guid("22222222-2222-2222-2222-222222222222"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
 
             migrationBuilder.InsertData(
                 table: "Answers",
                 columns: new[] { "Id", "Content", "CreatedAt", "IsActive", "IsCorrect", "IsDeleted", "QuestionId", "UpdatedAt" },
                 values: new object[,]
                 {
-                    { new Guid("44444444-4444-4444-4444-444444444444"), "go", new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), true, false, false, new Guid("33333333-3333-3333-3333-333333333333"), null },
-                    { new Guid("55555555-5555-5555-5555-555555555555"), "goes", new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), true, true, false, new Guid("33333333-3333-3333-3333-333333333333"), null },
-                    { new Guid("66666666-6666-6666-6666-666666666666"), "going", new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), true, false, false, new Guid("33333333-3333-3333-3333-333333333333"), null }
+                    { new Guid("44444444-4444-4444-4444-444444444444"), "go", new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), true, false, false, new Guid("33333333-3333-3333-3333-333333333333"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { new Guid("55555555-5555-5555-5555-555555555555"), "goes", new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), true, true, false, new Guid("33333333-3333-3333-3333-333333333333"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { new Guid("66666666-6666-6666-6666-666666666666"), "going", new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), true, false, false, new Guid("33333333-3333-3333-3333-333333333333"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.InsertData(
                 table: "ExamDetails",
                 columns: new[] { "ExamId", "QuestionId", "Score" },
-                values: new object[] { new Guid("77777777-7777-7777-7777-777777777777"), new Guid("33333333-3333-3333-3333-333333333333"), 1 });
+                values: new object[] { new Guid("77777777-7777-7777-7777-777777777777"), new Guid("33333333-3333-3333-3333-333333333333"), 1.0 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Answers_QuestionId",
                 table: "Answers",
+                column: "QuestionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AnswersHistories_QuestionId",
+                table: "AnswersHistories",
                 column: "QuestionId");
 
             migrationBuilder.CreateIndex(
@@ -571,11 +668,6 @@ namespace Infrastructure.Migrations
                 column: "TopicId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DetailResults_QuestionId",
-                table: "DetailResults",
-                column: "QuestionId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ExamDetails_QuestionId",
                 table: "ExamDetails",
                 column: "QuestionId");
@@ -594,6 +686,40 @@ namespace Infrastructure.Migrations
                 name: "IX_Exams_ExamCategoryId",
                 table: "Exams",
                 column: "ExamCategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InboxState_Delivered",
+                table: "InboxState",
+                column: "Delivered");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OutboxMessage_EnqueueTime",
+                table: "OutboxMessage",
+                column: "EnqueueTime");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OutboxMessage_ExpirationTime",
+                table: "OutboxMessage",
+                column: "ExpirationTime");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OutboxMessage_InboxMessageId_InboxConsumerId_SequenceNumber",
+                table: "OutboxMessage",
+                columns: new[] { "InboxMessageId", "InboxConsumerId", "SequenceNumber" },
+                unique: true,
+                filter: "[InboxMessageId] IS NOT NULL AND [InboxConsumerId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OutboxMessage_OutboxId_SequenceNumber",
+                table: "OutboxMessage",
+                columns: new[] { "OutboxId", "SequenceNumber" },
+                unique: true,
+                filter: "[OutboxId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OutboxState_Created",
+                table: "OutboxState",
+                column: "Created");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PracticeDetails_QuestionId",
@@ -623,6 +749,9 @@ namespace Infrastructure.Migrations
                 name: "Answers");
 
             migrationBuilder.DropTable(
+                name: "AnswersHistories");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
             migrationBuilder.DropTable(
@@ -641,10 +770,10 @@ namespace Infrastructure.Migrations
                 name: "Courses");
 
             migrationBuilder.DropTable(
-                name: "DetailResults");
+                name: "ExamDetails");
 
             migrationBuilder.DropTable(
-                name: "ExamDetails");
+                name: "OutboxMessage");
 
             migrationBuilder.DropTable(
                 name: "PracticeDetails");
@@ -653,10 +782,16 @@ namespace Infrastructure.Migrations
                 name: "Words");
 
             migrationBuilder.DropTable(
+                name: "ExamResults");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "ExamResults");
+                name: "InboxState");
+
+            migrationBuilder.DropTable(
+                name: "OutboxState");
 
             migrationBuilder.DropTable(
                 name: "Practices");
