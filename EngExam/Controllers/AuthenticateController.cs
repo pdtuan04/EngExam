@@ -54,7 +54,6 @@ namespace EngExam.Controllers
         {
             var command = new SignInByGoogleCommand(idToken);
             var result = await Sender.Send(command);
-            //var token = 
             Response.Cookies.Append("jwt", result.Token, new CookieOptions
             {
                 HttpOnly = true,
