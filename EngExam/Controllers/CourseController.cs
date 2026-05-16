@@ -48,6 +48,11 @@ namespace EngExam.Controllers
             var result = await Sender.Send(query);
             return Ok(result);
         }
-
+        [HttpGet("cicd")]
+        public async Task<IActionResult> TestCICD()
+        {
+            //return Ok("ok");
+            return Ok();
+        }
     }
 }
