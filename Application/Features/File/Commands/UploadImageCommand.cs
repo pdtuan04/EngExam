@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace Application.Features.File.Commands
 {
-    public sealed record UploadImageCommand(Stream Content, string FileName) : ICommand<string>;
+    public sealed record UploadImageCommand(Stream Content, string FileName, string ContentType) : ICommand<string>;
 }

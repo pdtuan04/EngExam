@@ -10,15 +10,15 @@ namespace Application.Features.File.Commands
 {
     public sealed class UploadImageCommandHandler : ICommandHandler<UploadImageCommand, string>
     {
-        private readonly IUploadImageService _uploadImageService;
-        public UploadImageCommandHandler(IUploadImageService uploadImageService)
+        private readonly IFileService _fileService;
+        public UploadImageCommandHandler(IFileService fileService)
         {
-            _uploadImageService = uploadImageService;
+            _fileService = fileService;
         }
         public async Task<string> Handle(UploadImageCommand request, CancellationToken cancellationToken)
         {
             if (request.Content.CanSeek) request.Content.Seek(0, SeekOrigin.Begin);
-            var savingImage = await _uploadImageService.SaveImageAsync(request.Content, request.FileName);
+            var savingImage = await _fileService.UploadImageAsync(request.Content,request.FileName);
             return savingImage;
         }
     }

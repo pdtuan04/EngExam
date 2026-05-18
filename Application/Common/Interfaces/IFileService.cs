@@ -9,6 +9,6 @@ namespace Application.Common.Interfaces
 {
     public interface IFileService
     {
-        Task<string> UploadImageAsync(UploadImageRequest request);
+        Task<string> UploadImageAsync(Stream Content, string FileName, string ContentType);
     }
 }

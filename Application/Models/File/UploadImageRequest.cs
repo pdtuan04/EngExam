@@ -8,5 +8,6 @@ namespace Application.Models.File
 {
     public sealed record UploadImageRequest(
     Stream Content,
-    string FileName);
+    string FileName,
+    string ContentType);
 }
