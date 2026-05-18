@@ -9,16 +9,17 @@ namespace EngExam.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UploadMediaController : ApiController
+    public class FileController : ApiController
     {
         [HttpPost("upload-images")]
         public async Task<IActionResult> UploadImages(IFormFile file)
         {
             var request = new UploadImageRequest(
                 file.OpenReadStream(),
-                file.FileName
+                file.FileName,
+                file.ContentType
             );
-            var command = new UploadImageCommand(request.Content,request.FileName);
+            var command = new UploadImageCommand(request.Content, request.FileName, request.ContentType);
             var result = await Sender.Send(command);
 
             return Ok(new

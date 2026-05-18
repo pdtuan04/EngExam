@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,16 +8,21 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.FileServices
 {
-    public class FileService : IUploadImageService
+    public class LocalStorageService : IFileService
     {
-        public async Task<string> SaveImageAsync(Stream input, string fileExtension)
+        private readonly LocalStorageOptions _localStorageOptions;
+        public LocalStorageService(LocalStorageOptions localStorageOptions)
         {
-                var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "images");
+            _localStorageOptions = localStorageOptions ?? throw new ArgumentNullException(nameof(localStorageOptions));
+        }
+        public async Task<string> UploadImageAsync(Stream Content, string FileName, string ContentType)
+        {
+                var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", _localStorageOptions.StoragePath);
                 if(!Directory.Exists(rootPath))
                 {
                     Directory.CreateDirectory(rootPath);
                 }
-                var fileName = $"{Guid.NewGuid()}{fileExtension}";
+                var fileName = $"{Guid.NewGuid()}{Path.GetExtension(FileName)}";
                 var path = Path.Combine(rootPath, fileName);
                 //var fileStreamOptions = new FileStreamOptions
                 //{
@@ -27,9 +33,13 @@ namespace Infrastructure.FileServices
                 //};
                 using (var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write))
                 {
-                    await input.CopyToAsync(fileStream);
+                    await Content.CopyToAsync(fileStream);
                 }
                 return $"uploads/images/{fileName}";
         }
+    }
+    public sealed class LocalStorageOptions
+    {
+        public string StoragePath { get; set; } = Path.Combine("uploads", "images");
     }
 }

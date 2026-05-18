@@ -1,3 +1,5 @@
+using Amazon;
+using Amazon.S3;
 using Application;
 using Application.Abstractions;
 using Application.Abstractions.Caching;
@@ -28,6 +30,7 @@ using Infrastructure.Authentication;
 using Infrastructure.Cache;
 using Infrastructure.Email;
 using Infrastructure.Events;
+using Infrastructure.File;
 using Infrastructure.FileServices;
 using Infrastructure.Realtime;
 using Infrastructure.Repositories.SQLServer;
@@ -47,6 +50,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
 using System.Text;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 //    /\_____/\
 //   / o   o   \
 //  (==  ^    ==)
@@ -282,6 +286,10 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
             service.GetRequiredService<IMapper>()));
     }
 
+    //storage
+    var storageOptions = configuration.GetSection("StorageOptions").Get<StorageOptions>() ?? new StorageOptions();
+    StorageServices(configuration,services,storageOptions);
+
     //cache
     services.AddSingleton<ICacheService, CacheService>();
     var cacheOptions = configuration.GetSection("CacheSetting").Get<CacheOptions>() ?? new CacheOptions();
@@ -296,9 +304,6 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
             { QuestionTypes.MultipleChoice, services.GetRequiredService<MultipleChoiceHandler>() },
             { QuestionTypes.FillInTheBlank, services.GetRequiredService<FillInBlankHandler>()}
         });
-    services.AddTransient<IUploadImageService>(service => new Infrastructure.FileServices.FileService(
-        ));
-    
     //usecase
     services.AddTransient<IAuthIdentityService>(services => new AuthIdentityService(
         services.GetRequiredService<UserManager<Infrastructure.Repositories.SQLServer.DataContext.User>>(),
@@ -382,7 +387,40 @@ void RegisterAIServices(ConfigurationManager configuration, IServiceCollection s
             break;
     }
 }
-
+void StorageServices(ConfigurationManager configuration, IServiceCollection services, StorageOptions storageOptions)
+{
+    switch(storageOptions.StorageType)
+    {
+        case StorageType.Local:
+            if(storageOptions.LocalStorageOptions == null)
+            {
+                throw new Exception("LocalStorageOptions is not configured.");
+            }
+            services.AddSingleton<IFileService, LocalStorageService>();
+            break;
+        case StorageType.S3:
+            if(storageOptions.S3Options == null)
+            {
+                throw new Exception("S3Options is not configured.");
+            }
+            services.AddSingleton<IAmazonS3>(cg =>
+            {
+                var config = new AmazonS3Config
+                {
+                    RegionEndpoint = RegionEndpoint.GetBySystemName(storageOptions.S3Options.Region),
+                };
+                return new AmazonS3Client(config);
+            });
+            services.AddSingleton<IFileService>(cg =>
+            {
+                var amazonS3 = cg.GetRequiredService<IAmazonS3>();
+                return new S3StorageService(amazonS3, storageOptions.S3Options);
+            });
+            break;
+        default:
+            throw new NotSupportedException($"Storage type {storageOptions.StorageType} is not supported.");
+    }
+}
 void InitializeCache(ConfigurationManager configuration, IServiceCollection services, CacheOptions cacheOptions)
 {
     switch(cacheOptions.CacheType)

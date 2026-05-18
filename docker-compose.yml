@@ -81,6 +81,13 @@ services:
       RABBITMQ_DEFAULT_PASS: guest
     networks:
       - engexam-network
+  engexamui:
+    image: pdtuan04/engexamui:latest
+    container_name: engexamui
+    restart: always
+    ports:
+      - "80:80"
+    
 volumes:
   sql_data:
   redis_data: 
