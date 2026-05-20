@@ -35,11 +35,11 @@ namespace Infrastructure.FileServices
                 {
                     await Content.CopyToAsync(fileStream);
                 }
-                return $"uploads/images/{fileName}";
+                return $"/images/{fileName}";
         }
     }
     public sealed class LocalStorageOptions
     {
-        public string StoragePath { get; set; } = Path.Combine("uploads", "images");
+        public string StoragePath { get; set; } = Path.Combine("images");
     }
 }

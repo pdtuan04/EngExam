@@ -9,10 +9,10 @@ namespace EngExam.Extensions
         public static void UseApplyMigrations(this IApplicationBuilder app)
         {
             using IServiceScope serviceScope = app.ApplicationServices.CreateScope();
-            using ApplicationDbContext context = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            using IServiceScope readServiceScope = app.ApplicationServices.CreateScope();
-            using ApplicationDbReadContext readContext = readServiceScope.ServiceProvider.GetRequiredService<ApplicationDbReadContext>();
+            var services = serviceScope.ServiceProvider;
+            using var context = services.GetRequiredService<ApplicationDbContext>();
             context.Database.Migrate();
+            using var readContext = services.GetRequiredService<ApplicationDbReadContext>();
             readContext.Database.Migrate();
         }
     }

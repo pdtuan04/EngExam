@@ -20,12 +20,26 @@ services:
     environment:
         - ASPNETCORE_ENVIRONMENT=Production
         - ASPNETCORE_URLS=http://+:8080
-        - ConnectionStrings__EngExamConnection=Server=sqlserver;Database=ENG_WRITE;User Id=SA;Password=111AAAa@;Encrypt=False;TrustServerCertificate=True;
-        - ConnectionStrings__EngExamReadDBConnection=Server=sqlserver;Database=ENG_READ;User Id=SA;Password=111AAAa@;Encrypt=False;TrustServerCertificate=True;
-        - ConnectionStrings__RedisCache=redis:6379,abortConnect=false,connectRetry=5,connectTimeout=5000
-        - MessageBrokerSetting__Host=amqp://engexam-mq
-        - MessageBrokerSetting__UserName=guest
-        - MessageBrokerSetting__Password=guest
+        - ConnectionStrings__EngExamConnection=Server=${DB_SERVER};Database=${DB_NAME_WRITE};User Id=${DB_USER};Password=${DB_PASS};Encrypt=False;TrustServerCertificate=True;
+        - ConnectionStrings__EngExamReadDBConnection=Server=${DB_SERVER};Database=${DB_NAME_READ};User Id=${DB_USER};Password=${DB_PASS};Encrypt=False;TrustServerCertificate=True;
+        - ConnectionStrings__RedisCache=${REDIS_CONNECTION}
+        - JWTKey__ValidAudience=${JWT_AUDIENCE}
+        - JWTKey__ValidIssuer=${JWT_ISSUER}
+        - JWTKey__Secret=${JWT_SECRET}
+        - ExternalAuth__GoogleAuthOptions__ClientId=${GOOGLE_CLIENT_ID}
+        - ExternalAuth__GoogleAuthOptions__ClientSecret=${GOOGLE_CLIENT_SECRET}
+        - StorageOptions__StorageType=${STORAGE_TYPE}
+        - StorageOptions__S3Options__Region=${S3_REGION}
+        - StorageOptions__S3Options__BucketName=${S3_BUCKET_NAME}
+        - EmailSetting__Provider=${EMAIL_PROVIDER}
+        - EmailSetting__SMTPOptions__Host=${SMTP_HOST}
+        - EmailSetting__SMTPOptions__Port=${SMTP_PORT}
+        - EmailSetting__SMTPOptions__Username=${SMTP_USER}
+        - EmailSetting__SMTPOptions__Password=${SMTP_PASS}
+        - MessageBrokerSetting__Host=${MQ_HOST}
+        - MessageBrokerSetting__UserName=${MQ_USER}
+        - MessageBrokerSetting__Password=${MQ_PASS}
+        - AIModel__ModelType=${AI_MODEL_TYPE}
     volumes:
         - images_data:/app/wwwroot/uploads/images
     networks:

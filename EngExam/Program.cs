@@ -28,6 +28,7 @@ using Hangfire.SqlServer;
 using Infrastructure;
 using Infrastructure.Authentication;
 using Infrastructure.Cache;
+using Infrastructure.Common;
 using Infrastructure.Email;
 using Infrastructure.Events;
 using Infrastructure.File;
@@ -289,7 +290,6 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
     //storage
     var storageOptions = configuration.GetSection("StorageOptions").Get<StorageOptions>() ?? new StorageOptions();
     StorageServices(configuration,services,storageOptions);
-
     //cache
     services.AddSingleton<ICacheService, CacheService>();
     var cacheOptions = configuration.GetSection("CacheSetting").Get<CacheOptions>() ?? new CacheOptions();
@@ -411,6 +411,8 @@ void StorageServices(ConfigurationManager configuration, IServiceCollection serv
                 };
                 return new AmazonS3Client(config);
             });
+            services.AddSingleton<IFileUrlResolver>(service => new CloudFrontUrlResolver(storageOptions.S3Options));
+
             services.AddSingleton<IFileService>(cg =>
             {
                 var amazonS3 = cg.GetRequiredService<IAmazonS3>();
