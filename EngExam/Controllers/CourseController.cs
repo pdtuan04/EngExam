@@ -52,7 +52,12 @@ namespace EngExam.Controllers
         public async Task<IActionResult> TestCICD()
         {
             //return Ok("ok");
-            return Ok();
+            return Ok(new
+            {
+                success = true,
+                data = "CICD pipeline is working fine",
+                message = "CICD pipeline test successful"
+            });
         }
     }
 }

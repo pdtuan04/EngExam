@@ -28,21 +28,24 @@ namespace Infrastructure.File
                 BucketName = _s3Options.BucketName,
                 Key = key,
                 InputStream = Content,
-                ContentType = ContentType
+                ContentType = ContentType,
+                Metadata =
+                {
+                    ["file-name"] = FileName
+                }
             };
             var response = await _amazonS3.PutObjectAsync(putObjectRequest);
             if(response.HttpStatusCode == HttpStatusCode.OK)
             {
-                return key;
+                return $"{_s3Options.CloudFrontDomain}/{key}";
             }
             throw new Exception("Failed to upload image to S3");
         }
     }
     public sealed class S3Options
     {
-        public string AccessKey { get; set; } = null!;
-        public string SecretKey { get; set; } = null!;
         public string BucketName { get; set; } = null!;
         public string Region { get; set; } = null!;
+        public string CloudFrontDomain { get; set; } = null!;
     }
 }

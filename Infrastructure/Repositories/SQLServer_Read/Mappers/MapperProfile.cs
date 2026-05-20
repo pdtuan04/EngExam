@@ -1,4 +1,5 @@
-﻿using Application.Models.Answer;
+﻿using Application.Common.Interfaces;
+using Application.Models.Answer;
 using Application.Models.Course;
 using Application.Models.Exam;
 using Application.Models.ExamCategory;
@@ -21,7 +22,7 @@ namespace Infrastructure.Repositories.SQLServer_Read.Mappers
 {
     public class MapperProfile:Profile
     {
-        public MapperProfile() 
+        public MapperProfile(IFileUrlResolver urlResolver)
         {
             //Map between Domain and DataContext
             CreateMap<Question, Domain.Entity.Question>().ReverseMap();

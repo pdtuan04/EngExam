@@ -18,7 +18,7 @@ namespace Application.Features.File.Commands
         public async Task<string> Handle(UploadImageCommand request, CancellationToken cancellationToken)
         {
             if (request.Content.CanSeek) request.Content.Seek(0, SeekOrigin.Begin);
-            var savingImage = await _fileService.UploadImageAsync(request.Content,request.FileName);
+            var savingImage = await _fileService.UploadImageAsync(request.Content,request.FileName, request.ContentType);
             return savingImage;
         }
     }
