@@ -10,10 +10,11 @@ using Infrastructure.Repositories.SQLServer.DataContext;
 
 namespace Infrastructure.Repositories.SQLServer
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork : IUnitOfWork, IDisposable
     {
         private readonly ApplicationDbContext _applicationDbContext;
         private readonly IMapper _mapper;
+        public ICommentRepository CommentRepository { get; }
         public IExamRepository ExamRepository { get;}
         public IQuestionRepository QuestionRepository { get;}
         public IAnswerRepository AnswerRepository { get;}
@@ -28,6 +29,7 @@ namespace Infrastructure.Repositories.SQLServer
         {
             this._applicationDbContext = applicationDbContext ?? throw new ArgumentNullException(nameof(applicationDbContext));
             this._mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            CommentRepository = new CommentRepository(_applicationDbContext, _mapper);
             ExamRepository = new ExamRepository(_applicationDbContext, _mapper);
             QuestionRepository = new QuestionRepository(_applicationDbContext, _mapper);
             AnswerRepository = new AnswerRepository(_applicationDbContext, _mapper);

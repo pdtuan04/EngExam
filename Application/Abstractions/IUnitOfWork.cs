@@ -9,6 +9,7 @@ namespace Application.Abstractions
 {
     public interface IUnitOfWork
     {
+        ICommentRepository CommentRepository { get; }
         IExamRepository ExamRepository { get; }
         IExamResultRepository ExamResultRepository { get; }
         IQuestionRepository QuestionRepository { get; }
@@ -21,6 +22,7 @@ namespace Application.Abstractions
         IWordRepository WordRepository { get; }
         Task BeginTransactionAsync();
         Task SaveChangesAsync();
-        Task CancelAsync();
+        Task CommitTransactionAsync();
+        Task RollbackTransactionAsync();
     }
 }

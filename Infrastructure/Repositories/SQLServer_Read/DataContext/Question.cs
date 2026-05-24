@@ -14,6 +14,7 @@ namespace Infrastructure.Repositories.SQLServer_Read.DataContext
         public QuestionTypes QuestionTypes { get; set; }
         public string? Explanation { get; set; }
         public string? ImageUrl { get; set; }
+        public string? AudioUrl { get; set; }
         public required Guid TopicId { get; set; }
         public bool IsDeleted { get; set; }
     }

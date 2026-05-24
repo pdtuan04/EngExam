@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Entity
+namespace Infrastructure.Repositories.SQLServer.DataContext
 {
     public class Comment : BaseEntity<Guid>, ISoftDeletable
     {
@@ -15,19 +15,7 @@ namespace Domain.Entity
         public Guid? ParentId { get; set; }
         public required Guid RootCommentId { get; set; }
         public required string Path { get; set; }
-        private int _level;
-        public required int Level { 
-            get 
-            {
-                return _level; 
-            } 
-            set
-            {
-                if(value < 0)
-                    throw new ArgumentOutOfRangeException(nameof(Level), "Level cannot be negative.");
-                _level = value;
-            }
-        }
+        public required int Level { get; set; }
         public bool IsDeleted { get; set; }
     }
 }

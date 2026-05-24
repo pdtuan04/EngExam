@@ -28,12 +28,12 @@ namespace Application.Behaviors
             {
                 var response = await next();
                 await _unitOfWork.SaveChangesAsync();
-
+                await _unitOfWork.CommitTransactionAsync();
                 return response;
             }
             catch (Exception ex)
             {
-                await _unitOfWork.CancelAsync();
+                await _unitOfWork.RollbackTransactionAsync();
                 throw;
             }
         }

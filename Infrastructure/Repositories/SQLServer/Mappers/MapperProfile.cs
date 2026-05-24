@@ -19,6 +19,7 @@ namespace Infrastructure.Repositories.SQLServer.Mappers
         public MapperProfile() 
         {
             //Map between Domain and DataContext
+            CreateMap<Comment, Domain.Entity.Comment>().ReverseMap();
             CreateMap<Question, Domain.Entity.Question>().ReverseMap();
             CreateMap<Answer, Domain.Entity.Answer>().ReverseMap();
             CreateMap<Exam, Domain.Entity.Exam>().ReverseMap();

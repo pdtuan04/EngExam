@@ -23,6 +23,9 @@
     <Folder Include="Features\Answer\Consumers\" />
     <Folder Include="Features\Answer\Commands\" />
     <Folder Include="Features\Answer\Queries\" />
+    <Folder Include="Features\Comment\Consummers\" />
+    <Folder Include="Features\Comment\Events\" />
+    <Folder Include="Features\Comment\Queries\" />
     <Folder Include="Features\Question\Consumers\" />
     <Folder Include="Features\Question\Commands\" />
     <Folder Include="Features\Question\Queries\" />
