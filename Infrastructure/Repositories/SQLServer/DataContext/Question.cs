@@ -13,7 +13,8 @@ namespace Infrastructure.Repositories.SQLServer.DataContext
         public required string Content { get; set; }
         public QuestionTypes QuestionTypes { get; set; }
         public string? Explanation { get; set; }
-        public string? ImageUrl { get; set; }
+        public string? ImageUrl { get; set; } = null;
+        public string? AudioUrl { get; set; } = null;
         public ICollection<Answer> Answers { get; set; } = null!;
         public ICollection<ExamDetail> ExamDetail { get; set; } = null!;
         public ICollection<AnswerHistory> AnswerHistory { get; set; } = null!;

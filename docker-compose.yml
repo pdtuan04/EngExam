@@ -101,7 +101,6 @@ services:
     restart: always
     ports:
       - "80:80"
-    
 volumes:
   sql_data:
   redis_data: 

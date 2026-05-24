@@ -33,6 +33,7 @@ namespace Infrastructure.Repositories.SQLServer.DataContext
         : base(options)
         {
         }
+        public DbSet<Comment> Comments { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<Answer> Answers { get; set; }
         public DbSet<ExamDetail> ExamDetails { get; set; }

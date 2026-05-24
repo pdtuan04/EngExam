@@ -13,7 +13,7 @@ namespace Infrastructure.Repositories.SQLServer.DataContext
         public ApplicationDbContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-            optionsBuilder.UseSqlServer(@"Server=TUAN;Database=ENG_WRITE;Trusted_Connection=True;TrustServerCertificate=True");
+            optionsBuilder.UseSqlServer(@"Server=NEMESIS;Database=ENG_WRITE;Trusted_Connection=True;TrustServerCertificate=True");
             return new ApplicationDbContext(optionsBuilder.Options);
         }
     }

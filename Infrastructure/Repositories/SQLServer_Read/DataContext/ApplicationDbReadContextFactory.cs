@@ -13,7 +13,7 @@ namespace Infrastructure.Repositories.SQLServer_Read.DataContext
         public ApplicationDbReadContext CreateDbContext(string[] args)
         {   
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbReadContext>();
-            optionsBuilder.UseSqlServer(@"Server=TUAN;Database=ENG_READ;Trusted_Connection=True;TrustServerCertificate=True");
+            optionsBuilder.UseSqlServer(@"Server=NEMESIS;Database=ENG_READ;Trusted_Connection=True;TrustServerCertificate=True");
             return new ApplicationDbReadContext(optionsBuilder.Options);
         }
     }
