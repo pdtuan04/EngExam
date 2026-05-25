@@ -176,5 +176,12 @@ namespace Infrastructure.Authentication
             if (result.Succeeded) return true;
             return false;
         }
+
+        public async Task<Domain.Entity.User> GetByIdAsync(Guid id)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null) throw new Exception("User not found");
+            return _mapper.Map<Domain.Entity.User>(user);
+        }
     }
 }

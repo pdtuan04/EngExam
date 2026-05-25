@@ -9,6 +9,5 @@ namespace Application.Abstractions.Repositories
 {
     public interface ICommentRepository : IGenericRepository<Comment>
     {
-        Task<IEnumerable<Comment>> GetRootCommentDetailsById(Guid rootId);
     }
 }

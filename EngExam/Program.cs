@@ -8,6 +8,7 @@ using Application.Abstractions.Repositories.Read;
 using Application.Behaviors;
 using Application.Common.Interfaces;
 using Application.Exceptions;
+using Application.Features.Comment.Consummers;
 using Application.Features.Course.Consumers;
 using Application.Features.Exam.Consumers;
 using Application.Features.ExamCategory.Consumers;
@@ -208,7 +209,9 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
           .UseRecommendedSerializerSettings()
           .UseSqlServerStorage(builder.Configuration.GetConnectionString("EngExamConnection")));
         builder.Services.AddHangfireServer();
-
+        services.AddTransient<ICommentRepository>(service => new CommentRepository(
+            service.GetRequiredService<ApplicationDbContext>(),
+            service.GetRequiredService<IMapper>()));
         services.AddTransient<IQuestionRepository>(service => new QuestionRepository(
             service.GetRequiredService<ApplicationDbContext>(),
             service.GetRequiredService<IMapper>()));
@@ -251,7 +254,10 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
             options.UseSqlServer(configuration.GetConnectionString("EngExamReadDBConnection"));
             options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });
-
+        services.AddTransient<ICommentReadRepository>(service => new CommentReadRepository(
+            service.GetRequiredService<ApplicationDbReadContext>(),
+            service.GetRequiredService<IMapper>()
+        ));
         services.AddTransient<IQuestionReadRepository>(service => new QuestionReadRepository(
             service.GetRequiredService<ApplicationDbReadContext>(),
             service.GetRequiredService<IMapper>()));
@@ -319,6 +325,8 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
     services.AddSingleton(services => services.GetRequiredService<IOptions<MessageBrokerOptions>>().Value);
     services.AddMassTransit(busConfig =>
     {
+        busConfig.AddConsumer<SyncCommentReadDbConsumer>();
+        busConfig.AddConsumer<InvalidateCommentCacheConsumer>();
         busConfig.AddConsumer<InvalidateCourseCacheConsumer>();
         busConfig.AddConsumer<SyncCourseReadDbConsumer>();
         busConfig.AddConsumer<InvalidateExamCategoryCacheConsumer>();

@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Application.Models.Comment
 {
-    public record CreateCommentRequest(Guid parentId, string content, Guid courseId);
+    public record CreateCommentRequest(Guid? parentId, string content, Guid courseId);
 }

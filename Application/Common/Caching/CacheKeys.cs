@@ -12,6 +12,9 @@ namespace Application.Common.Caching
         public static string AllExamCategories = "examCategory:all";
         public static string ExamCategoryDetail(Guid id) => $"examCategory:detail:{id}";
 
+        //Comment
+        public static string CourseComments(Guid courseId) => $"course:comments:{courseId}";
+
         // Course
         public static string CourseDetail(Guid id) => $"course:detail:{id}";
 

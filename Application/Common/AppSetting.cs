@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Application.Common
 {
-    internal class AppSetting
+    public static class AppSetting
     {
     }
 }

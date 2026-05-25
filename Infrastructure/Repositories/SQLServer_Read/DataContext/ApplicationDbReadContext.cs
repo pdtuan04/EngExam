@@ -18,6 +18,7 @@ namespace Infrastructure.Repositories.SQLServer_Read.DataContext
         : base(options)
         {
         }
+        public DbSet<Comment> Comments { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<Answer> Answers { get; set; }
         public DbSet<ExamDetail> ExamDetails { get; set; }
@@ -41,6 +42,7 @@ namespace Infrastructure.Repositories.SQLServer_Read.DataContext
             modelBuilder.Entity<Course>().HasQueryFilter(x => !x.IsDeleted);
             modelBuilder.Entity<Practice>().HasQueryFilter(x => !x.IsDeleted);
             modelBuilder.Entity<Question>().HasQueryFilter(x => !x.IsDeleted);
+            modelBuilder.Entity<Comment>().HasQueryFilter(x => !x.IsDeleted);
             modelBuilder.Entity<Topic>().HasQueryFilter(x => !x.IsDeleted);
             modelBuilder.Entity<ExamDetail>().HasKey(ed => new { ed.ExamId, ed.QuestionId });
             modelBuilder.Entity<PracticeDetail>().HasKey(pd => new { pd.PracticeId, pd.QuestionId });
