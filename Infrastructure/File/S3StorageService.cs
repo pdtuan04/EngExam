@@ -37,7 +37,7 @@ namespace Infrastructure.File
             var response = await _amazonS3.PutObjectAsync(putObjectRequest);
             if(response.HttpStatusCode == HttpStatusCode.OK)
             {
-                return $"{_s3Options.CloudFrontDomain}/{key}";
+                return key;
             }
             throw new Exception("Failed to upload image to S3");
         }

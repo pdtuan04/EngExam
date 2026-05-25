@@ -1,5 +1,6 @@
 ﻿using Application.Common.Interfaces;
 using Application.Models.Answer;
+using Application.Models.Comment;
 using Application.Models.Course;
 using Application.Models.Exam;
 using Application.Models.ExamCategory;
@@ -22,7 +23,7 @@ namespace Infrastructure.Repositories.SQLServer_Read.Mappers
 {
     public class MapperProfile:Profile
     {
-        public MapperProfile(IFileUrlResolver urlResolver)
+        public MapperProfile()
         {
             //Map between Domain and DataContext
             CreateMap<Question, Domain.Entity.Question>().ReverseMap();
@@ -66,6 +67,7 @@ namespace Infrastructure.Repositories.SQLServer_Read.Mappers
                         ? new List<Option>()
                         : JsonSerializer.Deserialize<List<Option>>(src.OptionsJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
                 ));
+            CreateMap<CommentReadModel, Comment>();
             CreateMap<ExamResultReadModel, ExamResult>();
             CreateMap<AnswerHistoryReadModel, AnswerHistory>();
             CreateMap<ExamCategoryReadModel, ExamCategory>();

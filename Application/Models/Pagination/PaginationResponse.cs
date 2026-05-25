@@ -8,13 +8,14 @@ namespace Application.Models.Pagination
 {
     public class PaginationResponse<T> 
     {
-        public int CurrentPage { get; private set; }
-        public int TotalPages { get; private set; } 
-        public int PageSize { get; private set; } 
-        public int TotalCount { get; private set; }
+        public int CurrentPage { get; init; }
+        public int TotalPages { get; init; } 
+        public int PageSize { get; init; } 
+        public int TotalCount { get; init; }
         public bool HasPrevious => CurrentPage > 1;
         public bool HasNext => CurrentPage < TotalPages;
-        public List<T>? Items { get; private set; } 
+        public List<T>? Items { get; init; }
+        public PaginationResponse() { }
         public PaginationResponse(List<T>? items, int count, int pageIndex, int pageSize)
         {
             Items = items;

@@ -21,6 +21,7 @@ namespace Application.Common.Interfaces
         Task<string> CreateRole(string roleName);
         Task<bool> AddUserToRole(User user, string roleName);
         Task<bool> ResetPassword(string email, string newPassword, string confirmNewPassword);
+        Task<User> GetByIdAsync(Guid id);
         Task Logout();
     }
 }
