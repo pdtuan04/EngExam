@@ -18,6 +18,10 @@ namespace Application.Behaviors
         }
         public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
+            if(string.IsNullOrEmpty(request.CacheKey))
+            {
+                return await next();
+            }
             return await _cacheService.GetOrCreateAsync(request.CacheKey,_ => next(), request.Expiration, cancellationToken);
         }
     }

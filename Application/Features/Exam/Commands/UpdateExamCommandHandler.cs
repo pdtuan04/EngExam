@@ -1,6 +1,6 @@
-﻿using Application.Abstractions;
-using Application.Abstractions.Events;
+﻿using Application.Abstractions.Events;
 using Application.Abstractions.Messaging;
+using Application.Abstractions.Repositories;
 using Application.Common.Exceptions;
 using Application.Features.Exam.Events;
 using Application.Features.ExamCategory.Events;

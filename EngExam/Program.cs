@@ -1,11 +1,11 @@
 using Amazon;
 using Amazon.S3;
 using Application;
-using Application.Abstractions;
 using Application.Abstractions.Caching;
 using Application.Abstractions.Repositories;
 using Application.Abstractions.Repositories.Read;
 using Application.Behaviors;
+using Application.Common.Helpers;
 using Application.Common.Interfaces;
 using Application.Exceptions;
 using Application.Features.Comment.Consummers;
@@ -16,6 +16,7 @@ using Application.Features.ExamResult.Consumers;
 using Application.Features.FlashCard.Consumers;
 using Application.Features.Practice.Consumer;
 using Application.Features.Topic.Consumers;
+using Application.Features.User.Consumers;
 using Application.Features.Word.Consumers;
 using Application.Handler;
 using Application.Handler.InterfaceHandler;
@@ -23,13 +24,13 @@ using AutoMapper;
 using Domain.Enums;
 using EngExam.Extensions;
 using EngExam.Middlewares;
-using EngExam.OptionsModels;
 using Hangfire;
 using Hangfire.SqlServer;
 using Infrastructure;
 using Infrastructure.Authentication;
 using Infrastructure.Cache;
 using Infrastructure.Common;
+using Infrastructure.Common.Options;
 using Infrastructure.Email;
 using Infrastructure.Events;
 using Infrastructure.File;
@@ -300,8 +301,9 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
     services.AddSingleton<ICacheService, CacheService>();
     var cacheOptions = configuration.GetSection("CacheSetting").Get<CacheOptions>() ?? new CacheOptions();
     InitializeCache(configuration, services, cacheOptions);
-
-
+    //
+    services.Configure<FrontendOptions>(configuration.GetSection("FrontendOptions"));
+    services.AddSingleton<IFrontEndUrlProvider, FrontEndUrlProvider>();
     //handler
     services.AddSingleton<MultipleChoiceHandler>();
     services.AddSingleton<FillInBlankHandler>();
@@ -344,6 +346,7 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
         busConfig.AddConsumer<SyncPracticeReadDbConsumer>();
         busConfig.AddConsumer<InvalidateTopicCacheConsumer>();
         busConfig.AddConsumer<SyncTopicReadDbConsumer>();
+        busConfig.AddConsumer<SendEmailNotificationConsumer>();
         busConfig.AddEntityFrameworkOutbox<ApplicationDbContext>(o =>
         {
             o.UseSqlServer();
@@ -405,12 +408,14 @@ void StorageServices(ConfigurationManager configuration, IServiceCollection serv
                 throw new Exception("LocalStorageOptions is not configured.");
             }
             services.AddSingleton<IFileService, LocalStorageService>();
+            FileUrlHelper.Initialize(storageOptions.LocalStorageOptions.StoragePath);
             break;
         case StorageType.S3:
             if(storageOptions.S3Options == null)
             {
                 throw new Exception("S3Options is not configured.");
             }
+            FileUrlHelper.Initialize(storageOptions.S3Options.CloudFrontDomain);
             services.AddSingleton<IAmazonS3>(cg =>
             {
                 var config = new AmazonS3Config
@@ -419,7 +424,6 @@ void StorageServices(ConfigurationManager configuration, IServiceCollection serv
                 };
                 return new AmazonS3Client(config);
             });
-            services.AddSingleton<IFileUrlResolver>(service => new CloudFrontUrlResolver(storageOptions.S3Options));
 
             services.AddSingleton<IFileService>(cg =>
             {

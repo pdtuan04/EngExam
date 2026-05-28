@@ -8,7 +8,6 @@ namespace Application.Common.Interfaces
 {
     public interface IEmailService
     {
-        Task SendWelcomeAsync(string to, string subject, string body);
-
+        Task SendMailAsync(string to, string subject, string body);
     }
 }
