@@ -19,7 +19,7 @@ namespace Infrastructure.Email
         {
             _options = options.Value;
         }
-        public async Task SendWelcomeAsync(string to, string subject, string body)
+        public async Task SendMailAsync(string to, string subject, string body)
         {
             var smtp = _options.SmtpOptions
                 ?? throw new InvalidOperationException("SMTP config missing.");

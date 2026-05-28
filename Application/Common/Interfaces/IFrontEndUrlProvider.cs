@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Application.Common.Interfaces
 {
-    public interface IFileUrlResolver
+    public interface IFrontEndUrlProvider
     {
-        string ResolveFileUrl(string fileName);
+        string GetFrontEndUrlAsync();
+        string GetResetPasswordUrlAsync();
     }
 }

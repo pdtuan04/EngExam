@@ -12,7 +12,7 @@ namespace Application.Features.Comment.Queries
 {
     public sealed record GetCourseCommentQuery(Guid CourseId, int PageIndex, int PageSize) : ICacheQuery<PaginationResponse<CommentResponse>>
     {
-        public string CacheKey => CacheKeys.CourseComments(CourseId);
+        public string CacheKey => PageIndex == 1 ? CacheKeys.CourseComments(CourseId) : null;
 
         public TimeSpan? Expiration => null;
     }

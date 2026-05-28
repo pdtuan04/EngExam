@@ -20,7 +20,7 @@ namespace Infrastructure.File
             _amazonS3 = amazonS3 ?? throw new ArgumentNullException(nameof(amazonS3));
             _s3Options = s3Options ?? throw new ArgumentNullException(nameof(s3Options));
         }
-        public async Task<string> UploadImageAsync(Stream Content, string FileName, string ContentType)
+        public async Task<UploadFileResponse> UploadImageAsync(Stream Content, string FileName, string ContentType)
         {
             var key = $"images/{Guid.NewGuid()}_{FileName}";
             var putObjectRequest = new PutObjectRequest
@@ -37,7 +37,7 @@ namespace Infrastructure.File
             var response = await _amazonS3.PutObjectAsync(putObjectRequest);
             if(response.HttpStatusCode == HttpStatusCode.OK)
             {
-                return key;
+                return new UploadFileResponse(key, $"{_s3Options.CloudFrontDomain}/{key}");
             }
             throw new Exception("Failed to upload image to S3");
         }

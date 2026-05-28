@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces;
+using Application.Models.File;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace Infrastructure.FileServices
         {
             _localStorageOptions = localStorageOptions ?? throw new ArgumentNullException(nameof(localStorageOptions));
         }
-        public async Task<string> UploadImageAsync(Stream Content, string FileName, string ContentType)
+        public async Task<UploadFileResponse> UploadImageAsync(Stream Content, string FileName, string ContentType)
         {
                 var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", _localStorageOptions.StoragePath);
                 if(!Directory.Exists(rootPath))
@@ -35,7 +36,7 @@ namespace Infrastructure.FileServices
                 {
                     await Content.CopyToAsync(fileStream);
                 }
-                return $"/images/{fileName}";
+                return new UploadFileResponse($"images/{fileName}", $"{_localStorageOptions.StoragePath}/{fileName}");
         }
     }
     public sealed class LocalStorageOptions

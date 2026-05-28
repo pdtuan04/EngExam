@@ -81,5 +81,19 @@ namespace EngExam.Controllers
             }
             return Ok("Change password successful");
         }
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
+        {
+            var command = new ForgotPasswordCommand(request.Email);
+            var result = await Sender.Send(command);
+            return Ok(result);
+        }
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+        {
+            var command = new ResetPasswordCommand(request.Email, request.ResetCode, request.NewPassword);
+            var result = await Sender.Send(command);
+            return Ok(result);
+        }
     }
 }

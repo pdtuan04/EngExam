@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace EngExam.OptionsModels
+namespace Infrastructure.Common.Options
 {
     public class ExternalAuthOptions
     {

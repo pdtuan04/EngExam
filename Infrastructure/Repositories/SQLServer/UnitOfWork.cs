@@ -1,5 +1,4 @@
-﻿using Application.Abstractions;
-using Application.Abstractions.Repositories;
+﻿using Application.Abstractions.Repositories;
 using AutoMapper;
 using Infrastructure.Repositories.SQLServer.DataContext;
 using Microsoft.EntityFrameworkCore;

@@ -2,7 +2,7 @@
 using Infrastructure.FileServices;
 using System.Text.Json.Serialization;
 
-namespace EngExam.OptionsModels
+namespace Infrastructure.Common.Options
 {
     public sealed class StorageOptions
     {

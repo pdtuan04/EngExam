@@ -1,5 +1,5 @@
-﻿using Application.Abstractions;
-using Application.Abstractions.Messaging;
+﻿using Application.Abstractions.Messaging;
+using Application.Abstractions.Repositories;
 using MediatR;
 using System;
 using System.Collections.Generic;

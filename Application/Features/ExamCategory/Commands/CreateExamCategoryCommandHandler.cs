@@ -1,7 +1,7 @@
-﻿using Application.Abstractions;
-using Application.Abstractions.Caching;
+﻿using Application.Abstractions.Caching;
 using Application.Abstractions.Events;
 using Application.Abstractions.Messaging;
+using Application.Abstractions.Repositories;
 using Application.Features.ExamCategory.Events;
 using Application.Models.ExamCategory;
 using System;

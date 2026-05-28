@@ -61,7 +61,7 @@ namespace Infrastructure.Authentication
             };
             var result = await _userManager.CreateAsync(newUser, request.Password);
             _backgroundJobClient.Enqueue<IEmailService>(
-                    c => c.SendWelcomeAsync(newUser.Email, "Welcome", "Welcome to our website")
+                    c => c.SendMailAsync(newUser.Email, "Welcome", "Welcome to our website")
                 );
             return result.Succeeded;
         }
@@ -133,7 +133,7 @@ namespace Infrastructure.Authentication
                 };
                 var result = await _userManager.CreateAsync(newUser);
                 _backgroundJobClient.Enqueue<IEmailService>(
-                    c => c.SendWelcomeAsync(newUser.Email, "Welcome", "Welcome to our website")
+                    c => c.SendMailAsync(newUser.Email, "Welcome", "Welcome to our website")
                 );
                 userByName = newUser;
             }
@@ -166,15 +166,13 @@ namespace Infrastructure.Authentication
             return result.Succeeded;
         }
 
-        public async Task<bool> ResetPassword(string email, string newPassword, string confirmNewPassword)
+        public async Task<bool> ResetPassword(string email, string token, string newPassword)
         {
-            if (newPassword != confirmNewPassword) throw new BadRequestException("New password and confirm password do not match");
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null) throw new Exception("User not found");
-            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
-            if (result.Succeeded) return true;
-            return false;
+            if (!result.Succeeded) throw new Exception("Failed to reset password");
+            return true;
         }
 
         public async Task<Domain.Entity.User> GetByIdAsync(Guid id)
@@ -182,6 +180,14 @@ namespace Infrastructure.Authentication
             var user = await _userManager.FindByIdAsync(id.ToString());
             if (user == null) throw new Exception("User not found");
             return _mapper.Map<Domain.Entity.User>(user);
+        }
+
+        public async Task<string?> ForgotPassword(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                return null;
+            return await _userManager.GeneratePasswordResetTokenAsync(user);
         }
     }
 }
