@@ -1,6 +1,7 @@
 ﻿using Application.Common.Interfaces;
 using Application.Features.File.Commands;
 using Application.Models.File;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +12,7 @@ namespace EngExam.Controllers
     [ApiController]
     public class FileController : ApiController
     {
+        [Authorize]
         [HttpPost("upload-images")]
         public async Task<IActionResult> UploadImages(IFormFile file)
         {

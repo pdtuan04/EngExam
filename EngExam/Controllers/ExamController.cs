@@ -1,4 +1,5 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Common.Constants;
+using Application.Common.Interfaces;
 using Application.Features.Exam.Commands;
 using Application.Features.Exam.Queries;
 using Application.Features.ExamResult.Commands;
@@ -16,7 +17,7 @@ namespace EngExam.Controllers
     [ApiController]
     public class ExamController : ApiController
     {
-        [Authorize]
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost]
         public async Task<IActionResult> CreateExam(CreateExamRequest request)
         {
@@ -35,7 +36,7 @@ namespace EngExam.Controllers
                 data = result
             });
         }
-        [Authorize]
+        [Authorize(Roles = Roles.Admin)]
         [HttpPut]
         public async Task<IActionResult> UpdateExam([FromBody] UpdateExamRequest request)
         {
@@ -54,6 +55,7 @@ namespace EngExam.Controllers
                 data = result
             });
         }
+        [Authorize(Roles = Roles.Admin)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteExam(Guid id)
         {
@@ -71,6 +73,7 @@ namespace EngExam.Controllers
                 message = "Delete exam successfully",
             });
         }
+        [Authorize(Roles = Roles.Admin)]
         [HttpPatch("{id}/unactive")]
         public async Task<IActionResult> SoftDelete(Guid id)
         {

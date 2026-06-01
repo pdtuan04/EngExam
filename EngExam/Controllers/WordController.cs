@@ -3,6 +3,7 @@ using Application.Features.Word.Commands;
 using Application.Features.Word.Events;
 using Application.Features.Word.Queries;
 using Application.Models.Word;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,6 +13,7 @@ namespace EngExam.Controllers
     [ApiController]
     public class WordController : ApiController
     {
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateWord([FromBody] CreateWordRequest request)
         {
@@ -26,6 +28,7 @@ namespace EngExam.Controllers
             var meaning = await Sender.Send(query);
             return Ok(meaning);
         }
+        [Authorize]
         [HttpPatch("{id}/memorized")]
         public async Task<IActionResult> MarkWordAsMemorized(Guid id, [FromBody] SetWordMemorizationStatusRequest request)
         {

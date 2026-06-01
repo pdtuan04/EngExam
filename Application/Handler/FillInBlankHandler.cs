@@ -8,6 +8,16 @@ namespace Application.Handler
     {
         public AnswerHistory HistoryHandler(UserAnswerRequest userAnswer, ExamDetail examDetail, Guid examResultId)
         {
+            if (userAnswer == null)
+                return new AnswerHistory
+                {
+                    Id = Guid.NewGuid(),
+                    ExamResultId = examResultId,
+                    QuestionId = examDetail.QuestionId,
+                    UserAnswer = "",
+                    IsCorrect = false,
+                    Score = 0,
+                };
             var isCorrectFill = examDetail
                                 .Question.Answers
                                 .Any(a => string.Equals(a.Content, userAnswer.AnswerFillInBlank, StringComparison.OrdinalIgnoreCase));
@@ -35,6 +45,7 @@ namespace Application.Handler
         }
         public double CalculateScoreHandler(UserAnswerRequest userAnswer, ExamDetail examDetail)
         {
+            if(userAnswer == null) return 0;
             if(string.IsNullOrWhiteSpace(userAnswer.AnswerFillInBlank)) return 0;
             var correctAnswer = examDetail.Question.Answers
                                 .FirstOrDefault(a => a.IsCorrect == true) ?? throw new Exception("This question has no correct answer");

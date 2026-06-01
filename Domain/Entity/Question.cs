@@ -18,7 +18,9 @@ namespace Domain.Entity
         public ICollection<Answer> Answers { get; set; } = [];
         public ICollection<ExamDetail> ExamDetail { get; set; } = [];
         public ICollection<AnswerHistory> AnswerHistory { get; set; } = [];
-        public ICollection<PracticeDetail> PracticeDetail { get; set; } = null!;
+        public ICollection<PracticeDetail> PracticeDetail { get; set; } = [];
         public bool IsDeleted { get; set; }
+        public Guid? QuestionGroupId { get; set; }
+        public QuestionGroup? QuestionGroup { get; set; }
     }
 }

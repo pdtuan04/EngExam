@@ -4,6 +4,7 @@ using Infrastructure.Repositories.SQLServer_Read.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations.ApplicationDbRead
 {
     [DbContext(typeof(ApplicationDbReadContext))]
-    partial class ApplicationDbReadContextModelSnapshot : ModelSnapshot
+    [Migration("20260601123003_seedmoredata")]
+    partial class seedmoredata
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -718,21 +721,6 @@ namespace Infrastructure.Migrations.ApplicationDbRead
                     b.HasKey("Id");
 
                     b.ToTable("Courses");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("2b82c46a-209b-4c86-b917-9ee78a51efeb"),
-                            Content = "<h1>12 Th&igrave; Trong Tiếng Anh</h1>\r\n<h2>Giới thiệu</h2>\r\n<p>Th&igrave; (Tense) l&agrave; một trong những phần ngữ ph&aacute;p quan trọng nhất trong tiếng Anh. Việc sử dụng đ&uacute;ng th&igrave; gi&uacute;p người học diễn đạt ch&iacute;nh x&aacute;c thời gian, trạng th&aacute;i v&agrave; qu&aacute; tr&igrave;nh của h&agrave;nh động. Hệ thống ngữ ph&aacute;p tiếng Anh bao gồm 12 th&igrave; cơ bản, được chia th&agrave;nh ba mốc thời gian ch&iacute;nh: hiện tại, qu&aacute; khứ v&agrave; tương lai. Mỗi mốc thời gian lại c&oacute; bốn dạng: đơn, tiếp diễn, ho&agrave;n th&agrave;nh v&agrave; ho&agrave;n th&agrave;nh tiếp diễn.</p>\r\n<hr>\r\n<h1>I. C&aacute;c th&igrave; hiện tại</h1>\r\n<h2>1. Hiện tại đơn (Simple Present)</h2>\r\n<h3>C&ocirc;ng thức</h3>\r\n<ul>\r\n<li><p>Khẳng định: S + V(s/es)</p></li>\r\n<li><p>Phủ định: S + do/does not + V</p></li>\r\n<li><p>Nghi vấn: Do/Does + S + V?</p></li>\r\n</ul>\r\n<h3>C&aacute;ch d&ugrave;ng</h3>\r\n<ul>\r\n<li><p>Diễn tả th&oacute;i quen, sở th&iacute;ch.</p></li>\r\n<li><p>Diễn tả sự thật hiển nhi&ecirc;n.</p></li>\r\n<li><p>Diễn tả lịch tr&igrave;nh, thời gian biểu.</p></li>\r\n</ul>\r\n<h3>V&iacute; dụ</h3>\r\n<ul>\r\n<li><p>I go to school every day.</p></li>\r\n<li><p>The sun rises in the east.</p></li>\r\n</ul>\r\n<hr>\r\n<h2>2. Hiện tại tiếp diễn (Present Continuous)</h2>\r\n<h3>C&ocirc;ng thức</h3>\r\n<ul>\r\n<li><p>S + am/is/are + V-ing</p></li>\r\n</ul>\r\n<h3>C&aacute;ch d&ugrave;ng</h3>\r\n<ul>\r\n<li><p>Diễn tả h&agrave;nh động đang diễn ra tại thời điểm n&oacute;i.</p></li>\r\n<li><p>Diễn tả kế hoạch trong tương lai gần.</p></li>\r\n</ul>\r\n<h3>V&iacute; dụ</h3>\r\n<ul>\r\n<li><p>She is studying English now.</p></li>\r\n<li><p>We are meeting our teacher tomorrow.</p></li>\r\n</ul>\r\n<hr>\r\n<h2>3. Hiện tại ho&agrave;n th&agrave;nh (Present Perfect)</h2>\r\n<h3>C&ocirc;ng thức</h3>\r\n<ul>\r\n<li><p>S + have/has + V3/ed</p></li>\r\n</ul>\r\n<h3>C&aacute;ch d&ugrave;ng</h3>\r\n<ul>\r\n<li><p>Diễn tả h&agrave;nh động xảy ra trong qu&aacute; khứ nhưng c&ograve;n li&ecirc;n quan đến hiện tại.</p></li>\r\n<li><p>Diễn tả kinh nghiệm hoặc trải nghiệm.</p></li>\r\n</ul>\r\n<h3>V&iacute; dụ</h3>\r\n<ul>\r\n<li><p>I have finished my homework.</p></li>\r\n<li><p>She has visited Japan twice.</p></li>\r\n</ul>\r\n<hr>\r\n<h2>4. Hiện tại ho&agrave;n th&agrave;nh tiếp diễn (Present Perfect Continuous)</h2>\r\n<h3>C&ocirc;ng thức</h3>\r\n<ul>\r\n<li><p>S + have/has been + V-ing</p></li>\r\n</ul>\r\n<h3>C&aacute;ch d&ugrave;ng</h3>\r\n<ul>\r\n<li><p>Nhấn mạnh qu&aacute; tr&igrave;nh của h&agrave;nh động bắt đầu trong qu&aacute; khứ v&agrave; vẫn tiếp tục đến hiện tại.</p></li>\r\n</ul>\r\n<h3>V&iacute; dụ</h3>\r\n<ul>\r\n<li><p>They have been learning English for three years.</p></li>\r\n<li><p>I have been waiting for an hour.</p></li>\r\n</ul>\r\n<hr>\r\n<h1>II. C&aacute;c th&igrave; qu&aacute; khứ</h1>\r\n<h2>5. Qu&aacute; khứ đơn (Simple Past)</h2>\r\n<h3>C&ocirc;ng thức</h3>\r\n<ul>\r\n<li><p>S + V2/ed</p></li>\r\n</ul>\r\n<h3>C&aacute;ch d&ugrave;ng</h3>\r\n<ul>\r\n<li><p>Diễn tả h&agrave;nh động đ&atilde; xảy ra v&agrave; kết th&uacute;c trong qu&aacute; khứ.</p></li>\r\n</ul>\r\n<h3>V&iacute; dụ</h3>\r\n<ul>\r\n<li><p>I visited my grandparents last weekend.</p></li>\r\n<li><p>She bought a new laptop yesterday.</p></li>\r\n</ul>\r\n<hr>\r\n<h2>6. Qu&aacute; khứ tiếp diễn (Past Continuous)</h2>\r\n<h3>C&ocirc;ng thức</h3>\r\n<ul>\r\n<li><p>S + was/were + V-ing</p></li>\r\n</ul>\r\n<h3>C&aacute;ch d&ugrave;ng</h3>\r\n<ul>\r\n<li><p>Diễn tả h&agrave;nh động đang diễn ra tại một thời điểm trong qu&aacute; khứ.</p></li>\r\n<li><p>Diễn tả h&agrave;nh động bị h&agrave;nh động kh&aacute;c xen v&agrave;o.</p></li>\r\n</ul>\r\n<h3>V&iacute; dụ</h3>\r\n<ul>\r\n<li><p>I was reading when he called.</p></li>\r\n<li><p>They were playing football at 5 p.m.</p></li>\r\n</ul>\r\n<hr>\r\n<h2>7. Qu&aacute; khứ ho&agrave;n th&agrave;nh (Past Perfect)</h2>\r\n<h3>C&ocirc;ng thức</h3>\r\n<ul>\r\n<li><p>S + had + V3/ed</p></li>\r\n</ul>\r\n<h3>C&aacute;ch d&ugrave;ng</h3>\r\n<ul>\r\n<li><p>Diễn tả h&agrave;nh động xảy ra trước một h&agrave;nh động kh&aacute;c trong qu&aacute; khứ.</p></li>\r\n</ul>\r\n<h3>V&iacute; dụ</h3>\r\n<ul>\r\n<li><p>She had left before I arrived.</p></li>\r\n<li><p>They had finished dinner when we came.</p></li>\r\n</ul>\r\n<hr>\r\n<h2>8. Qu&aacute; khứ ho&agrave;n th&agrave;nh tiếp diễn (Past Perfect Continuous)</h2>\r\n<h3>C&ocirc;ng thức</h3>\r\n<ul>\r\n<li><p>S + had been + V-ing</p></li>\r\n</ul>\r\n<h3>C&aacute;ch d&ugrave;ng</h3>\r\n<ul>\r\n<li><p>Nhấn mạnh qu&aacute; tr&igrave;nh của h&agrave;nh động k&eacute;o d&agrave;i trước một thời điểm hoặc h&agrave;nh động trong qu&aacute; khứ.</p></li>\r\n</ul>\r\n<h3>V&iacute; dụ</h3>\r\n<ul>\r\n<li><p>He had been working for five hours before taking a break.</p></li>\r\n<li><p>They had been waiting for a long time before the bus arrived.</p></li>\r\n</ul>\r\n<hr>\r\n<h1>III. C&aacute;c th&igrave; tương lai</h1>\r\n<h2>9. Tương lai đơn (Simple Future)</h2>\r\n<h3>C&ocirc;ng thức</h3>\r\n<ul>\r\n<li><p>S + will + V</p></li>\r\n</ul>\r\n<h3>C&aacute;ch d&ugrave;ng</h3>\r\n<ul>\r\n<li><p>Diễn tả quyết định tức thời.</p></li>\r\n<li><p>Dự đo&aacute;n hoặc lời hứa.</p></li>\r\n</ul>\r\n<h3>V&iacute; dụ</h3>\r\n<ul>\r\n<li><p>I will help you.</p></li>\r\n<li><p>It will rain tomorrow.</p></li>\r\n</ul>\r\n<hr>\r\n<h2>10. Tương lai tiếp diễn (Future Continuous)</h2>\r\n<h3>C&ocirc;ng thức</h3>\r\n<ul>\r\n<li><p>S + will be + V-ing</p></li>\r\n</ul>\r\n<h3>C&aacute;ch d&ugrave;ng</h3>\r\n<ul>\r\n<li><p>Diễn tả h&agrave;nh động sẽ đang diễn ra tại một thời điểm trong tương lai.</p></li>\r\n</ul>\r\n<h3>V&iacute; dụ</h3>\r\n<ul>\r\n<li><p>This time tomorrow, I will be studying.</p></li>\r\n<li><p>They will be traveling next week.</p></li>\r\n</ul>\r\n<hr>\r\n<h2>11. Tương lai ho&agrave;n th&agrave;nh (Future Perfect)</h2>\r\n<h3>C&ocirc;ng thức</h3>\r\n<ul>\r\n<li><p>S + will have + V3/ed</p></li>\r\n</ul>\r\n<h3>C&aacute;ch d&ugrave;ng</h3>\r\n<ul>\r\n<li><p>Diễn tả h&agrave;nh động sẽ ho&agrave;n th&agrave;nh trước một thời điểm trong tương lai.</p></li>\r\n</ul>\r\n<h3>V&iacute; dụ</h3>\r\n<ul>\r\n<li><p>I will have graduated by next year.</p></li>\r\n<li><p>She will have completed the project before Friday.</p></li>\r\n</ul>\r\n<hr>\r\n<h2>12. Tương lai ho&agrave;n th&agrave;nh tiếp diễn (Future Perfect Continuous)</h2>\r\n<h3>C&ocirc;ng thức</h3>\r\n<ul>\r\n<li><p>S + will have been + V-ing</p></li>\r\n</ul>\r\n<h3>C&aacute;ch d&ugrave;ng</h3>\r\n<ul>\r\n<li><p>Nhấn mạnh khoảng thời gian một h&agrave;nh động k&eacute;o d&agrave;i đến một thời điểm trong tương lai.</p></li>\r\n</ul>\r\n<h3>V&iacute; dụ</h3>\r\n<ul>\r\n<li><p>By next month, I will have been working here for two years.</p></li>\r\n<li><p>They will have been studying for six hours by midnight.</p></li>\r\n</ul>\r\n<hr>\r\n<h1>Kết luận</h1>\r\n<p>Mười hai th&igrave; trong tiếng Anh gi&uacute;p người học diễn đạt ch&iacute;nh x&aacute;c thời gian v&agrave; trạng th&aacute;i của h&agrave;nh động. Để sử dụng th&agrave;nh thạo, cần nắm vững c&ocirc;ng thức, dấu hiệu nhận biết v&agrave; c&aacute;ch d&ugrave;ng của từng th&igrave;. Việc luyện tập thường xuy&ecirc;n th&ocirc;ng qua n&oacute;i, viết v&agrave; l&agrave;m b&agrave;i tập sẽ gi&uacute;p người học sử dụng c&aacute;c th&igrave; một c&aacute;ch tự nhi&ecirc;n v&agrave; ch&iacute;nh x&aacute;c hơn trong giao tiếp cũng như trong học tập.</p>",
-                            CreatedAt = new DateTime(2026, 6, 1, 14, 17, 35, 0, DateTimeKind.Unspecified),
-                            Description = "Cách dùng và công thức của 12 Thì Trong Tiếng Anh",
-                            ImageUrl = "images/fd75ef51-c277-4856-8f5f-a70515953e2d_Screenshot 2026-06-01 210443.png",
-                            IsActive = true,
-                            IsDeleted = false,
-                            Name = "12 Thì Trong Tiếng Anh",
-                            TopicId = new Guid("22222222-2222-2222-2222-222222222222"),
-                            UpdatedAt = new DateTime(2026, 6, 1, 14, 17, 35, 0, DateTimeKind.Unspecified)
-                        });
                 });
 
             modelBuilder.Entity("Infrastructure.Repositories.SQLServer_Read.DataContext.Exam", b =>
@@ -769,20 +757,6 @@ namespace Infrastructure.Migrations.ApplicationDbRead
                     b.HasKey("Id");
 
                     b.ToTable("Exams");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("77777777-7777-7777-7777-777777777777"),
-                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Basic Grammar Test",
-                            DurationInMinutes = 10,
-                            ExamCategoryId = new Guid("11111111-1111-1111-1111-111111111111"),
-                            IsActive = true,
-                            IsDeleted = false,
-                            Title = "Basic Grammar Test",
-                            UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        });
                 });
 
             modelBuilder.Entity("Infrastructure.Repositories.SQLServer_Read.DataContext.ExamCategory", b =>
@@ -1196,7 +1170,7 @@ namespace Infrastructure.Migrations.ApplicationDbRead
                         new
                         {
                             Id = new Guid("33333333-3333-3333-3333-000000000002"),
-                            Content = "They usually ___ (play) basketball on weekends.",
+                            Content = "They usually [play] basketball on weekends.",
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Explanation = "Có trạng từ 'usually' chỉ thói quen.",
                             IsActive = true,
@@ -1220,7 +1194,7 @@ namespace Infrastructure.Migrations.ApplicationDbRead
                         new
                         {
                             Id = new Guid("33333333-3333-3333-3333-000000000004"),
-                            Content = "I ___ (study) for my TOEIC exam right now.",
+                            Content = "I [am studying] for my TOEIC exam right now.",
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Explanation = "Có trạng từ 'right now'.",
                             IsActive = true,
@@ -1244,7 +1218,7 @@ namespace Infrastructure.Migrations.ApplicationDbRead
                         new
                         {
                             Id = new Guid("33333333-3333-3333-3333-000000000006"),
-                            Content = "We ___ (see) this movie before.",
+                            Content = "We [have seen] this movie before.",
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Explanation = "Trải nghiệm tính đến thời điểm hiện tại ('before').",
                             IsActive = true,
@@ -1268,7 +1242,7 @@ namespace Infrastructure.Migrations.ApplicationDbRead
                         new
                         {
                             Id = new Guid("33333333-3333-3333-3333-000000000008"),
-                            Content = "It ___ (rain) since morning.",
+                            Content = "It [has been raining] since morning.",
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Explanation = "Nhấn mạnh quá trình bắt đầu từ sáng và vẫn đang tiếp diễn.",
                             IsActive = true,
@@ -1292,7 +1266,7 @@ namespace Infrastructure.Migrations.ApplicationDbRead
                         new
                         {
                             Id = new Guid("33333333-3333-3333-3333-000000000010"),
-                            Content = "They ___ (win) the match yesterday.",
+                            Content = "They [won] the match yesterday.",
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Explanation = "Sự việc kết thúc hôm qua ('yesterday').",
                             IsActive = true,
@@ -1316,7 +1290,7 @@ namespace Infrastructure.Migrations.ApplicationDbRead
                         new
                         {
                             Id = new Guid("33333333-3333-3333-3333-000000000012"),
-                            Content = "While we ___ (play), it started to rain.",
+                            Content = "While we [were playing], it started to rain.",
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Explanation = "Hành động đang kéo dài trong quá khứ ('While').",
                             IsActive = true,
@@ -1340,7 +1314,7 @@ namespace Infrastructure.Migrations.ApplicationDbRead
                         new
                         {
                             Id = new Guid("33333333-3333-3333-3333-000000000014"),
-                            Content = "She told me she ___ (finish) the job.",
+                            Content = "She told me she [had finished] the job.",
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Explanation = "Hành động hoàn thành trước khi hành động 'told' xảy ra.",
                             IsActive = true,
@@ -1364,7 +1338,7 @@ namespace Infrastructure.Migrations.ApplicationDbRead
                         new
                         {
                             Id = new Guid("33333333-3333-3333-3333-000000000016"),
-                            Content = "I ___ (study) English for a year before I visited London.",
+                            Content = "I [had been studying] English for a year before I visited London.",
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Explanation = "Hành động học kéo dài liên tục trước khi đến London.",
                             IsActive = true,
@@ -1388,7 +1362,7 @@ namespace Infrastructure.Migrations.ApplicationDbRead
                         new
                         {
                             Id = new Guid("33333333-3333-3333-3333-000000000018"),
-                            Content = "Don't worry, she ___ (call) you back later.",
+                            Content = "Don't worry, she [will call] you back later.",
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Explanation = "Một lời hứa hoặc quyết định ngay lúc nói.",
                             IsActive = true,
@@ -1412,7 +1386,7 @@ namespace Infrastructure.Migrations.ApplicationDbRead
                         new
                         {
                             Id = new Guid("33333333-3333-3333-3333-000000000020"),
-                            Content = "They ___ (have) dinner when we arrive tonight.",
+                            Content = "They [will be having] dinner when we arrive tonight.",
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Explanation = "Hành động đang diễn ra trong tương lai thì bị xen vào.",
                             IsActive = true,
@@ -1436,7 +1410,7 @@ namespace Infrastructure.Migrations.ApplicationDbRead
                         new
                         {
                             Id = new Guid("33333333-3333-3333-3333-000000000022"),
-                            Content = "They ___ (build) the new bridge by July.",
+                            Content = "They [will have built] the new bridge by July.",
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Explanation = "Hoàn thành trước tháng 7 tới.",
                             IsActive = true,
@@ -1460,7 +1434,7 @@ namespace Infrastructure.Migrations.ApplicationDbRead
                         new
                         {
                             Id = new Guid("33333333-3333-3333-3333-000000000024"),
-                            Content = "By the time you wake up, I ___ (drive) for 3 hours.",
+                            Content = "By the time you wake up, I [will have been driving] for 3 hours.",
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Explanation = "Hành động kéo dài liên tục đến lúc bạn thức dậy.",
                             IsActive = true,

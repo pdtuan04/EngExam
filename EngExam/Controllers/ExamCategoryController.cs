@@ -1,4 +1,5 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Common.Constants;
+using Application.Common.Interfaces;
 using Application.Features.ExamCategory.Commands;
 using Application.Features.ExamCategory.Queries;
 using Application.Models.ExamCategory;
@@ -33,6 +34,7 @@ namespace EngExam.Controllers
                 message = "Exam categories retrieved successfully"
             });
         }
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateExamCategoryRequest request)
         {
@@ -53,6 +55,7 @@ namespace EngExam.Controllers
                 message = "Exam category created successfully"
             });
         }
+        [Authorize(Roles = Roles.Admin)]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] UpdateExamCategoryRequest request)
         {
@@ -73,6 +76,7 @@ namespace EngExam.Controllers
                 message = "Exam category updated successfully"
             });
         }
+        [Authorize(Roles = Roles.Admin)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {

@@ -13,8 +13,10 @@ namespace Application.Models.Exam
         int DurationInMinutes,
         Guid ExamCategoryId,
         string? Description = null,
-        IReadOnlyCollection<CreateQuestionRequest> Questions = null!)
+        IReadOnlyCollection<CreateQuestionRequest> Questions = null!,
+        IReadOnlyCollection<CreateQuestionGroupRequest>? QuestionGroups = null)
     {
         public IReadOnlyCollection<CreateQuestionRequest> Questions { get; init; } = Questions ?? [];
+        public IReadOnlyCollection<CreateQuestionGroupRequest> QuestionGroups { get; init; } = QuestionGroups ?? [];
     }
 }
