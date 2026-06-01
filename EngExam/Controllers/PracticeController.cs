@@ -1,7 +1,9 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Common.Constants;
+using Application.Common.Interfaces;
 using Application.Features.Practice.Commands;
 using Application.Features.Practice.Queries;
 using Application.Models.Practice;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,6 +32,7 @@ namespace EngExam.Controllers
                 data = result
             });
         }
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost]
         public async Task<IActionResult> CreatePractice([FromBody] CreatePracticeRequest request)
         {
@@ -48,6 +51,7 @@ namespace EngExam.Controllers
                 data = result
             });
         }
+        [Authorize(Roles = Roles.Admin)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdatePractice(Guid id, [FromBody] UpdatePracticeRequest request)
         {
@@ -72,6 +76,7 @@ namespace EngExam.Controllers
                 data = result
             });
         }
+        [Authorize(Roles = Roles.Admin)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePractice(Guid id)
         {

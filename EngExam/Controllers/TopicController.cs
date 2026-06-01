@@ -1,8 +1,10 @@
-﻿using Application.Features.Exam.Queries;
+﻿using Application.Common.Constants;
+using Application.Features.Exam.Queries;
 using Application.Features.Topic.Commands;
 using Application.Features.Topic.Queries;
 using Application.Models.Pagination;
 using Application.Models.Topic;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,6 +38,7 @@ namespace EngExam.Controllers
                 message = "Get topic by id successfully"
             });
         }
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost]
         public async Task<IActionResult> CreateTopic([FromBody]CreateTopicRequest request, CancellationToken cancellationToken)
         {
@@ -48,6 +51,7 @@ namespace EngExam.Controllers
                 message = "Create topic successfully"
             });
         }
+        [Authorize(Roles = Roles.Admin)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateTopic(Guid id, [FromBody] UpdateTopicRequest request, CancellationToken cancellationToken)
         {
@@ -60,6 +64,7 @@ namespace EngExam.Controllers
                 message = "Update topic successfully"
             });
         }
+        [Authorize(Roles = Roles.Admin)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTopic(Guid id, CancellationToken cancellationToken)
         {

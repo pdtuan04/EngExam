@@ -16,6 +16,8 @@ namespace Application.Models.Question
         QuestionTypes QuestionTypes,
         Guid TopicId,
         string? Explanation = null,
+        string? AudioUrl = null,
+        string? ImageUrl = null,
         IReadOnlyCollection<CreateAnswerRequest> Answers = null!)
     {
         public IReadOnlyCollection<CreateAnswerRequest> Answers { get; init; } = Answers ?? [];

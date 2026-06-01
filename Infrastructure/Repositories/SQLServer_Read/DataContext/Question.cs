@@ -17,5 +17,6 @@ namespace Infrastructure.Repositories.SQLServer_Read.DataContext
         public string? AudioUrl { get; set; }
         public required Guid TopicId { get; set; }
         public bool IsDeleted { get; set; }
+        public Guid? QuestionGroupId { get; set; }
     }
 }

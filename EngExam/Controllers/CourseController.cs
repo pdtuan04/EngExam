@@ -1,8 +1,10 @@
-﻿using Application.Features.Course.Command;
+﻿using Application.Common.Constants;
+using Application.Features.Course.Command;
 using Application.Features.Course.Commands;
 using Application.Features.Course.Queries;
 using Application.Models.Course;
 using Application.Models.Pagination;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,6 +22,7 @@ namespace EngExam.Controllers
             var result = await Sender.Send(query, cancellationToken);
             return Ok(result);
         }
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost]
         public async Task<IActionResult> CreateCourse(CreateCourseRequest request, CancellationToken cancellationToken)
         {
@@ -27,6 +30,7 @@ namespace EngExam.Controllers
             var result = await Sender.Send(command, cancellationToken);
             return Ok(result);
         }
+        [Authorize(Roles = Roles.Admin)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCourse(Guid id, UpdateCourseRequest request, CancellationToken cancellationToken)
         {
@@ -34,6 +38,7 @@ namespace EngExam.Controllers
             var result = await Sender.Send(command, cancellationToken);
             return Ok(result);
         }
+        [Authorize(Roles = Roles.Admin)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCourse(Guid id, CancellationToken cancellationToken)
         {

@@ -1,6 +1,7 @@
 ﻿using Application.Features.ExamResult.Queries;
 using Application.Features.Practice.Queries;
 using EngExam.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +11,7 @@ namespace EngExam.Controllers
     [ApiController]
     public class ExamResultController : ApiController
     {
+        [Authorize]
         [HttpGet("details/{id}")]
         public async Task<IActionResult> GetUserExamResult(Guid id)
         {
@@ -22,6 +24,7 @@ namespace EngExam.Controllers
                 data = result
             });
         }
+        [Authorize]
         [HttpGet("paginated-user-exam-result")]
         public async Task<IActionResult> GetUserExamResult([FromQuery] int pageIndex, int pageSize)
         {

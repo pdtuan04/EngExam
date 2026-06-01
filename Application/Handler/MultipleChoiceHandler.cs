@@ -10,6 +10,16 @@ namespace Application.Handler
     {
         public AnswerHistory HistoryHandler(UserAnswerRequest userAnswer, ExamDetail examDetail, Guid examResultId)
         {
+            if (userAnswer == null)
+            return new AnswerHistory
+            {
+                Id = Guid.NewGuid(),
+                ExamResultId = examResultId,
+                QuestionId = examDetail.QuestionId,
+                UserAnswer = "",
+                IsCorrect = false,
+                Score = 0,
+            };
             var answer = examDetail
                          .Question.Answers
                          .FirstOrDefault(a => a.Id == userAnswer.AnswerId) ?? throw new BadRequestException("Answer isn't in the exam");
@@ -26,6 +36,7 @@ namespace Application.Handler
         }
         public double CalculateScoreHandler(UserAnswerRequest userAnswer, ExamDetail examDetail)
         {
+            if (userAnswer == null) return 0;
             if(!userAnswer.AnswerId.HasValue) return 0;
             var correctAnswer = examDetail
                                 .Question

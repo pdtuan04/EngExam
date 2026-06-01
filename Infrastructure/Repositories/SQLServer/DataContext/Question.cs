@@ -22,5 +22,7 @@ namespace Infrastructure.Repositories.SQLServer.DataContext
         public required Guid TopicId { get; set; }
         public Topic? Topic { get; set; } = null!;
         public bool IsDeleted { get; set; }
+        public Guid? QuestionGroupId { get; set; }
+        public QuestionGroup? QuestionGroup { get; set; }
     }
 }
