@@ -56,6 +56,17 @@ namespace Domain.Entity
             }
             examDetail.Score = score;
         }
+        public void RemoveExamDetails(ICollection<Question> questions)
+        {
+            foreach (var question in questions)
+            {
+                var examDetail = ExamDetail.FirstOrDefault(q => q.QuestionId == question.Id);
+                if (examDetail != null)
+                {
+                    ExamDetail.Remove(examDetail);
+                }
+            }
+        }
         public bool IsDeleted { get ; set ; }
     }
 }
