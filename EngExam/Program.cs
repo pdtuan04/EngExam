@@ -107,9 +107,10 @@ var app = builder.Build();
 app.UseStaticFiles();
 // Configure the HTTP request pipeline.
 app.UseCors(MyAllowSpecificOrigins);
-app.UseApplyMigrations();
+
 if (app.Environment.IsDevelopment())
 {
+    app.UseApplyMigrations();
     app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI(options =>
