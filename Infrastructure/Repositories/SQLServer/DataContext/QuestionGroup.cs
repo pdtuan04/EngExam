@@ -14,7 +14,6 @@ namespace Infrastructure.Repositories.SQLServer.DataContext
         public string? ImageUrl { get; set; }
         public string? AudioUrl { get; set; }
         public ICollection<Question> Questions { get; set; } = new List<Question>();
-
         public bool IsDeleted { get; set; }
     }
 }

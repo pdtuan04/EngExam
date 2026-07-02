@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Events;
 using Application.Abstractions.Messaging;
 using Application.Abstractions.Repositories;
+using Application.Exceptions;
 using Application.Features.Answer.Events;
 using Application.Features.Exam.Events;
 using Application.Features.Question.Events;
@@ -39,7 +40,11 @@ namespace Application.Features.Exam.Commands
                 CreatedAt = now,
                 UpdatedAt = now,
             };
-
+            var questionsNumber = request.Questions.Count;
+            if(questionsNumber < 10)
+            {
+                throw new InvalidQuesionNumberException();
+            }
             foreach (var q in request.Questions)
             {
                 var questionId = Guid.NewGuid();

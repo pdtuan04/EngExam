@@ -76,6 +76,7 @@ namespace Infrastructure.Repositories.SQLServer_Read
             var questionIds = questions.Select(q => q.Id).ToList();
             var existingQuestions = await _dbContext.Questions
                 .IgnoreQueryFilters()
+                .AsTracking()
                 .Where(t => questionIds.Contains(t.Id))
                 .ToDictionaryAsync(q => q.Id, q => q);
             var newQuestion = new List<Question>();
@@ -86,6 +87,7 @@ namespace Infrastructure.Repositories.SQLServer_Read
                     if(existingQuestion.UpdatedAt < question.UpdatedAt)
                     {
                         _mapper.Map(question, existingQuestion);
+                        _dbContext.Questions.Update(existingQuestion);
                     }
                 }
                 else

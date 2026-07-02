@@ -824,7 +824,7 @@ namespace Infrastructure.Migrations.ApplicationDbRead
                             Id = new Guid("11111111-1111-1111-1111-111111111111"),
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Grammar examination category",
-                            ImageUrl = "/uploads/images/category_img.jpg",
+                            ImageUrl = "images/category_img.jpg",
                             IsActive = true,
                             IsDeleted = false,
                             Name = "Grammar",
@@ -835,7 +835,7 @@ namespace Infrastructure.Migrations.ApplicationDbRead
                             Id = new Guid("c5f9dd20-276f-4a4a-bbb1-26b795a8514c"),
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Reading",
-                            ImageUrl = "/uploads/images/category_img.jpg",
+                            ImageUrl = "images/category_img.jpg",
                             IsActive = true,
                             IsDeleted = false,
                             Name = "Reading",
@@ -846,7 +846,7 @@ namespace Infrastructure.Migrations.ApplicationDbRead
                             Id = new Guid("2af67565-75f7-4511-9b67-3762e917c173"),
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Vocabulary exam",
-                            ImageUrl = "/uploads/images/category_img.jpg",
+                            ImageUrl = "images/category_img.jpg",
                             IsActive = true,
                             IsDeleted = false,
                             Name = "Vocabulary",
@@ -857,7 +857,7 @@ namespace Infrastructure.Migrations.ApplicationDbRead
                             Id = new Guid("48b31fd9-e2a2-4b6a-9884-e2b6c664715b"),
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Listening exam",
-                            ImageUrl = "/uploads/images/category_img.jpg",
+                            ImageUrl = "images/category_img.jpg",
                             IsActive = true,
                             IsDeleted = false,
                             Name = "Listening",
@@ -1166,6 +1166,9 @@ namespace Infrastructure.Migrations.ApplicationDbRead
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<Guid?>("QuestionGroupId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("QuestionTypes")
                         .HasColumnType("int");

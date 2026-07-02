@@ -2,6 +2,7 @@
 using Application.Abstractions.Messaging;
 using Application.Abstractions.Repositories;
 using Application.Common.Exceptions;
+using Application.Exceptions;
 using Application.Features.Exam.Events;
 using Application.Features.ExamCategory.Events;
 using Application.Models.Answer;
@@ -39,6 +40,11 @@ namespace Application.Features.Exam.Commands
                 IsActive = request.IsActive ?? true,
                 UpdatedAt = now
             };
+            var questionsNumber = request.Questions.Count;
+            if (questionsNumber < 10)
+            {
+                throw new InvalidQuesionNumberException();
+            }
             foreach (var q in request.Questions)
             {
                 var questionId = q.Id == Guid.Empty ? Guid.NewGuid() : q.Id;
