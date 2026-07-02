@@ -105,12 +105,12 @@ RegisterServicesForApp(builder.Configuration, builder.Services);
 builder.Services.AddHttpClient();
 var app = builder.Build();
 app.UseStaticFiles();
+app.UseApplyMigrations();
 // Configure the HTTP request pipeline.
 app.UseCors(MyAllowSpecificOrigins);
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseApplyMigrations();
     app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI(options =>
