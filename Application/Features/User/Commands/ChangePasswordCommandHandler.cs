@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Messaging;
 using Application.Common.Interfaces;
+using Application.Exceptions;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,8 @@ namespace Application.Features.User.Commands
 
         public async Task<bool> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
         {
-            return await _authIdentityService.ChangePassword(request.UserId, request.CurrentPassword, request.NewPassword, request.ConfirmNewPassword);
+            if(!await _authIdentityService.ChangePassword(request.UserId, request.CurrentPassword, request.NewPassword, request.ConfirmNewPassword)) throw new PasswordMismatchException();
+            return true;
         }
     }
 }

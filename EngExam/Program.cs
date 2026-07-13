@@ -293,6 +293,9 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
         services.AddTransient<IWordReadRepository>(service => new WordReadRepository(
             service.GetRequiredService<ApplicationDbReadContext>(),
             service.GetRequiredService<IMapper>()));
+        services.AddTransient<IUserReadRepository>(service => new UserReadRepository(
+            service.GetRequiredService<ApplicationDbReadContext>(),
+            service.GetRequiredService<IMapper>()));
     }
 
     //storage
@@ -348,6 +351,7 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
         busConfig.AddConsumer<InvalidateTopicCacheConsumer>();
         busConfig.AddConsumer<SyncTopicReadDbConsumer>();
         busConfig.AddConsumer<SendEmailNotificationConsumer>();
+        busConfig.AddConsumer<SyncUserDbConsumer>();
         busConfig.AddEntityFrameworkOutbox<ApplicationDbContext>(o =>
         {
             o.UseSqlServer();

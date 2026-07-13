@@ -23,6 +23,7 @@ namespace Application.Common.Interfaces
         Task<bool> AddUserToRole(User user, string roleName);
         Task<bool> ResetPassword(string email, string token, string newPassword);
         Task<User> GetByIdAsync(Guid id);
+        Task<User> ChangeAvatar(Guid userId, string avatarUrl);
         Task Logout();
     }
 }

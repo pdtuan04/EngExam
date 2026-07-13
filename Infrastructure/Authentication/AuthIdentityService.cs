@@ -75,7 +75,7 @@ namespace Infrastructure.Authentication
             if (!result) throw new Exception("Sai tai khoan hoac mat khau");
             var token = await JwtTokenGen(_mapper.Map<Domain.Entity.User>(userByName));
             var userRoles = await _userManager.GetRolesAsync(userByName);
-            var response = new SignInResponse(token, userByName.Id, userByName.UserName ?? "", userByName.Email ?? "", userRoles.ToList());
+            var response = new SignInResponse(token, userByName.Id, userByName.UserName ?? "", userByName.Email ?? "", userRoles.ToList(), userByName.ImageUrl);
             return response;
         }
         public async Task<string> JwtTokenGen(Domain.Entity.User user)
@@ -139,7 +139,7 @@ namespace Infrastructure.Authentication
             }
             var token = await JwtTokenGen(_mapper.Map<Domain.Entity.User>(userByName));
             var userRoles = await _userManager.GetRolesAsync(userByName);
-            var response = new SignInResponse(token, userByName.Id, userByName.UserName ?? "", userByName.Email ?? "", userRoles.ToList());
+            var response = new SignInResponse(token, userByName.Id, userByName.UserName ?? "", userByName.Email ?? "", userRoles.ToList(), userByName.ImageUrl);
             return response;
         }
 
@@ -188,6 +188,18 @@ namespace Infrastructure.Authentication
             if (user == null)
                 return null;
             return await _userManager.GeneratePasswordResetTokenAsync(user);
+        }
+
+        public async Task<Domain.Entity.User> ChangeAvatar(Guid userId, string avatarUrl)
+        {
+            var now = DateTime.UtcNow;
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null) throw new NotFoundException("User", userId);
+            user.ImageUrl = avatarUrl;
+            user.UpdatedAt = now;
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded) throw new Exception("Failed to update avatar");
+            return _mapper.Map<Domain.Entity.User>(user);
         }
     }
 }
