@@ -9,6 +9,7 @@ using Application.Models.FlashCard;
 using Application.Models.Practice;
 using Application.Models.Question;
 using Application.Models.Topic;
+using Application.Models.User;
 using Application.Models.Word;
 using AutoMapper;
 using Infrastructure.Repositories.SQLServer_Read.DataContext;
@@ -82,6 +83,7 @@ namespace Infrastructure.Repositories.SQLServer_Read.Mappers
             CreateMap<Course, CourseDetailResponse>();
             CreateMap<Course, CourseResponse>();
             CreateMap<ExamCategory, ExamCategoryResponse>();
+            CreateMap<User, UserDetailResponse>();
         }
     }
 }

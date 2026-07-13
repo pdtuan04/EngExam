@@ -39,6 +39,6 @@ namespace Domain.Entity
             } 
         }
         private int _age;
-        public string? AvatarUrl { get; set; }
+        public string? ImageUrl { get; set; }
     }
 }

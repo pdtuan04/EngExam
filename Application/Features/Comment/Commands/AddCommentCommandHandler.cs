@@ -41,10 +41,10 @@ namespace Application.Features.Comment.Commands
                 comment = Domain.Entity.Comment.CreateRoot(request.courseId, request.userId, request.content);
             }
             await _unitOfWork.CommentRepository.AddAsync(comment);
-            var commentAddedEvent = new CreateCommentEvent(comment.Id, comment.CourseId, comment.UserId, user.UserName, user.AvatarUrl, comment.Content, comment.ParentId, comment.RootCommentId, comment.Path, comment.Level, comment.IsDeleted, comment.CreatedAt);
+            var commentAddedEvent = new CreateCommentEvent(comment.Id, comment.CourseId, comment.UserId, user.UserName, user.ImageUrl, comment.Content, comment.ParentId, comment.RootCommentId, comment.Path, comment.Level, comment.IsDeleted, comment.CreatedAt);
             await _eventBus.PublishAsync(commentAddedEvent);
             await _unitOfWork.SaveChangesAsync();
-            return new CommentResponse(comment.Id, comment.CourseId, comment.UserId, user.UserName, user.AvatarUrl, comment.Content, comment.ParentId, comment.RootCommentId, comment.Path, comment.Level, comment.IsDeleted, 0);
+            return new CommentResponse(comment.Id, comment.CourseId, comment.UserId, user.UserName, user.ImageUrl, comment.Content, comment.ParentId, comment.RootCommentId, comment.Path, comment.Level, comment.IsDeleted, 0);
         }
     }
 }

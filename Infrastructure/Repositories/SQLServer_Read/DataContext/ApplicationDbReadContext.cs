@@ -32,6 +32,7 @@ namespace Infrastructure.Repositories.SQLServer_Read.DataContext
         public DbSet<Course> Courses { get; set; }
         public DbSet<Word> Words { get; set; }
         public DbSet<FlashCard> FlashCards { get; set; }
+        public DbSet<User> Users { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
