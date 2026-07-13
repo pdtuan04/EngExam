@@ -352,6 +352,7 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
         busConfig.AddConsumer<SyncTopicReadDbConsumer>();
         busConfig.AddConsumer<SendEmailNotificationConsumer>();
         busConfig.AddConsumer<SyncUserDbConsumer>();
+        busConfig.AddConsumer<InvalidateUserCacheConsumer>();
         busConfig.AddEntityFrameworkOutbox<ApplicationDbContext>(o =>
         {
             o.UseSqlServer();
