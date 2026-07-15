@@ -323,8 +323,7 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
         services.GetRequiredService<RoleManager<IdentityRole<Guid>>>(),
         services.GetRequiredService<IMapper>(),
         services.GetRequiredService<IConfiguration>(),
-        services.GetRequiredService<IEmailService>(),
-        services.GetRequiredService<IBackgroundJobClient>()
+        services.GetRequiredService<IEmailService>()
         ));
     services.AddSignalR();
     services.Configure<MessageBrokerOptions>(configuration.GetSection("MessageBrokerSetting"));

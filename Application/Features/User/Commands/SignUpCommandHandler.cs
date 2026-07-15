@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Events;
 using Application.Abstractions.Messaging;
 using Application.Abstractions.Repositories;
+using Application.Common.Constants;
 using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 using Application.Exceptions;
@@ -42,9 +43,9 @@ namespace Application.Features.User.Commands
             };
             var resutl = await _authIdentityService.SignUp(user);
             if (!resutl) throw new AccountRegisterFailedException("Sign up unsuccess");
-            await _eventBus.PublishAsync(new CreateUserEvent(user.Id, user.UserName, user.Email, user.Age, user.CreatedAt, user.UpdatedAt));
-            await _authIdentityService.CreateRole("User");
-            await _authIdentityService.AddUserToRole(user, "User");
+            await _authIdentityService.CreateRole(Roles.User);
+            await _authIdentityService.AddUserToRole(user, Roles.User);
+            await _eventBus.PublishAsync(new UserCreatedEvent(user.Id, user.UserName, user.Email, user.Age, new[] { Roles.User }, user.CreatedAt, user.UpdatedAt));
             return resutl;
         }
     }

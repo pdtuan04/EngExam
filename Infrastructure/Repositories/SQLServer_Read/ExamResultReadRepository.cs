@@ -91,5 +91,17 @@ namespace Infrastructure.Repositories.SQLServer_Read
             _dbContext.AnswerHistories.AddRange(answerHistories);
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task<int> GetCompletedExamCountByMonthAsync(int year, int month, CancellationToken cancellationToken)
+        {
+            return await _dbContext.ExamResults
+                .CountAsync(er => er.CompleteAt.Year == year && er.CompleteAt.Month == month, cancellationToken);
+        }
+
+        public async Task<int> GetCompletedExamCountByYearAsync(int year, CancellationToken cancellationToken)
+        {
+            return await _dbContext.ExamResults
+                .CountAsync(er => er.CompleteAt.Year == year, cancellationToken);
+        }
     }
 }

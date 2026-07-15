@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.Features.User.Consumers
 {
-    public sealed class SendEmailNotificationConsumer : IConsumer<CreateUserEvent>, IConsumer<ForgotPasswordEvent>, IConsumer<ResetPasswordEvent>
+    public sealed class SendEmailNotificationConsumer : IConsumer<UserCreatedEvent>, IConsumer<ForgotPasswordEvent>, IConsumer<ResetPasswordEvent>
     {
         private readonly IEmailService _emailService;
         private readonly IFrontEndUrlProvider _frontEndUrlProvider;
@@ -20,7 +20,7 @@ namespace Application.Features.User.Consumers
             _emailService = emailService;
             _frontEndUrlProvider = frontEndUrlProvider;
         }
-        public async Task Consume(ConsumeContext<CreateUserEvent> context)
+        public async Task Consume(ConsumeContext<UserCreatedEvent> context)
         {
             var message = context.Message;
             await _emailService.SendMailAsync(message.Email, "Welcome to EngExam!", $"Hello {message.UserName}, welcome to our service! We're glad to have you on board.");

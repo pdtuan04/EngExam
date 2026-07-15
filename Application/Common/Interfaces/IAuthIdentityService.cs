@@ -17,13 +17,16 @@ namespace Application.Common.Interfaces
         Task<string?> ForgotPassword(string email);
         Task<string> JwtTokenGen(User user);
         Task<bool> ChangePassword(Guid userId, string currentPassword, string newPassword, string confirmNewPassword);
-        Task<SignInResponse> LoginByGoogle(string idToken);
+        Task<ExternalSignInResult> LoginByGoogle(string idToken);
         Task<string> GetRole(string roleName);
         Task<string> CreateRole(string roleName);
         Task<bool> AddUserToRole(User user, string roleName);
         Task<bool> ResetPassword(string email, string token, string newPassword);
         Task<User> GetByIdAsync(Guid id);
         Task<User> ChangeAvatar(Guid userId, string avatarUrl);
+        Task<IList<string>> GetUserRolesAsync(User user);
         Task Logout();
+        Task<User> GetUserByEmail(string email);
+        Task<bool> ExternalSignUp(User request);
     }
 }

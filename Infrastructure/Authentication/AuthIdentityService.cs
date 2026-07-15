@@ -24,15 +24,13 @@ namespace Infrastructure.Authentication
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
         private readonly IEmailService _emailService;
-        private readonly IBackgroundJobClient _backgroundJobClient;
         public AuthIdentityService(
             UserManager<User> userManager,
             SignInManager<User> signInManager,
             RoleManager<IdentityRole<Guid>> roleManager,
             IMapper mapper,
             IConfiguration configuration,
-            IEmailService emailService,
-            IBackgroundJobClient backgroundJobClient)
+            IEmailService emailService)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
@@ -40,7 +38,6 @@ namespace Infrastructure.Authentication
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _emailService = emailService;
-            _backgroundJobClient = backgroundJobClient;
         }
         public async Task<bool> CheckUserExist(string userName, string email)
         {
@@ -60,9 +57,6 @@ namespace Infrastructure.Authentication
                 Email = request.Email,
             };
             var result = await _userManager.CreateAsync(newUser, request.Password);
-            _backgroundJobClient.Enqueue<IEmailService>(
-                    c => c.SendMailAsync(newUser.Email, "Welcome", "Welcome to our website")
-                );
             return result.Succeeded;
         }
         public async Task<SignInResponse> SignIn(string username, string password, bool rememberme)
@@ -119,28 +113,10 @@ namespace Infrastructure.Authentication
             if (result.Succeeded) return true;
             return false;
         }
-        public async Task<SignInResponse> LoginByGoogle(string idToken)
+        public async Task<ExternalSignInResult> LoginByGoogle(string idToken)
         {
             var payload = await GoogleJsonWebSignature.ValidateAsync(idToken);
-            var userByName = await _userManager.FindByEmailAsync(payload.Email);
-
-            if (userByName == null)
-            {
-                var newUser = new User
-                {
-                    UserName = payload.Email,
-                    Email = payload.Email,
-                };
-                var result = await _userManager.CreateAsync(newUser);
-                _backgroundJobClient.Enqueue<IEmailService>(
-                    c => c.SendMailAsync(newUser.Email, "Welcome", "Welcome to our website")
-                );
-                userByName = newUser;
-            }
-            var token = await JwtTokenGen(_mapper.Map<Domain.Entity.User>(userByName));
-            var userRoles = await _userManager.GetRolesAsync(userByName);
-            var response = new SignInResponse(token, userByName.Id, userByName.UserName ?? "", userByName.Email ?? "", userRoles.ToList(), userByName.ImageUrl);
-            return response;
+            return new ExternalSignInResult(payload.Email);
         }
 
         public async Task Logout()
@@ -200,6 +176,30 @@ namespace Infrastructure.Authentication
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded) throw new Exception("Failed to update avatar");
             return _mapper.Map<Domain.Entity.User>(user);
+        }
+        public async Task<IList<string>> GetUserRolesAsync(Domain.Entity.User user)
+        {
+            var identityUser = await _userManager.FindByNameAsync(user.UserName) ?? throw new Exception("User not found");
+            return (await _userManager.GetRolesAsync(identityUser)).ToList();
+        }
+
+        public async Task<Domain.Entity.User> GetUserByEmail(string email)
+        {
+            var identityUser = await _userManager.FindByEmailAsync(email);
+            return _mapper.Map<Domain.Entity.User>(identityUser);
+        }
+
+        public async Task<bool> ExternalSignUp(Domain.Entity.User request)
+        {
+            var newUser = new User
+            {
+                Id = request.Id,
+                UserName = request.UserName,
+                Age = request.Age ?? 0,
+                Email = request.Email,
+            };
+            var result = await _userManager.CreateAsync(newUser);
+            return result.Succeeded;
         }
     }
 }

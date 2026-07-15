@@ -55,6 +55,7 @@ namespace Infrastructure.Repositories.SQLServer_Read.Mappers
             CreateMap<AnswerReadModel, Answer>().ReverseMap();
             CreateMap<ExamDetailReadModel, ExamDetail>().ReverseMap();
             CreateMap<PracticeDetailReadModel, PracticeDetail>().ReverseMap();
+            CreateMap<UserReadModel, User>().ReverseMap();
             //Map between Infrastructure and Application Models for reading
 
             //Exam result 
@@ -84,6 +85,7 @@ namespace Infrastructure.Repositories.SQLServer_Read.Mappers
             CreateMap<Course, CourseResponse>();
             CreateMap<ExamCategory, ExamCategoryResponse>();
             CreateMap<User, UserDetailResponse>();
+            CreateMap<Exam, ExamSuggestResponse>();
         }
     }
 }
