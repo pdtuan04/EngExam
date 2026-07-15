@@ -177,5 +177,17 @@ namespace EngExam.Controllers
                 message = "Get exam by id successfully"
             });
         }
+        [HttpGet("search-by-keyword")]
+        public async Task<IActionResult> GetExamByKeyWord([FromQuery] ExamByKeyWordRequest request)
+        {
+            var query = new GetExamByKeyWordQuery(request.KeyWord);
+            var result = await Sender.Send(query);
+            return Ok(new
+            {
+                success = true,
+                data = result,
+                message = "Get exam by keyword successfully"
+            });
+        }
     }
 }

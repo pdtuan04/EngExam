@@ -14,5 +14,8 @@ namespace Application.Abstractions.Repositories.Read
         Task<bool> IsEmailUniqueAsync(string email);
         Task<bool> IsUsernameUniqueAsync(string username);
         Task UpdateUserAvatarAsync(Guid userId, string avatarUrl, DateTime updatedAt);
+        Task<int> GetCreatedUserCountByMonthAsync(int year, int month, CancellationToken cancellationToken);
+        Task<int> GetCreatedUserCountByYearAsync(int year, CancellationToken cancellationToken);
+        Task UpsertAsync(UserReadModel user);
     }
 }

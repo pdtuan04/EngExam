@@ -22,6 +22,7 @@ namespace Application.Common.Caching
         public static string ExamByCategory(Guid categoryId) => $"exam:category:{categoryId}";
         public static string ExamDetail(Guid id) => $"exam:detail:{id}";
         public static string ExamToTake(Guid id) => $"exam:take:{id}";
+        public static string ExamSuggested(string name) => $"exam:suggested:{name}";
 
         // Exam Result
         public static string ExamResultDetail(Guid id) => $"examResult:detail:{id}";

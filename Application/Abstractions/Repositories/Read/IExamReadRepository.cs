@@ -22,5 +22,6 @@ namespace Application.Abstractions.Repositories.Read
         Task UpsertAsync(ExamReadModel exam);
         Task DeleteAsync(Guid id, DateTime deletedAt);
         Task UpsertExamDetailsAsync(IEnumerable<ExamDetailReadModel> details, Guid examId);
+        Task<IEnumerable<ExamSuggestResponse>> GetExamSuggestionsAsync(string keyword, CancellationToken cancellationToken);
     }
 }

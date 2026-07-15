@@ -1,4 +1,5 @@
-﻿using Application.Features.ExamResult.Queries;
+﻿using Application.Common.Constants;
+using Application.Features.ExamResult.Queries;
 using Application.Features.Practice.Queries;
 using EngExam.Extensions;
 using Microsoft.AspNetCore.Authorization;
@@ -37,6 +38,22 @@ namespace EngExam.Controllers
                 message = "Get user exam result paginated successfully",
                 data = result
             });
+        }
+        [Authorize(Roles = Roles.Admin)]
+        [HttpGet("count-by-month")]
+        public async Task<IActionResult> GetExamResultCountByMonth([FromQuery] int year, [FromQuery] int month, CancellationToken cancellationToken)
+        {
+            var query = new GetCompletedExamCountByMonthQuery(year, month);
+            var count = await Sender.Send(query, cancellationToken);
+            return Ok(count);
+        }
+        [Authorize(Roles = Roles.Admin)]
+        [HttpGet("count-by-year")]
+        public async Task<IActionResult> GetExamResultCountByYear([FromQuery] int year, CancellationToken cancellationToken)
+        {
+            var query = new GetCompletedExamCountByYearQuery(year);
+            var count = await Sender.Send(query, cancellationToken);
+            return Ok(count);
         }
     }
 }

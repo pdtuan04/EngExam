@@ -16,5 +16,7 @@ namespace Application.Abstractions.Repositories.Read
         Task<PaginationResponse<ExamResultResponse>> GetExamResultPaginatedByUserId(Guid userId, int pageIndex, int pageSize, CancellationToken cancellationToken);
         Task<ExamResultDetailResponse> GetDetailByIdAsync(Guid id);
         Task UpsertAsync(ExamResultReadModel examResultReadModel);
+        Task<int> GetCompletedExamCountByMonthAsync(int year, int month, CancellationToken cancellationToken);
+        Task<int> GetCompletedExamCountByYearAsync(int year, CancellationToken cancellationToken);
     }
 }

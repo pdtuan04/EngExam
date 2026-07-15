@@ -53,5 +53,49 @@ namespace Infrastructure.Repositories.SQLServer_Read
             }
             return;
         }
+
+        public async Task<int> GetCreatedUserCountByMonthAsync(int year, int month, CancellationToken cancellationToken)
+        {
+            return await _dbContext.Users.CountAsync(u => u.CreatedAt.Year == year && u.CreatedAt.Month == month, cancellationToken);
+        }
+
+        public async Task<int> GetCreatedUserCountByYearAsync(int year, CancellationToken cancellationToken)
+        {
+            return await _dbContext.Users.CountAsync(u => u.CreatedAt.Year == year, cancellationToken);
+        }
+
+        public async Task UpsertAsync(UserReadModel user)
+        {
+            var dbUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == user.Id);
+            if (dbUser == null)
+            {
+                dbUser = new User
+                {
+                    Id = user.Id,
+                    UserName = user.UserName,
+                    NormalizedEmail = user.Email.ToUpperInvariant(),
+                    NormalizedUserName = user.UserName.ToUpperInvariant(),
+                    Email = user.Email,
+                    ImageUrl = user.ImageUrl,
+                    CreatedAt = user.CreatedAt,
+                    UpdatedAt = user.UpdatedAt
+                };
+                _dbContext.Users.Add(dbUser);
+            }
+            else
+            {
+                if (dbUser.UpdatedAt < user.UpdatedAt)
+                {
+                    dbUser.UserName = user.UserName;
+                    dbUser.NormalizedUserName = user.UserName.ToUpperInvariant();
+                    dbUser.Email = user.Email;
+                    dbUser.NormalizedEmail = user.Email.ToUpperInvariant();
+                    dbUser.ImageUrl = user.ImageUrl;
+                    dbUser.UpdatedAt = user.UpdatedAt;
+                    _dbContext.Users.Update(dbUser);
+                }
+            }
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }

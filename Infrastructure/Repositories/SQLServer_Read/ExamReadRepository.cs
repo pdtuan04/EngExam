@@ -234,5 +234,13 @@ namespace Infrastructure.Repositories.SQLServer_Read
             await _dbContext.BulkInsertOrUpdateAsync(entities);
             
         }
+        public async Task<IEnumerable<ExamSuggestResponse>> GetExamSuggestionsAsync(string keyWord, CancellationToken cancellationToken)
+        {
+            var query = await _dbContext.Exams
+                .Where(e => e.Title.Contains(keyWord))
+                .Take(5)
+                .ToListAsync(cancellationToken);
+            return _mapper.Map<IEnumerable<ExamSuggestResponse>>(query);
+        }
     }
 }
