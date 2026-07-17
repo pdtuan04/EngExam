@@ -10,5 +10,6 @@ namespace Application.Common.Interfaces
     public interface IFileService
     {
         Task<UploadFileResponse> UploadImageAsync(Stream Content, string FileName, string ContentType);
+        Task<UploadFileResponse> UploadAudioAsync(Stream Content, string FileName, string ContentType);
     }
 }

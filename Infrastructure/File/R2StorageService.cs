@@ -12,7 +12,13 @@ namespace Infrastructure.File
     {
         public Task<UploadFileResponse> UploadImageAsync(Stream Content, string FileName, string ContentType)
         {
-            //not implemented yet, we will implement it when we need to use it
+            //not implemented yet, i will implement it when i need to use it
+            throw new NotImplementedException();
+        }
+
+        public Task<UploadFileResponse> UploadAudioAsync(Stream Content, string FileName, string ContentType)
+        {
+            //not implemented yet, i will implement it when i need to use it
             throw new NotImplementedException();
         }
     }

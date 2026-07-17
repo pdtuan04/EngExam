@@ -31,6 +31,24 @@ namespace EngExam.Controllers
                 message = "Upload image successfully"
             });
         }
+        [Authorize]
+        [HttpPost("upload-audio")]
+        public async Task<IActionResult> UploadAudio(IFormFile file)
+        {
+            var request = new UploadAudioRequest(
+                file.OpenReadStream(),
+                file.FileName,
+                file.ContentType
+            );
+            var command = new UploadAudioCommand(request.Content, request.FileName, request.ContentType);
+            var result = await Sender.Send(command);
+            return Ok(new
+            {
+                success = true,
+                data = result,
+                message = "Upload audio successfully"
+            });
+        }
         [HttpPost("upload-videos")]
         public async Task<IActionResult> UploadVideos(IFormFile file)
         {

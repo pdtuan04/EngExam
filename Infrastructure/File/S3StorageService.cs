@@ -41,6 +41,27 @@ namespace Infrastructure.File
             }
             throw new Exception("Failed to upload image to S3");
         }
+        public async Task<UploadFileResponse> UploadAudioAsync(Stream Content, string FileName, string ContentType)
+        {
+            var key = $"audio/{Guid.NewGuid()}_{FileName}";
+            var putObjectRequest = new PutObjectRequest
+            {
+                BucketName = _s3Options.BucketName,
+                Key = key,
+                InputStream = Content,
+                ContentType = ContentType,
+                Metadata =
+                {
+                    ["file-name"] = FileName
+                }
+            };
+            var response = await _amazonS3.PutObjectAsync(putObjectRequest);
+            if(response.HttpStatusCode == HttpStatusCode.OK)
+            {
+                return new UploadFileResponse(key, $"{_s3Options.CloudFrontDomain}/{key}");
+            }
+            throw new Exception("Failed to upload audio to S3");
+        }
     }
     public sealed class S3Options
     {

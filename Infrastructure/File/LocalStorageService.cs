@@ -38,7 +38,24 @@ namespace Infrastructure.FileServices
                 }
                 return new UploadFileResponse($"images/{fileName}", $"{_localStorageOptions.StoragePath}/{fileName}");
         }
+
+        public async Task<UploadFileResponse> UploadAudioAsync(Stream Content, string FileName, string ContentType)
+        {
+            var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", _localStorageOptions.StoragePath);
+            if (!Directory.Exists(rootPath))
+            {
+                Directory.CreateDirectory(rootPath);
+            }
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(FileName)}";
+            var path = Path.Combine(rootPath, fileName);
+            using (var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write))
+            {
+                await Content.CopyToAsync(fileStream);
+            }
+            return new UploadFileResponse($"audio/{fileName}", $"{_localStorageOptions.StoragePath}/{fileName}");
+        }
     }
+
     public sealed class LocalStorageOptions
     {
         public string StoragePath { get; set; } = Path.Combine("images");
