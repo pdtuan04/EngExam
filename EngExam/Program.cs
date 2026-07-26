@@ -71,7 +71,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy =>
                       {
-                          policy.WithOrigins("http://localhost:5175");
+                          policy.WithOrigins("http://localhost:5175", "https://engexam.site");
                           //policy.AllowAnyOrigin();
                           policy.AllowAnyHeader();
                           policy.AllowCredentials();
@@ -105,7 +105,7 @@ RegisterServicesForApp(builder.Configuration, builder.Services);
 builder.Services.AddHttpClient();
 var app = builder.Build();
 app.UseStaticFiles();
-app.UseApplyMigrations();
+
 // Configure the HTTP request pipeline.
 app.UseCors(MyAllowSpecificOrigins);
 
@@ -113,6 +113,7 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.UseSwagger();
+    app.UseApplyMigrations();
     app.UseSwaggerUI(options =>
     {
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "api");

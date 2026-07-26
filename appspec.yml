@@ -1,8 +1,5 @@
 version: 0.0
 os: linux
-files:
-  - source: /aws/compose.yaml
-    destination: /usr/local/codedeployresources/
 hooks:
   ApplicationStop:
     - location: aws/scripts/application-stop.sh
