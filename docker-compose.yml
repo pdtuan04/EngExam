@@ -20,8 +20,8 @@ services:
         - action: rebuild
           path: .
     environment:
-        - ASPNETCORE_ENVIRONMENT=Production
-        - ASPNETCORE_URLS=http://+:8080
+        - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+        - ASPNETCORE_URLS=${ASPNETCORE_URLS}
         - ConnectionStrings__EngExamConnection=Server=${DB_SERVER};Database=${DB_NAME_WRITE};User Id=${DB_USER};Password=${DB_PASS};Encrypt=False;TrustServerCertificate=True;
         - ConnectionStrings__EngExamReadDBConnection=Server=${DB_SERVER};Database=${DB_NAME_READ};User Id=${DB_USER};Password=${DB_PASS};Encrypt=False;TrustServerCertificate=True;
         - ConnectionStrings__RedisCache=${REDIS_CONNECTION}
@@ -56,10 +56,10 @@ services:
       - "1433:1433"
     restart: always
     environment:
-      MSSQL_SA_PASSWORD: "111AAAa@"
+      MSSQL_SA_PASSWORD: ${DB_PASS}
       ACCEPT_EULA: "Y"
     healthcheck:
-        test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P '111AAAa@' -C -Q 'SELECT 1' || exit 1"]
+        test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P '${DB_PASS}' -C -Q 'SELECT 1' || exit 1"]
         retries: 5
         interval: 10s
         timeout: 3s
@@ -94,8 +94,8 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_USER: ${MQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${MQ_PASS}
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
       interval: 10s

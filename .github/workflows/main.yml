@@ -84,4 +84,5 @@ jobs:
             --application-name ${{ secrets.AWS_APPLICATION_NAME }} \
             --deployment-group-name ${{ secrets.AWS_DEPLOYMENT_GROUP_NAME }} \
             --s3-location bucket=${{ secrets.AWS_S3_BUCKET_NAME }},bundleType=zip,key=engexam/deploy-artifact.zip \
-            --ignore-application-stop-failures
+            --ignore-application-stop-failures \
+            --file-exists-behavior OVERWRITE
