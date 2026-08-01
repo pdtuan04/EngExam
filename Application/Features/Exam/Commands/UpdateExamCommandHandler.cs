@@ -69,6 +69,11 @@ namespace Application.Features.Exam.Commands
                 };
                 exam.AddExamDetail(newQuestion, q.Score);
             }
+            var totalScore = exam.ExamDetail.Sum(ed => ed.Score);
+            if (totalScore != 100)
+            {
+                throw new InvalidTotalScoreException(totalScore);
+            }
             await _unitOfWork.ExamRepository.Update(exam);
             await _eventBus.PublishAsync(new UpdateExamEvent(
                 Exam: new ExamReadModel

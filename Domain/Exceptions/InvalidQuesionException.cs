@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Domain.Exceptions
 {
-    public class DuplicateWordException : DomainException
+    public sealed class InvalidQuestionException : DomainException
     {
-        public DuplicateWordException() : base("Duplicate word found.")
+        public InvalidQuestionException(string message) : base(message)
         {
         }
     }

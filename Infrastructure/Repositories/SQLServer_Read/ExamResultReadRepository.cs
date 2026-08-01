@@ -67,6 +67,7 @@ namespace Infrastructure.Repositories.SQLServer_Read
                                     er.Id,
                                     er.CompleteAt,
                                     er.Score,
+                                    er.TotalScore,
                                     _dbContext.AnswerHistories
                                         .Where(ua => ua.ExamResultId == er.Id)
                                         .Select(ua => new UserAnswerResponse(

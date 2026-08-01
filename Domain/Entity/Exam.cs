@@ -4,11 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Domain.Common;
+using Domain.Exceptions;
 
 namespace Domain.Entity
 {
     public class Exam: BaseEntity<Guid>, ISoftDeletable
     {
+        private List<double> ScoreValue = new List<double>() {1.0,2.0, 5.0 , 10.0 };
         public required string Title { get; set; }
         public string? Description { get; set; }
         private int _durationInMinutes;
@@ -37,12 +39,16 @@ namespace Domain.Entity
         }
         public void AddExamDetail(Question question, double score)
         {
-            if(ExamDetail.Any(q => q.QuestionId == question.Id)) 
-                throw new Exception($"Question {question.Id} already exists in the exam.");
+            if(ExamDetail.Any(q => q.QuestionId == question.Id))
+                throw new InvalidQuestionException($"Question {question.Id} already exists in the exam.");
+            if(!ScoreValue.Contains(score))
+                throw new InvalidScoreValueException($"Invalid score value. Please use one of the allowed scores: {string.Join(", ", ScoreValue)}.");
             ExamDetail.Add(new ExamDetail() { ExamId = this.Id, QuestionId = question.Id, Score = score ,Question = question,});
         }
         public void UpdateExamDetail(Question question, double score)
         {
+            if(!ScoreValue.Contains(score))
+                throw new InvalidScoreValueException($"Invalid score value. Please use one of the allowed scores: {string.Join(", ", ScoreValue)}.");
             var examDetail = ExamDetail.FirstOrDefault(q => q.QuestionId == question.Id);
             if (examDetail == null)
                 ExamDetail.Add(new ExamDetail() { ExamId = this.Id, QuestionId = question.Id, Score = score, Question = question });

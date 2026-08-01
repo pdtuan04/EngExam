@@ -2,6 +2,7 @@
 
 using Application.Common.Exceptions;
 using Application.Common.Interfaces;
+using Application.Exceptions;
 using Application.Models.Authen;
 using AutoMapper;
 using Google.Apis.Auth;
@@ -63,10 +64,10 @@ namespace Infrastructure.Authentication
         {
             var userByName = await _userManager.FindByNameAsync(username);
 
-            if (userByName == null) throw new Exception("Ko tim thay");
+            if (userByName == null) throw new AccountLoginFailedException();
 
             var result = await _userManager.CheckPasswordAsync(userByName, password);
-            if (!result) throw new Exception("Sai tai khoan hoac mat khau");
+            if (!result) throw new AccountLoginFailedException();
             var token = await JwtTokenGen(_mapper.Map<Domain.Entity.User>(userByName));
             var userRoles = await _userManager.GetRolesAsync(userByName);
             var response = new SignInResponse(token, userByName.Id, userByName.UserName ?? "", userByName.Email ?? "", userRoles.ToList(), userByName.ImageUrl);
@@ -108,7 +109,7 @@ namespace Infrastructure.Authentication
         {
             if (newPassword != confirmNewPassword) throw new BadRequestException("New password and confirm password do not match");
             var user = await _userManager.FindByIdAsync(userId.ToString());
-            if (user == null) throw new Exception("User not found");
+            if (user == null) throw new NotFoundException();
             var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
             if (result.Succeeded) return true;
             return false;
@@ -137,7 +138,7 @@ namespace Infrastructure.Authentication
         }
         public async Task<bool> AddUserToRole(Domain.Entity.User request, string roleName)
         {
-            var user = await _userManager.FindByNameAsync(request.UserName) ?? throw new Exception("User not found");// tu tu tinh :))
+            var user = await _userManager.FindByNameAsync(request.UserName) ?? throw new NotFoundException("User", request.Id);
             var result = await _userManager.AddToRoleAsync(user, roleName);
             return result.Succeeded;
         }
@@ -145,16 +146,16 @@ namespace Infrastructure.Authentication
         public async Task<bool> ResetPassword(string email, string token, string newPassword)
         {
             var user = await _userManager.FindByEmailAsync(email);
-            if (user == null) throw new Exception("User not found");
+            if (user == null) throw new NotFoundException("User", email);
             var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
-            if (!result.Succeeded) throw new Exception("Failed to reset password");
+            if (!result.Succeeded) throw new BusinessException("Failed to reset password", 400);
             return true;
         }
 
         public async Task<Domain.Entity.User> GetByIdAsync(Guid id)
         {
             var user = await _userManager.FindByIdAsync(id.ToString());
-            if (user == null) throw new Exception("User not found");
+            if (user == null) throw new NotFoundException("User", id);
             return _mapper.Map<Domain.Entity.User>(user);
         }
 
@@ -174,12 +175,12 @@ namespace Infrastructure.Authentication
             user.ImageUrl = avatarUrl;
             user.UpdatedAt = now;
             var result = await _userManager.UpdateAsync(user);
-            if (!result.Succeeded) throw new Exception("Failed to update avatar");
+            if (!result.Succeeded) throw new BusinessException("Failed to update avatar", 400);
             return _mapper.Map<Domain.Entity.User>(user);
         }
         public async Task<IList<string>> GetUserRolesAsync(Domain.Entity.User user)
         {
-            var identityUser = await _userManager.FindByNameAsync(user.UserName) ?? throw new Exception("User not found");
+            var identityUser = await _userManager.FindByNameAsync(user.UserName) ?? throw new NotFoundException("User", user.Id);
             return (await _userManager.GetRolesAsync(identityUser)).ToList();
         }
 

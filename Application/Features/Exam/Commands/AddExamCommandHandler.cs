@@ -29,6 +29,11 @@ namespace Application.Features.Exam.Commands
         public async Task<ExamDetailResponse> Handle(AddExamCommand request, CancellationToken cancellationToken)
         {
             var now = DateTime.UtcNow;
+            var totalScore = request.Questions.Sum(q => q.Score);
+            if(totalScore != 100)
+            {
+                throw new InvalidTotalScoreException(totalScore);
+            }
             var exam = new Domain.Entity.Exam
             {
                 Id = Guid.NewGuid(),

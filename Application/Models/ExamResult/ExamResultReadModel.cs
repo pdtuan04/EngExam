@@ -14,6 +14,7 @@ namespace Application.Models.ExamResult
         int DurationInMinutes,
         DateTime CompleteAt,
         double Score,
+        double TotalScore,
         Guid ExamId,
         Guid UserId,
         IReadOnlyCollection<AnswerHistoryReadModel> AnswerHistories

@@ -10,6 +10,7 @@ namespace Application.Models.ExamResult
     public sealed record ExamResultDetailResponse(
         Guid Id,
         DateTime CompleteAt,
+        double Score,
         double TotalScore,
         IReadOnlyCollection<UserAnswerResponse> UserAnswers)
     {

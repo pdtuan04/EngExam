@@ -33,6 +33,7 @@ namespace Application.Features.ExamResult.Commands
         {
             var now = DateTime.UtcNow;
             var exam = await _unitOfWork.ExamRepository.GetExamToTake(request.ExamId) ?? throw new NotFoundException("Exam", request.ExamId);
+            var totalScore = exam.ExamDetail.Sum(ed => ed.Score);
             var dicQuestion = exam.ExamDetail.ToDictionary(ed => ed.QuestionId, ed => ed.Question);
             var score = await ScoreCalculation(request.UserAnswers, exam.ExamDetail);
             var histories = await HistorySave(request.UserAnswers, exam.ExamDetail, exam.Id);
@@ -44,6 +45,7 @@ namespace Application.Features.ExamResult.Commands
                 UserId = request.UserId,
                 Score = score,
                 CompleteAt = now,
+                TotalScore = totalScore,
                 AnswerHistory = histories
             };
             await _unitOfWork.ExamResultRepository.AddAsync(examResult);
@@ -69,6 +71,7 @@ namespace Application.Features.ExamResult.Commands
                         exam.DurationInMinutes,
                         examResult.CompleteAt,
                         examResult.Score,
+                        examResult.TotalScore,
                         examResult.ExamId,
                         examResult.UserId,
                         answerHistories
@@ -77,7 +80,8 @@ namespace Application.Features.ExamResult.Commands
             (
                 Id: examResult.Id,
                 CompleteAt: examResult.CompleteAt,
-                TotalScore: examResult.Score,
+                Score: examResult.Score,
+                TotalScore: examResult.TotalScore,
                 UserAnswers: exam
                             .ExamDetail
                             .Select(ed =>
