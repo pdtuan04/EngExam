@@ -25,6 +25,7 @@ namespace Domain.Entity
                 _score = value;
             }
         }
+        public required double TotalScore { get; set; }
         public required ICollection<AnswerHistory> AnswerHistory { get; set; }
         public required Guid UserId { get; set; }
     }

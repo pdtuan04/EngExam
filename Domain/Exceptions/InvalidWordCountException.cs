@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace Domain.Exceptions
 {
-    public class InvalidWordCountException : Exception
+    public class InvalidWordCountException : DomainException
     {
-
+        public InvalidWordCountException() : base("Invalid word count.")
+        {
+        }
     }
 }

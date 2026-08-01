@@ -1052,6 +1052,9 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<double>("TotalScore")
+                        .HasColumnType("float");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 

@@ -16,6 +16,7 @@ namespace Infrastructure.Repositories.SQLServer_Read.DataContext
         public required int DurationInMinutes { get; set; }
         public required DateTime CompleteAt { get; set; }
         public required double Score { get; set; } = 0;
+        public required double TotalScore { get; set; }
         public required Guid ExamId { get; set; }
         public required Guid UserId { get; set; }
     }
