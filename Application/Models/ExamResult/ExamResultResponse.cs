@@ -9,5 +9,6 @@ namespace Application.Models.ExamResult
     public sealed record ExamResultResponse(
         Guid Id,
         DateTime CompleteAt,
-        double Score);
+        double Score,
+        double TotalScore);
 }

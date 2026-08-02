@@ -51,7 +51,8 @@ namespace Infrastructure.Repositories.SQLServer_Read
         {
             var query = _dbContext.ExamResults
                                 .AsNoTracking()
-                                .Where(x => x.UserId == userId);
+                                .Where(x => x.UserId == userId)
+                                .OrderByDescending(e => e.CompleteAt);
             var projectedQuery = query.ProjectTo<ExamResultResponse>(_mapper.ConfigurationProvider);
             var queryExecute = await PaginationDb<ExamResultResponse>.ToPagedList(projectedQuery, pageIndex, pageSize);
 

@@ -45,6 +45,7 @@ namespace Infrastructure.Repositories.SQLServer_Read.DataContext
             modelBuilder.Entity<Question>().HasQueryFilter(x => !x.IsDeleted);
             modelBuilder.Entity<Comment>().HasQueryFilter(x => !x.IsDeleted);
             modelBuilder.Entity<Topic>().HasQueryFilter(x => !x.IsDeleted);
+            modelBuilder.Entity<FlashCard>().HasQueryFilter(x => !x.IsDeleted);
             modelBuilder.Entity<ExamDetail>().HasKey(ed => new { ed.ExamId, ed.QuestionId });
             modelBuilder.Entity<PracticeDetail>().HasKey(pd => new { pd.PracticeId, pd.QuestionId });
             // Seed data when migration

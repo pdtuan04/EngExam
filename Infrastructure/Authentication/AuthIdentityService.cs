@@ -53,6 +53,7 @@ namespace Infrastructure.Authentication
         {
             var newUser = new User
             {
+                Id = request.Id,
                 UserName = request.UserName,
                 Age = request.Age ?? 0,
                 Email = request.Email,

@@ -33,7 +33,7 @@ namespace Application.Features.User.Commands
 
             var user = new Domain.Entity.User
             {
-                Id = Guid.NewGuid(),
+                Id = Guid.CreateVersion7(),
                 UserName = request.UserName,
                 Password = request.Password,
                 Age = request.Age,
