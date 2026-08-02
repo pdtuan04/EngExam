@@ -95,5 +95,12 @@ namespace EngExam.Controllers
             var result = await Sender.Send(command);
             return Ok(result);
         }
+        [Authorize]
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            Response.Cookies.Delete("jwt");
+            return Ok("Logout successful");
+        }
     }
 }

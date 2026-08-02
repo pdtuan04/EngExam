@@ -60,8 +60,8 @@ namespace EngExam.Controllers
             return Ok(new
             {
                 success = true,
-                data = "CICD pipeline is working fine 1",
-                message = "CICD pipeline test successful 1"
+                data = "CICD pipeline is working fine 2",
+                message = "CICD pipeline test successful 2"
             });
         }
     }

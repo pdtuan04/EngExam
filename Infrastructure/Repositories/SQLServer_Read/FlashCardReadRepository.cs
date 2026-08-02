@@ -36,7 +36,9 @@ namespace Infrastructure.Repositories.SQLServer_Read
                 }
                 flashCard.IsDeleted = true;
                 flashCard.UpdatedAt = deletedAt;
-                await _dbContext.SaveChangesAsync();
+                _dbContext.FlashCards.Update(flashCard);
+                var affected = await _dbContext.SaveChangesAsync();
+                
             }
         }
 
