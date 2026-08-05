@@ -26,6 +26,7 @@
     <Folder Include="Features\Question\Consumers\" />
     <Folder Include="Features\Question\Commands\" />
     <Folder Include="Features\Question\Queries\" />
+    <Folder Include="Features\WordGuessing\GameSession\" />
   </ItemGroup>
 
   <ItemGroup>

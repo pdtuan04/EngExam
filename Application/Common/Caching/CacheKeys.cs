@@ -37,6 +37,7 @@ namespace Application.Common.Caching
 
         //User
         public static string UserDetail(Guid id) => $"user:detail:{id}";
+        public static string OnlineUsers => "all:online";
         //Auth
         public static string JwtToken(string token) => $"jwt:{token}";
 

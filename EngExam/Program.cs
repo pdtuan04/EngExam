@@ -99,6 +99,7 @@ builder.Services.AddInfrastructure();
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 RegisterServicesForApp(builder.Configuration, builder.Services);
 
 
@@ -123,7 +124,7 @@ app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapHub<OnlineCounter>("/onlineCounter");
+app.MapHub<OnlineCounterHub>("/onlineCounter");
 app.MapControllers();
 
 app.Run();
@@ -458,6 +459,11 @@ void InitializeCache(ConfigurationManager configuration, IServiceCollection serv
                 options.Configuration = configuration.GetConnectionString(cacheOptions.RedisOptions.ConnectionStringName);
             });
             services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(configuration.GetConnectionString(cacheOptions.RedisOptions.ConnectionStringName)));
+            services.AddSignalR()
+            .AddStackExchangeRedis(configuration.GetConnectionString(cacheOptions.RedisOptions.ConnectionStringName), options =>
+            {
+                options.Configuration.ChannelPrefix = "WordGuessing";
+            });
             break;
         default:
             throw new NotSupportedException($"Cache type {cacheOptions.CacheType} is not supported.");
