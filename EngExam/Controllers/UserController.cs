@@ -23,8 +23,6 @@ namespace EngExam.Controllers
             var userId = ClaimsExtensions.GetUserId(User);
             var query = new GetUserByIdQuery(userId);
             var result = await Sender.Send(query);
-            if(result == null)
-                return NotFound();
             return Ok(result);
         }
         [Authorize]

@@ -12,7 +12,6 @@ namespace Domain.Entity
     {
         public required string Title { get; set; }
         public string? Description { get; set; }
-        public DateTime CreatedAt { get; set; }
         public required Guid UserId { get; init; }
         private readonly List<Word> _words = [];
         public ICollection<Word> Words
