@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Entity
+namespace Domain.Enums
 {
-    public class GameRoom
+    public enum WordGuessingStatus
     {
-        public Guid Id { get; set; }
+        Waiting,
+        InProgress,
+        Completed
     }
 }
