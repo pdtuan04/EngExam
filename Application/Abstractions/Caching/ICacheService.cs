@@ -14,6 +14,7 @@ namespace Application.Abstractions.Caching
             TimeSpan? expiration = null,
             CancellationToken cancellationToken = default
         );
+        Task<T> GetAsync<T>(string cacheKey);
         Task RemoveCacheAsync(string cacheKey, CancellationToken cancellationToken = default);
     }
 }

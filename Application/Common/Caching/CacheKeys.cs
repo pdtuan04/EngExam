@@ -46,5 +46,9 @@ namespace Application.Common.Caching
         //FlashCard
         public static string FlashCardsByUser(Guid userId) => $"flashCards:user:{userId}";
         public static string FlashCardDetail(Guid id) => $"flashCard:detail:{id}";
+
+        //Waiting Rooms
+        public static string WaitingRooms => "waiting:rooms";
+        public static string GuessingRoom(string code) => $"guessingroom:room:{code}";
     }
 }
