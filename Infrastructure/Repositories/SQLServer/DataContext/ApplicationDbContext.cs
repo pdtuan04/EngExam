@@ -47,6 +47,7 @@ namespace Infrastructure.Repositories.SQLServer.DataContext
         public DbSet<Course> Courses { get; set; }
         public DbSet<Word> Words { get; set; }
         public DbSet<FlashCard> FlashCards { get; set; }
+        public DbSet<Vocabulary> Vocabularies { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -60,6 +61,7 @@ namespace Infrastructure.Repositories.SQLServer.DataContext
             modelBuilder.Entity<Practice>().HasQueryFilter(x => !x.IsDeleted);
             modelBuilder.Entity<Question>().HasQueryFilter(x => !x.IsDeleted);
             modelBuilder.Entity<Topic>().HasQueryFilter(x => !x.IsDeleted);
+            modelBuilder.Entity<Vocabulary>().HasQueryFilter(x => !x.IsDeleted);
 
             modelBuilder.Entity<ExamDetail>()
                 .HasKey(ed => new { ed.ExamId, ed.QuestionId });

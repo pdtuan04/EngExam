@@ -50,5 +50,6 @@ namespace Application.Common.Caching
         //Waiting Rooms
         public static string WaitingRooms => "waiting:rooms";
         public static string GuessingRoom(string code) => $"guessingroom:room:{code}";
+        public static string GuessingRoomByPlayer(string connectionId) => $"guessingroom:player:{connectionId}";
     }
 }
