@@ -26,6 +26,17 @@ namespace Infrastructure.Cache
             };
         }
 
+        public async Task<T?> GetAsync<T>(string cacheKey)
+        {
+            var cacheResult = await _cache.GetStringAsync(cacheKey);
+            if (cacheResult != null)
+            {
+                T result = JsonSerializer.Deserialize<T>(cacheResult, serializerOptions);
+                return result;
+            }
+            return default(T);
+        }
+
         public async Task<T> GetOrCreateAsync<T>(string cacheKey, Func<CancellationToken, Task<T>> factory, TimeSpan? expiration = null, CancellationToken cancellationToken = default)
         {
             var cacheResult = await _cache.GetStringAsync(cacheKey, cancellationToken);
@@ -46,6 +57,16 @@ namespace Infrastructure.Cache
         public async Task RemoveCacheAsync(string cacheKey, CancellationToken cancellationToken = default)
         {
             await _cache.RemoveAsync(cacheKey, cancellationToken);
+        }
+
+        public async Task SetAsync<T>(string cacheKey, T value, TimeSpan? expiration = null, CancellationToken cancellationToken = default)
+        {
+            var options = expiration.HasValue ? new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = expiration.Value,
+            } : _cacheEntryOptions;
+            await _cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(value, serializerOptions), options, cancellationToken);
+            return;
         }
     }
 }

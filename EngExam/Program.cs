@@ -125,6 +125,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapHub<OnlineCounterHub>("/onlineCounter");
+app.MapHub<WordGuessingHub>("/wordGuessing").RequireAuthorization();
 app.MapControllers();
 
 app.Run();
@@ -298,6 +299,9 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
         services.AddTransient<IUserReadRepository>(service => new UserReadRepository(
             service.GetRequiredService<ApplicationDbReadContext>(),
             service.GetRequiredService<IMapper>()));
+        services.AddTransient<IVocabularyReadRepository>(service => new VocabularyReadRepository(
+            service.GetRequiredService<ApplicationDbReadContext>(),
+            service.GetRequiredService<IMapper>()));
     }
 
     //storage
@@ -459,6 +463,11 @@ void InitializeCache(ConfigurationManager configuration, IServiceCollection serv
                 options.Configuration = configuration.GetConnectionString(cacheOptions.RedisOptions.ConnectionStringName);
             });
             services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(configuration.GetConnectionString(cacheOptions.RedisOptions.ConnectionStringName)));
+            services.AddSingleton<IDatabase>(sp =>
+            {
+                var multiplexer = sp.GetRequiredService<IConnectionMultiplexer>();
+                return multiplexer.GetDatabase();
+            });
             services.AddSignalR()
             .AddStackExchangeRedis(configuration.GetConnectionString(cacheOptions.RedisOptions.ConnectionStringName), options =>
             {

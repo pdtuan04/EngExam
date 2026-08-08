@@ -14,6 +14,8 @@ namespace Domain.Entity
         public required string RoomCode { get; init; }
         public string? Player1ConnectionId { get; set; }
         public string? Player2ConnectionId { get; set; }
+        public required int Player1Score { get; set; } = 0;
+        public required int Player2Score { get; set; } = 0;
         public IList<Vocabulary> Words { get; private set; } = [];
         public required int CurrentWordIndex { get; set; } = 0;
         public WordGuessingStatus Status { get; set; } = WordGuessingStatus.Waiting;
@@ -44,9 +46,18 @@ namespace Domain.Entity
         }
         public void MoveToNextWord()
         {
-            if(CurrentWordIndex >= Words.Count - 1)
-                return;
             CurrentWordIndex++;
+        }
+        public void UpdatePlayerScore(string connectionId)
+        {
+            if (connectionId == Player1ConnectionId)
+            {
+                Player1Score ++;
+            }
+            else if (connectionId == Player2ConnectionId)
+            {
+                Player2Score ++;
+            }
         }
     }
 }

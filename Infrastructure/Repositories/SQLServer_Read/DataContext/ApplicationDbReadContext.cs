@@ -33,6 +33,7 @@ namespace Infrastructure.Repositories.SQLServer_Read.DataContext
         public DbSet<Word> Words { get; set; }
         public DbSet<FlashCard> FlashCards { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Vocabulary> Vocabularies { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -48,6 +49,7 @@ namespace Infrastructure.Repositories.SQLServer_Read.DataContext
             modelBuilder.Entity<FlashCard>().HasQueryFilter(x => !x.IsDeleted);
             modelBuilder.Entity<ExamDetail>().HasKey(ed => new { ed.ExamId, ed.QuestionId });
             modelBuilder.Entity<PracticeDetail>().HasKey(pd => new { pd.PracticeId, pd.QuestionId });
+            modelBuilder.Entity<Vocabulary>().HasQueryFilter(x => !x.IsDeleted);
             // Seed data when migration
             modelBuilder.SeedingData();
         }
