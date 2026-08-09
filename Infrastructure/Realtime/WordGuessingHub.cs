@@ -1,8 +1,6 @@
 ﻿using Application.Abstractions.Caching;
-using Application.Abstractions.Repositories.Read;
 using Application.Common.Caching;
 using Application.Common.Helpers;
-using Application.Common.Interfaces;
 using Application.Features.Vocabulary.Queries;
 using Application.Models.Vocabulary;
 using Domain.Entity;
@@ -10,11 +8,14 @@ using Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using OpenAI.Assistants;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Realtime
@@ -34,6 +35,8 @@ namespace Infrastructure.Realtime
         public override async Task OnConnectedAsync()
         {
             var connectionId = Context.ConnectionId;
+            var userId = Context.User?.FindFirst("nameid")?.Value;
+            var playerId = Guid.TryParse(userId, out var guid) ? guid : Guid.Empty;
             WordGuessingRoom guessingRoom = null;
             bool hasJoinedRoom = false;
             while (true)
@@ -42,12 +45,15 @@ namespace Infrastructure.Realtime
                 if (!waitingRoomCode.HasValue)
                     break;
                 string roomCode = waitingRoomCode.ToString();
-                guessingRoom = await _cacheService.GetAsync<WordGuessingRoom>(CacheKeys.GuessingRoom(roomCode));
+                var data = await _database.HashGetAsync(CacheKeys.GuessingRoom(roomCode), "Data");
+                if (!data.HasValue) continue;
+                guessingRoom = JsonSerializer.Deserialize<WordGuessingRoom>(data);
                 if (guessingRoom == null || guessingRoom.Player1ConnectionId == null)
                 {
                     continue;
                 }
                 guessingRoom.Player2ConnectionId = connectionId;
+                guessingRoom.Player2UserId = playerId;
                 guessingRoom.UpdateRoomStatus(WordGuessingStatus.InProgress);
                 var query = new GetRandomWordsQuery(10);
                 var words = await _sender.Send(query);
@@ -62,7 +68,11 @@ namespace Infrastructure.Realtime
                 }).ToList());
                 //set the room code for player 2
                 await _cacheService.SetAsync(CacheKeys.GuessingRoomByPlayer(connectionId), roomCode, TimeSpan.FromMinutes(30));
-                await _cacheService.SetAsync(CacheKeys.GuessingRoom(roomCode), guessingRoom, TimeSpan.FromMinutes(10));
+                await _database.HashSetAsync(CacheKeys.GuessingRoom(roomCode), new HashEntry[]
+                {
+                    new("Version", 1),
+                    new("Data", JsonSerializer.Serialize(guessingRoom))
+                });
                 hasJoinedRoom = true;
                 break;
             }
@@ -73,6 +83,7 @@ namespace Infrastructure.Realtime
                 {
                     Id = Guid.CreateVersion7(),
                     Player1ConnectionId = connectionId,
+                    Player1UserId = playerId,
                     RoomCode = newRoomCode,
                     CurrentWordIndex = 0,
                     Status = WordGuessingStatus.Waiting,
@@ -80,7 +91,11 @@ namespace Infrastructure.Realtime
                     Player2Score = 0,
                 };
                 await _database.ListLeftPushAsync(CacheKeys.WaitingRooms, newRoomCode);
-                await _cacheService.SetAsync(CacheKeys.GuessingRoom(newRoomCode), guessingRoom, TimeSpan.FromMinutes(30));
+                await _database.HashSetAsync(CacheKeys.GuessingRoom(newRoomCode), new HashEntry[]
+                {
+                    new("Version", 1),
+                    new("Data", JsonSerializer.Serialize(guessingRoom))
+                });
                 await _cacheService.SetAsync(CacheKeys.GuessingRoomByPlayer(connectionId), newRoomCode, TimeSpan.FromMinutes(30));
             }
             await Groups.AddToGroupAsync(connectionId, guessingRoom.RoomCode);
@@ -96,7 +111,11 @@ namespace Infrastructure.Realtime
                     currentWord.Meaning,
                     currentWord.PronunciationAudioUrl,
                     currentWord.PartOfSpeech));
-                await _cacheService.SetAsync(CacheKeys.GuessingRoom(guessingRoom.RoomCode), guessingRoom, TimeSpan.FromMinutes(10));
+                await _database.HashSetAsync(CacheKeys.GuessingRoom(guessingRoom.RoomCode), new HashEntry[]
+                {
+                    new("Version", 1),
+                    new("Data", JsonSerializer.Serialize(guessingRoom))
+                });
             }
             await base.OnConnectedAsync();
         }
@@ -108,19 +127,47 @@ namespace Infrastructure.Realtime
             {
                 await Clients.Group(guessingRoomCode).SendAsync("GameStatus", "A player has disconnected. The game will end.");
                 await _cacheService.RemoveCacheAsync(CacheKeys.GuessingRoomByPlayer(connectionId));
+                await _database.KeyDeleteAsync(CacheKeys.GuessingRoom(guessingRoomCode));
             }
             await base.OnDisconnectedAsync(exception);
         }
         public async Task SubmitAnswerAsync(string user, string answer)
         {
             var connectionId = Context.ConnectionId;
+            var userId = Context.User?.FindFirst("nameid")?.Value;
+            var playerId = Guid.TryParse(userId, out var guid) ? guid : Guid.Empty;
             var roomCode = await _cacheService.GetAsync<string>(CacheKeys.GuessingRoomByPlayer(connectionId));
             if(string.IsNullOrEmpty(roomCode))
             {
                 await Clients.Caller.SendAsync("ErrorMessage", "You are not in a valid game room.");
                 return;
             }
-            var guessingRoom = await _cacheService.GetAsync<WordGuessingRoom>(CacheKeys.GuessingRoom(roomCode));
+            var data = await _database.HashGetAsync(CacheKeys.GuessingRoom(roomCode), "Data");
+            var version = await _database.HashGetAsync(CacheKeys.GuessingRoom(roomCode), "Version");
+            if (!data.HasValue || !version.HasValue) return;
+            var guessingRoomData = JsonSerializer.Deserialize<WordGuessingRoom>(data);
+            var words = guessingRoomData.Words.Select(w => new Vocabulary
+            {
+                Id = w.Id,
+                Word = w.Word,
+                Phonetic = w.Phonetic,
+                Meaning = w.Meaning,
+                PronunciationAudioUrl = w.PronunciationAudioUrl,
+                PartOfSpeech = w.PartOfSpeech
+            }).ToList();
+            var guessingRoom = new WordGuessingRoom
+            {
+                Id = guessingRoomData.Id,
+                RoomCode = guessingRoomData.RoomCode,
+                Player1ConnectionId = guessingRoomData.Player1ConnectionId,
+                Player2ConnectionId = guessingRoomData.Player2ConnectionId,
+                Player1Score = guessingRoomData.Player1Score,
+                Player2Score = guessingRoomData.Player2Score,
+                CurrentWordIndex = guessingRoomData.CurrentWordIndex,
+                Status = guessingRoomData.Status,
+                Version = guessingRoomData.Version
+            };
+            guessingRoom.SetWords(words);
             if (guessingRoom == null || guessingRoom.Status != WordGuessingStatus.InProgress)
             {
                 await Clients.Caller.SendAsync("ErrorMessage", "The game room isn't available.");
@@ -130,11 +177,28 @@ namespace Infrastructure.Realtime
             var isCorrect = string.Equals(currentWord.Word, answer, StringComparison.OrdinalIgnoreCase);
             if (isCorrect)
             {
-                await Clients.Group(guessingRoom.RoomCode).SendAsync("CorrectAnswer", new { User = user, Answer = answer , Mes = $"{user} has submitted a correct answer!"});
-                guessingRoom.UpdatePlayerScore(connectionId);
+
+                guessingRoom.UpdatePlayerScore(playerId);
                 guessingRoom.MoveToNextWord();
-                
-                await _cacheService.SetAsync(CacheKeys.GuessingRoom(guessingRoom.RoomCode), guessingRoom, guessingRoom.Status == WordGuessingStatus.InProgress ? TimeSpan.FromMinutes(10) : TimeSpan.FromMinutes(30));
+                guessingRoom.Version++;
+                bool isGameOver = guessingRoom.GetCurrentWord() == null;
+                var dataToStore = JsonSerializer.Serialize(guessingRoom);
+                var transaction = _database.CreateTransaction();
+                transaction.AddCondition(Condition.HashEqual(CacheKeys.GuessingRoom(roomCode), "Version", version));
+                await transaction.HashSetAsync(CacheKeys.GuessingRoom(roomCode), new HashEntry[]
+                {
+                    new("Version", guessingRoom.Version),
+                    new("Data", dataToStore)
+                });
+                var ttl = isGameOver ? TimeSpan.FromMinutes(10) : TimeSpan.FromMinutes(30);
+                await transaction.KeyExpireAsync(CacheKeys.GuessingRoom(roomCode), ttl);
+                var result = await transaction.ExecuteAsync();
+                if (!result)
+                {
+                    await Clients.Caller.SendAsync("ErrorMessage", "Your opponent has made a faster correct guess.");
+                    return;
+                }
+                await Clients.Group(guessingRoom.RoomCode).SendAsync("CorrectAnswer", new { User = user, Answer = answer, Mes = $"{user} has submitted a correct answer!" });
                 if (guessingRoom.GetCurrentWord() != null)
                 {
                     await Clients.Group(guessingRoom.RoomCode).SendAsync("GameStatus", "Ready for the next word! Good luck!");
