@@ -14,6 +14,8 @@ namespace Application.Models.Vocabulary
         Guid? Player2UserId,
         string? Player1ConnectionId,
         string? Player2ConnectionId,
+        string? Player1Name,
+        string? Player2Name,
         int Player1Score,
         int Player2Score,
         List<VocabularyResponse> Words,

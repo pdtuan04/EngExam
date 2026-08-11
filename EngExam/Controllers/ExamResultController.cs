@@ -1,7 +1,7 @@
 ﻿using Application.Common.Constants;
 using Application.Features.ExamResult.Queries;
 using Application.Features.Practice.Queries;
-using EngExam.Extensions;
+using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

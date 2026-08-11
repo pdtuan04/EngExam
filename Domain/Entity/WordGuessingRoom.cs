@@ -14,6 +14,8 @@ namespace Domain.Entity
         public required string RoomCode { get; init; }
         public Guid? Player1UserId { get; set; }
         public Guid? Player2UserId { get; set; }
+        public string? Player1Name { get; set; }
+        public string? Player2Name { get; set; }
         public string? Player1ConnectionId { get; set; }
         public string? Player2ConnectionId { get; set; }
         public int Player1Score { get; set; } = 0;

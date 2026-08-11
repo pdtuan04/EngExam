@@ -1,7 +1,7 @@
 ﻿using Application.Features.Comment.Commands;
 using Application.Features.Comment.Queries;
 using Application.Models.Comment;
-using EngExam.Extensions;
+using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

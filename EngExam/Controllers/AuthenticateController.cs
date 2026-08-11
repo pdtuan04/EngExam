@@ -1,6 +1,6 @@
 ﻿using Application.Features.User.Commands;
 using Application.Models.Authen;
-using EngExam.Extensions;
+using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;

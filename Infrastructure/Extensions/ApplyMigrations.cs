@@ -1,8 +1,10 @@
 ﻿using Infrastructure.Repositories.SQLServer.DataContext;
 using Infrastructure.Repositories.SQLServer_Read.DataContext;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace EngExam.Extensions
+namespace Infrastructure.Extensions
 {
     public static class ApplyMigrations
     {
