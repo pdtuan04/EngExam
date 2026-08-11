@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace EngExam.Extensions
+namespace Infrastructure.Extensions
 {
     public static class ClaimsExtensions
     {
@@ -9,6 +9,10 @@ namespace EngExam.Extensions
 
             var value = user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? user.FindFirst("nameid")?.Value; ;
             return Guid.TryParse(value, out var guid) ? guid : Guid.Empty;
+        }
+        public static string GetUserName(this ClaimsPrincipal user)
+        {
+            return user.FindFirst(ClaimTypes.Name)?.Value ?? user.FindFirst("name")?.Value ?? string.Empty;
         }
     }
 }

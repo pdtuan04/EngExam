@@ -1,7 +1,7 @@
 ﻿using Application.Features.FlashCard.Commands;
 using Application.Features.FlashCard.Queries;
 using Application.Models.FlashCard;
-using EngExam.Extensions;
+using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

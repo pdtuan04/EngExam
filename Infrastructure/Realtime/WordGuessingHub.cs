@@ -3,8 +3,10 @@ using Application.Common.Caching;
 using Application.Common.Helpers;
 using Application.Features.Vocabulary.Queries;
 using Application.Models.Vocabulary;
+using Application.Models.WordGuessing;
 using Domain.Entity;
 using Domain.Enums;
+using Infrastructure.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
@@ -35,8 +37,8 @@ namespace Infrastructure.Realtime
         public override async Task OnConnectedAsync()
         {
             var connectionId = Context.ConnectionId;
-            var userId = Context.User?.FindFirst("nameid")?.Value;
-            var playerId = Guid.TryParse(userId, out var guid) ? guid : Guid.Empty;
+            var userId = ClaimsExtensions.GetUserId(Context.User);
+            var userName = ClaimsExtensions.GetUserName(Context.User);
             WordGuessingRoom guessingRoom = null;
             bool hasJoinedRoom = false;
             while (true)
@@ -53,7 +55,8 @@ namespace Infrastructure.Realtime
                     continue;
                 }
                 guessingRoom.Player2ConnectionId = connectionId;
-                guessingRoom.Player2UserId = playerId;
+                guessingRoom.Player2UserId = userId;
+                guessingRoom.Player2Name = userName;
                 guessingRoom.UpdateRoomStatus(WordGuessingStatus.InProgress);
                 var query = new GetRandomWordsQuery(10);
                 var words = await _sender.Send(query);
@@ -83,7 +86,8 @@ namespace Infrastructure.Realtime
                 {
                     Id = Guid.CreateVersion7(),
                     Player1ConnectionId = connectionId,
-                    Player1UserId = playerId,
+                    Player1UserId = userId,
+                    Player1Name = userName,
                     RoomCode = newRoomCode,
                     CurrentWordIndex = 0,
                     Status = WordGuessingStatus.Waiting,
@@ -131,107 +135,119 @@ namespace Infrastructure.Realtime
             }
             await base.OnDisconnectedAsync(exception);
         }
-        public async Task SubmitAnswerAsync(string user, string answer)
+        public async Task SubmitAnswerAsync(string answer)
         {
-            var connectionId = Context.ConnectionId;
-            var userId = Context.User?.FindFirst("nameid")?.Value;
-            var playerId = Guid.TryParse(userId, out var guid) ? guid : Guid.Empty;
-            var roomCode = await _cacheService.GetAsync<string>(CacheKeys.GuessingRoomByPlayer(connectionId));
-            if(string.IsNullOrEmpty(roomCode))
+            try
             {
-                await Clients.Caller.SendAsync("ErrorMessage", "You are not in a valid game room.");
-                return;
-            }
-            var data = await _database.HashGetAsync(CacheKeys.GuessingRoom(roomCode), "Data");
-            var version = await _database.HashGetAsync(CacheKeys.GuessingRoom(roomCode), "Version");
-            if (!data.HasValue || !version.HasValue) return;
-            var guessingRoomData = JsonSerializer.Deserialize<WordGuessingRoom>(data);
-            var words = guessingRoomData.Words.Select(w => new Vocabulary
-            {
-                Id = w.Id,
-                Word = w.Word,
-                Phonetic = w.Phonetic,
-                Meaning = w.Meaning,
-                PronunciationAudioUrl = w.PronunciationAudioUrl,
-                PartOfSpeech = w.PartOfSpeech
-            }).ToList();
-            var guessingRoom = new WordGuessingRoom
-            {
-                Id = guessingRoomData.Id,
-                RoomCode = guessingRoomData.RoomCode,
-                Player1ConnectionId = guessingRoomData.Player1ConnectionId,
-                Player2ConnectionId = guessingRoomData.Player2ConnectionId,
-                Player1Score = guessingRoomData.Player1Score,
-                Player2Score = guessingRoomData.Player2Score,
-                CurrentWordIndex = guessingRoomData.CurrentWordIndex,
-                Status = guessingRoomData.Status,
-                Version = guessingRoomData.Version
-            };
-            guessingRoom.SetWords(words);
-            if (guessingRoom == null || guessingRoom.Status != WordGuessingStatus.InProgress)
-            {
-                await Clients.Caller.SendAsync("ErrorMessage", "The game room isn't available.");
-                return;
-            }
-            var currentWord = guessingRoom.GetCurrentWord();
-            var isCorrect = string.Equals(currentWord.Word, answer, StringComparison.OrdinalIgnoreCase);
-            if (isCorrect)
-            {
-
-                guessingRoom.UpdatePlayerScore(playerId);
-                guessingRoom.MoveToNextWord();
-                guessingRoom.Version++;
-                bool isGameOver = guessingRoom.GetCurrentWord() == null;
-                var dataToStore = JsonSerializer.Serialize(guessingRoom);
-                var transaction = _database.CreateTransaction();
-                transaction.AddCondition(Condition.HashEqual(CacheKeys.GuessingRoom(roomCode), "Version", version));
-                await transaction.HashSetAsync(CacheKeys.GuessingRoom(roomCode), new HashEntry[]
+                var connectionId = Context.ConnectionId;
+                var playerId = ClaimsExtensions.GetUserId(Context.User);
+                var userName = Context.User?.Identity?.Name ?? "Unknown";
+                var roomCode = await _cacheService.GetAsync<string>(CacheKeys.GuessingRoomByPlayer(connectionId));
+                if (string.IsNullOrEmpty(roomCode))
                 {
-                    new("Version", guessingRoom.Version),
-                    new("Data", dataToStore)
-                });
-                var ttl = isGameOver ? TimeSpan.FromMinutes(10) : TimeSpan.FromMinutes(30);
-                await transaction.KeyExpireAsync(CacheKeys.GuessingRoom(roomCode), ttl);
-                var result = await transaction.ExecuteAsync();
-                if (!result)
-                {
-                    await Clients.Caller.SendAsync("ErrorMessage", "Your opponent has made a faster correct guess.");
+                    await Clients.Caller.SendAsync("ErrorMessage", "You are not in a valid game room.");
                     return;
                 }
-                await Clients.Group(guessingRoom.RoomCode).SendAsync("CorrectAnswer", new { User = user, Answer = answer, Mes = $"{user} has submitted a correct answer!" });
-                if (guessingRoom.GetCurrentWord() != null)
+                var data = await _database.HashGetAsync(CacheKeys.GuessingRoom(roomCode), "Data");
+                var version = await _database.HashGetAsync(CacheKeys.GuessingRoom(roomCode), "Version");
+                if (!data.HasValue || !version.HasValue) return;
+                var guessingRoomData = JsonSerializer.Deserialize<WordGuessingRoomCacheModel>(data);
+
+                var words = guessingRoomData.Words.Select(w => new Vocabulary
                 {
-                    await Clients.Group(guessingRoom.RoomCode).SendAsync("GameStatus", "Ready for the next word! Good luck!");
-                    var nextWord = guessingRoom.GetCurrentWord();
-                    await Clients.Group(guessingRoom.RoomCode).SendAsync("ReceiveWord", new HiddenVocabularyResponse(
-                    nextWord.Id,
-                    nextWord.Word.MaskWord(),
-                    nextWord.Phonetic,
-                    nextWord.Meaning,
-                    nextWord.PronunciationAudioUrl,
-                    nextWord.PartOfSpeech));
+                    Id = w.Id,
+                    Word = w.Word,
+                    Phonetic = w.Phonetic,
+                    Meaning = w.Meaning,
+                    PronunciationAudioUrl = w.PronunciationAudioUrl,
+                    PartOfSpeech = w.PartOfSpeech
+                }).ToList();
+                var guessingRoom = new WordGuessingRoom
+                {
+                    Id = guessingRoomData.Id,
+                    RoomCode = guessingRoomData.RoomCode,
+                    Player1ConnectionId = guessingRoomData.Player1ConnectionId,
+                    Player2ConnectionId = guessingRoomData.Player2ConnectionId,
+                    Player1UserId = guessingRoomData.Player1UserId,
+                    Player2UserId = guessingRoomData.Player2UserId,
+                    Player1Name = guessingRoomData.Player1Name,
+                    Player2Name = guessingRoomData.Player2Name,
+                    Player1Score = guessingRoomData.Player1Score,
+                    Player2Score = guessingRoomData.Player2Score,
+                    CurrentWordIndex = guessingRoomData.CurrentWordIndex,
+                    Status = guessingRoomData.Status,
+                    Version = guessingRoomData.Version
+                };
+                guessingRoom.SetWords(words);
+                if (guessingRoom == null || guessingRoom.Status != WordGuessingStatus.InProgress)
+                {
+                    await Clients.Caller.SendAsync("ErrorMessage", "The game room isn't available.");
+                    return;
                 }
-                else
+                var currentWord = guessingRoom.GetCurrentWord();
+                var isCorrect = string.Equals(currentWord.Word, answer, StringComparison.OrdinalIgnoreCase);
+                if (isCorrect)
                 {
-                    guessingRoom.UpdateRoomStatus(WordGuessingStatus.Completed);
-                    await Clients.Group(guessingRoom.RoomCode).SendAsync("GameStatus", "Game over! All words have been guessed.");
-                    if(guessingRoom.Player1Score > guessingRoom.Player2Score)
+
+                    guessingRoom.UpdatePlayerScore(playerId);
+                    guessingRoom.MoveToNextWord();
+                    bool isGameOver = guessingRoom.GetCurrentWord() == null;
+                    var dataToStore = JsonSerializer.Serialize(guessingRoom);
+                    var transaction = _database.CreateTransaction();
+                    transaction.AddCondition(Condition.HashEqual(CacheKeys.GuessingRoom(roomCode), "Version", version));
+                    guessingRoom.Version++;
+                    _ = transaction.HashSetAsync(CacheKeys.GuessingRoom(roomCode), new HashEntry[]
                     {
-                        await Clients.Group(guessingRoom.RoomCode).SendAsync("GameOver", "Player 1 wins!", guessingRoom.Player1Score, guessingRoom.Player2Score);
+                    new("Version", guessingRoom.Version),
+                    new("Data", dataToStore)
+                    });
+                    var ttl = isGameOver ? TimeSpan.FromMinutes(10) : TimeSpan.FromMinutes(30);
+                    _ =  transaction.KeyExpireAsync(CacheKeys.GuessingRoom(roomCode), ttl);
+                    var result = await transaction.ExecuteAsync();
+                    if (!result)
+                    {
+                        await Clients.Caller.SendAsync("ErrorMessage", "Your opponent has made a faster correct guess.");
+                        return;
                     }
-                    else if(guessingRoom.Player2Score > guessingRoom.Player1Score)
+                    await Clients.Group(guessingRoom.RoomCode).SendAsync("CorrectAnswer", new WordGuessingAnswerResponse(true, userName, answer, guessingRoom.Player1Score, guessingRoom.Player2Score));
+                    if (guessingRoom.GetCurrentWord() != null)
                     {
-                        await Clients.Group(guessingRoom.RoomCode).SendAsync("GameOver", "Player 2 wins!", guessingRoom.Player1Score, guessingRoom.Player2Score);
+                        await Clients.Group(guessingRoom.RoomCode).SendAsync("GameStatus", "Ready for the next word! Good luck!");
+                        var nextWord = guessingRoom.GetCurrentWord();
+                        await Clients.Group(guessingRoom.RoomCode).SendAsync("ReceiveWord", new HiddenVocabularyResponse(
+                        nextWord.Id,
+                        nextWord.Word.MaskWord(),
+                        nextWord.Phonetic,
+                        nextWord.Meaning,
+                        nextWord.PronunciationAudioUrl,
+                        nextWord.PartOfSpeech));
                     }
                     else
                     {
-                        await Clients.Group(guessingRoom.RoomCode).SendAsync("GameOver", "It's a tie!", guessingRoom.Player1Score, guessingRoom.Player2Score);
-                    }   
+                        guessingRoom.UpdateRoomStatus(WordGuessingStatus.Completed);
+                        await Clients.Group(guessingRoom.RoomCode).SendAsync("GameStatus", "Game over! All words have been guessed.");
+                        if (guessingRoom.Player1Score > guessingRoom.Player2Score)
+                        {
+                            await Clients.Group(guessingRoom.RoomCode).SendAsync("GameOver", new WordGuessingSummaryResponse(guessingRoom.Player1Name, guessingRoom.Player2Name, guessingRoom.Player1Score, guessingRoom.Player2Score, "Player 1 wins!"));
+                        }
+                        else if (guessingRoom.Player2Score > guessingRoom.Player1Score)
+                        {
+                            await Clients.Group(guessingRoom.RoomCode).SendAsync("GameOver", new WordGuessingSummaryResponse(guessingRoom.Player1Name, guessingRoom.Player2Name, guessingRoom.Player1Score, guessingRoom.Player2Score, "Player 2 wins!"));
+                        }
+                        else
+                        {
+                            await Clients.Group(guessingRoom.RoomCode).SendAsync("GameOver", new WordGuessingSummaryResponse(guessingRoom.Player1Name, guessingRoom.Player2Name, guessingRoom.Player1Score, guessingRoom.Player2Score, "It's a tie!"));
+                        }
+                    }
+                }
+                else
+                {
+                    await Clients.Group(guessingRoom.RoomCode).SendAsync("IncorrectAnswer", new { UserName = userName, Answer = answer });
                 }
             }
-            else
+            catch (Exception ex)
             {
-                await Clients.Group(guessingRoom.RoomCode).SendAsync("IncorrectAnswer", new { User = user, Answer = answer });
+                await Clients.Caller.SendAsync("ErrorMessage", $"An error occurred: {ex.Message}");
             }
         }
     }

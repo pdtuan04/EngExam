@@ -5,7 +5,7 @@ using Application.Features.Exam.Queries;
 using Application.Features.ExamResult.Commands;
 using Application.Models.Exam;
 using Application.Models.Pagination;
-using EngExam.Extensions;
+using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;

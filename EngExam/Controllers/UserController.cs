@@ -3,7 +3,7 @@ using Application.Features.User.Commands;
 using Application.Features.User.Queries;
 using Application.Models.User;
 using Domain.Enums;
-using EngExam.Extensions;
+using Infrastructure.Extensions;
 using MassTransit.Futures.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
