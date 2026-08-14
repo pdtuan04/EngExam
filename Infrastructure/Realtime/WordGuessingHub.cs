@@ -120,6 +120,8 @@ namespace Infrastructure.Realtime
                     new("Version", 1),
                     new("Data", JsonSerializer.Serialize(guessingRoom))
                 });
+                long expiredTime = DateTimeOffset.UtcNow.AddSeconds(10).ToUnixTimeSeconds();
+                await _database.SortedSetAddAsync(CacheKeys.WordGuessingTimers, guessingRoom.RoomCode, expiredTime);
             }
             await base.OnConnectedAsync();
         }
@@ -130,6 +132,7 @@ namespace Infrastructure.Realtime
             if (!string.IsNullOrEmpty(guessingRoomCode))
             {
                 await Clients.Group(guessingRoomCode).SendAsync("GameStatus", "A player has disconnected. The game will end.");
+                await Groups.RemoveFromGroupAsync(connectionId, guessingRoomCode);
                 await _cacheService.RemoveCacheAsync(CacheKeys.GuessingRoomByPlayer(connectionId));
                 await _database.KeyDeleteAsync(CacheKeys.GuessingRoom(guessingRoomCode));
             }
@@ -188,10 +191,13 @@ namespace Infrastructure.Realtime
                 var isCorrect = string.Equals(currentWord.Word, answer, StringComparison.OrdinalIgnoreCase);
                 if (isCorrect)
                 {
-
                     guessingRoom.UpdatePlayerScore(playerId);
                     guessingRoom.MoveToNextWord();
                     bool isGameOver = guessingRoom.GetCurrentWord() == null;
+                    if(isGameOver)
+                    {
+                        guessingRoom.UpdateRoomStatus(WordGuessingStatus.Completed);
+                    }
                     var dataToStore = JsonSerializer.Serialize(guessingRoom);
                     var transaction = _database.CreateTransaction();
                     transaction.AddCondition(Condition.HashEqual(CacheKeys.GuessingRoom(roomCode), "Version", version));
@@ -201,8 +207,17 @@ namespace Infrastructure.Realtime
                     new("Version", guessingRoom.Version),
                     new("Data", dataToStore)
                     });
-                    var ttl = isGameOver ? TimeSpan.FromMinutes(10) : TimeSpan.FromMinutes(30);
-                    _ =  transaction.KeyExpireAsync(CacheKeys.GuessingRoom(roomCode), ttl);
+                    if (isGameOver)
+                    {
+                        _ = transaction.SortedSetRemoveAsync(CacheKeys.WordGuessingTimers, roomCode);
+                        _ = transaction.KeyExpireAsync(CacheKeys.GuessingRoom(roomCode), TimeSpan.FromMinutes(10));
+                    }
+                    else
+                    {
+                        long nextExpireTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds() + 10;
+                        _ = transaction.SortedSetAddAsync(CacheKeys.WordGuessingTimers, roomCode, nextExpireTime);
+                        _ = transaction.KeyExpireAsync(CacheKeys.GuessingRoom(roomCode), TimeSpan.FromMinutes(30));
+                    }
                     var result = await transaction.ExecuteAsync();
                     if (!result)
                     {
@@ -224,7 +239,6 @@ namespace Infrastructure.Realtime
                     }
                     else
                     {
-                        guessingRoom.UpdateRoomStatus(WordGuessingStatus.Completed);
                         await Clients.Group(guessingRoom.RoomCode).SendAsync("GameStatus", "Game over! All words have been guessed.");
                         if (guessingRoom.Player1Score > guessingRoom.Player2Score)
                         {
