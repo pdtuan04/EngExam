@@ -30,6 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Hangfire.Core" Version="1.8.23" />
     <PackageReference Include="MassTransit.Abstractions" Version="8.4.1" />
     <PackageReference Include="MediatR" Version="14.1.0" />
   </ItemGroup>

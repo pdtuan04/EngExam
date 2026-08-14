@@ -6,6 +6,7 @@ using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 using Application.Exceptions;
 using Application.Features.User.Events;
+using Hangfire;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,11 +20,13 @@ namespace Application.Features.User.Commands
         private readonly IUnitOfWork _unitOfWork;
         private readonly IAuthIdentityService _authIdentityService;
         private readonly IEventBus _eventBus;
-        public SignUpCommandHandler(IUnitOfWork unitOfWork, IAuthIdentityService authIdentityService, IEventBus eventBus)
+        private readonly IBackgroundJobClient _backgroundJobClient;
+        public SignUpCommandHandler(IUnitOfWork unitOfWork, IAuthIdentityService authIdentityService, IEventBus eventBus, IBackgroundJobClient backgroundJobClient)
         {
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             _authIdentityService = authIdentityService;
             _eventBus = eventBus;
+            _backgroundJobClient = backgroundJobClient;
         }
         public async Task<bool> Handle(SignUpCommand request, CancellationToken cancellationToken)
         {
@@ -46,6 +49,10 @@ namespace Application.Features.User.Commands
             await _authIdentityService.CreateRole(Roles.User);
             await _authIdentityService.AddUserToRole(user, Roles.User);
             await _eventBus.PublishAsync(new UserCreatedEvent(user.Id, user.UserName, user.Email, user.Age, new[] { Roles.User }, user.CreatedAt, user.UpdatedAt));
+            _backgroundJobClient.Schedule<IUserRetentionJob>(
+                job => job.SendComeBackEmailAsync(request.Email),
+                TimeSpan.FromDays(7)
+            );
             return resutl;
         }
     }

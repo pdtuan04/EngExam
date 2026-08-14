@@ -27,6 +27,7 @@ using Hangfire;
 using Hangfire.SqlServer;
 using Infrastructure;
 using Infrastructure.Authentication;
+using Infrastructure.BackgroundJob;
 using Infrastructure.Cache;
 using Infrastructure.Common;
 using Infrastructure.Common.Options;
@@ -213,6 +214,7 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
           .UseSimpleAssemblyNameTypeSerializer()
           .UseRecommendedSerializerSettings()
           .UseSqlServerStorage(builder.Configuration.GetConnectionString("EngExamConnection")));
+
         builder.Services.AddHangfireServer();
         services.AddTransient<ICommentRepository>(service => new CommentRepository(
             service.GetRequiredService<ApplicationDbContext>(),
@@ -393,7 +395,9 @@ void RegisterServicesForApp(ConfigurationManager configuration, IServiceCollecti
             });
             config.ConfigureEndpoints(context);
         });
-    }); 
+    });
+    services.AddHostedService<WordGuessingTimerWorker>();
+    services.AddTransient<IUserRetentionJob, UserRetentionJob>();
 }
 void RegisterAIServices(ConfigurationManager configuration, IServiceCollection services, AIOptions aiOption)
 {

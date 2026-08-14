@@ -22,7 +22,12 @@ namespace Infrastructure.Repositories.SQLServer_Read
         }
         public async Task<IList<VocabularyResponse>> GetRandomWordsAsync(int count, CancellationToken cancellationToken)
         {
-            var vocabularies = await _dbContext.Vocabularies.Take(count).ToListAsync(cancellationToken);
+            var totalCount = await _dbContext.Vocabularies.CountAsync(cancellationToken);
+            if (totalCount== 0)
+                return new List<VocabularyResponse>();
+            int maxSkip = Math.Max(0,totalCount - count);
+            int skip = new Random().Next(0, maxSkip + 1);
+            var vocabularies = await _dbContext.Vocabularies.OrderBy(v => v.Id).Skip(skip).Take(count).ToListAsync(cancellationToken);
             return vocabularies.Select(v => _mapper.Map<VocabularyResponse>(v)).ToList();
         }
     }
