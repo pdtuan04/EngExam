@@ -68,22 +68,16 @@ namespace EngExam.Controllers
                 message = "Login successful"
             });
         }
-        [Authorize]
-        [HttpPatch("change-password")]
-        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+        [HttpPost("change-password")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ChangePassword([FromBody] ForgotPasswordRequest request)
         {
-            var userId = ClaimsExtensions.GetUserId(User);
-            var command = new ChangePasswordCommand(userId, request.CurrentPassword, request.NewPassword, request.ConfirmNewPassword);
-            var result = await Sender.Send(command);
-            if (!result)
+            var emailFromToken = ClaimsExtensions.GetUserEmail(User);
+            var targetEmail = !string.IsNullOrEmpty(emailFromToken) ? emailFromToken : request.Email;
+            if (string.IsNullOrEmpty(targetEmail))
             {
-                return BadRequest("Change password failed");
+                return BadRequest("Please provide an email address.");
             }
-            return Ok("Change password successful");
-        }
-        [HttpPost("forgot-password")]
-        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
-        {
             var command = new ForgotPasswordCommand(request.Email);
             var result = await Sender.Send(command);
             return Ok(result);

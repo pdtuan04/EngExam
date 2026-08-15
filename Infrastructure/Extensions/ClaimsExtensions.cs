@@ -14,5 +14,9 @@ namespace Infrastructure.Extensions
         {
             return user.FindFirst(ClaimTypes.Name)?.Value ?? user.FindFirst("name")?.Value ?? string.Empty;
         }
+        public static string GetUserEmail(this ClaimsPrincipal user)
+        {
+            return user.FindFirst(ClaimTypes.Email)?.Value ?? user.FindFirst("email")?.Value ?? string.Empty;
+        }
     }
 }
